@@ -14,7 +14,6 @@ fi
 
 
 if [[ -e "$LIBDIR/shaders/noises/$1/fragment_shader$2.fs" ]]; then
-
     cd $LIBDIR/test/
     cp $LIBDIR/shaders/noises/$1/fragment_shader$2.fs .
     mv fragment_shader$2.fs fragment_shader01.fs

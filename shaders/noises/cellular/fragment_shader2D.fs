@@ -54,6 +54,9 @@ void ordering(inout float[9] tab){
         tab[j] = curr;
     }
 }
+// ------^-----------^-------
+// ------|---UTILS---|-------
+// --------------------------
 
 // Cellular noise general function
 // Compute some grey shades
