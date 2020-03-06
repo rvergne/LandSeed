@@ -1,6 +1,6 @@
 #! /bin/bash
 oldDir=$(pwd)
-LIBDIR="/disc/Document/lib/" # TODO : changer ça pour que ça ne soit pas en dur
+LIBDIR=$(cd `dirname $0`/../ && pwd)
 
 if [[ $# -eq 1 && $1 == "clean" ]]; then
     rm $LIBDIR/test/fragment_shader01.fs
