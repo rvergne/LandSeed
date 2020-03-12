@@ -8,10 +8,15 @@ in vec2 fragCoord;
 
 out vec4 outColor;
 
+const bool MOTION = true; // Do you want the noise to be in motion or fixed?
+float DIVISION = .8;  // How many cells in the grid spliting the screen do you want
+const int F = 0; // Distance to what point should we compute (0: closest, 1: 2nd closest...), value should be in [0,8]
+const int NUM_OCTAVES = 3; // Num of octaves you want to compute (0 or 1 correspond to 1 and so, no fbm computation)
+
+
 // -------------------------------------------------
 // ---------------Sphere Render Part----------------
 // -------------------------------------------------
-
 #define DIST_MIN 1e-5 // minimum distance to objects
 #define DIST_MAX 1e+5 // maximum distance to objects
 
@@ -36,20 +41,13 @@ struct ISObj
   int i; // object ID
 };
 
-// Useless mais distance a camera
-const float DP = 5.0;
-
 Sphere spheres[1] = Sphere[](
     Sphere(vec3(0.0,1.0,0.0),10.0)
 );
 
-// field of view
-const float fov = 45.0;
 // camera position
 float an = mousePos.x;
-// vec3 cameraPos = vec3(0.0,0.0,DP);
 vec3 cameraPos = vec3(30.*cos(an), 0.0, 30.*sin(an));
-// vec3 cameraPos = vec3(0.0,0.0,1.0/tan(fov/2.0)+3.0);
 
 // intersection test with one sphere
 ISObj intersectSphere(in Sphere s,in Ray r,in int id)
@@ -65,15 +63,8 @@ ISObj intersectSphere(in Sphere s,in Ray r,in int id)
     return ISObj(DIST_MAX,-1,-1);
 }
 
-// intersection test for all objects in the scene
-ISObj intersectObjects(in Ray r)
-{
-    return intersectSphere(spheres[0], r, 0);
-}
-
 Ray generatePerspectiveRay(in vec2 p)
 {
-
     // p is the current pixel coord, in [-1,1]
     vec3 ta = vec3( 0.0, 1.0, 0.0 );
     // camera matrix
@@ -82,18 +73,7 @@ Ray generatePerspectiveRay(in vec2 p)
     vec3 vv = normalize( cross(uu,ww));
     // create view ray
     vec3 rd = normalize( p.x*uu + p.y*vv*aspectRatio + 1.5*ww );
-    // return Ray(cameraPos,normalize(vec3(p.x,aspectRatio*p.y,-cameraPos.z)));
     return Ray(cameraPos,rd);
-
-}
-
-vec3 computeNormal(in ISObj is,in Ray r)
-{
-	vec3 normal = vec3(0.0);
-    vec3 intersectPoint = r.ro + is.d*r.rd;
-    normal = vec3((intersectPoint.x - spheres[is.i].c.x)/spheres[is.i].r,(intersectPoint.y - spheres[is.i].c.y)/spheres[is.i].r,(intersectPoint.z - spheres[is.i].c.z)/spheres[is.i].r);
-    return normal;
-    // return (normal+(vec3(1.0))/vec3(2.0));
 }
 
 vec3 getHitPoint(ISObj hit, Ray r){
@@ -104,12 +84,6 @@ vec3 getHitPoint(ISObj hit, Ray r){
 // -----------End Sphere Render Part----------------
 // -------------------------------------------------
 
-
-const bool MOTION = true; // Do you want the noise to be in motion or fixed?
-float DIVISION = .8;  // How many cells in the grid spliting the screen do you want
-const int F = 0; // Distance to what point should we compute (0: closest, 1: 2nd closest...), value should be in [0,8]
-const int NUM_OCTAVES = 3; // Num of octaves you want to compute (0 or 1 correspond to 1 and so, no fbm computation)
-
 // Motion used can be modified here
 vec3 motion(vec3 st){
     if(MOTION)
@@ -119,7 +93,7 @@ vec3 motion(vec3 st){
 }
 
 // Distance function can be modified here
-// To see different distance function, check Utis/2DDistanceFunctions.fs
+// To see different distance function, check Utis/3DDistanceFunctions.fs
 float my_distance(vec3 p1, vec3 p2){
     return distance(p1,p2);
 }
@@ -158,12 +132,12 @@ void ordering(inout float[27] tab){
 
 // Cellular noise general function
 // Compute some grey shades
-// The idea is to split the screen in cells (number of cells defined by DIVISION),
+// The idea is to split the space in cells (number of cells defined by DIVISION),
 // then we generate a point for each cells
-// finally, for each fragment, we compute the minimum distance for the f closest point
+// finally, for each point on the sphere, we compute the minimum distance for the f closest point
 // This minimum distance will define our grey shade value
 // SPEC --------------------------------------
-// position the screen point you want to compute (the current fragment for this example)
+// position the space point you want to compute
 // numOfDiv is the number of subdivision of the screen you want
 // f define the point we want (first nearest, second nearest...) so this value should be in the range [0,8]
 // -------------------------------------------
@@ -244,7 +218,7 @@ vec3 compute_color(vec3 coord){
 void main()
 {
     Ray ray = generatePerspectiveRay(fragCoord);
-    ISObj intersect = intersectObjects(ray);
+    ISObj intersect = intersectSphere(spheres[0], ray, 0);
     if(intersect.t == -1){
         outColor = vec4(vec3(0.0), 1);
     }else{
