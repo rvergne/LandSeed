@@ -11,6 +11,7 @@ out vec4 outColor;
 const bool MOTION = true; // Do you want the noise to be in motion or fixed?
 const float DIVISION = 10.0;  // How many cells in the grid spliting the screen do you want
 const int F = 0; // Distance to what point should we compute (0: closest, 1: 2nd closest...), value should be in [0,8]
+int NUM_OCTAVES = 1; // Num of octaves you want to compute (0 or 1 correspond to 1 and so, no fbm computation)
 
 // Motion used can be modified here
 vec2 motion(vec2 st){
@@ -69,7 +70,7 @@ void ordering(inout float[9] tab){
 // numOfDiv is the number of subdivision of the screen you want
 // f define the point we want (first nearest, second nearest...) so this value should be in the range [0,8]
 // -------------------------------------------
-vec3 cellular(vec2 position, float numOfDiv, int f){
+float cellular(vec2 position, float numOfDiv, int f){
     float distances[9];
     int indice = 0;
 
@@ -85,11 +86,11 @@ vec3 cellular(vec2 position, float numOfDiv, int f){
         }
     }
     ordering(distances);
-    return vec3(dist_alteration(distances[f]));
+    return dist_alteration(distances[f]);
 }
 
 // Below, a version to compute for the first nearest point (array-free version)
-vec3 cellular(vec2 position, float numOfDiv){
+float cellular(vec2 position, float numOfDiv){
 
     vec2 cellPosition = floor(position*numOfDiv);
     vec2 positionInCell = fract(position*numOfDiv);
@@ -110,12 +111,39 @@ vec3 cellular(vec2 position, float numOfDiv){
             }
         }
     }
-    return vec3(dist_alteration(min_dist));
+    return dist_alteration(min_dist);
+}
+
+// Computation of FBM, with NUM_OCTAVES octaves
+float fbm(vec2 x, int num_octave) {
+	float v = 0.0;
+	float a = 0.5;
+	vec2 shift = vec2(100);
+	// Rotate to reduce axial bias
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
+	for (int i = 0; i < num_octave; ++i) {
+		v += a * cellular(x, DIVISION, F);
+		x = rot * x * 2.0 + shift;
+		a *= 0.5;
+	}
+	return v;
+}
+
+// This is optionnal
+// you can also compute things like cellular(coord, DIVISION, 1)-cellular(coord, DIVISION, 0)
+vec3 compute_color(vec2 coord){
+    if(NUM_OCTAVES > 1){    // check to see if we need to use fbm function
+        return vec3(fbm(coord, NUM_OCTAVES));
+    }else{
+        if(F == 0)  // If F = 0, we need to compute the closest point only, so we don't need to use the more expensive cellular function
+            return vec3(cellular(coord, DIVISION));
+        else
+            return vec3(cellular(coord, DIVISION, F));
+    }
 }
 
 void main()
 {
     vec2 coord = vec2(fragCoord.x,fragCoord.y*aspectRatio);
-    // you can also compute things like cellular(coord, DIVISION, 1)-cellular(coord, DIVISION, 0)
-    outColor = vec4(cellular(coord, DIVISION, 0),1.0);
+    outColor = vec4(compute_color(coord),1.0);
 }
