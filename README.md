@@ -1,9 +1,9 @@
-#Procedural terrain generation
+# Procedural terrain generation
 
-##How to generate terrain
+## How to generate terrain
 // WORK IN PROGRESS
 
-##How to add a new noise :
+## How to add a new noise :
 First of all, create your noise shader following the next standards:
 
 - create a folder with the noise name in the shaders/noises/ directory
@@ -19,5 +19,5 @@ Annotate the differents part of the noise shader as follow
    
 Then call the generate_noise_code_fragments script to generate every components for the shader generation. Every component will be stored in the noise sub-dir code_gen. // WORK IN PROGRESS
 
-##Noise tester
+## Noise tester
 To try a noise, use the test.sh script in the testnoise directory.
