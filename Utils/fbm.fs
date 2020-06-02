@@ -42,6 +42,7 @@ float fbm(vec3 x, int num_octave) {
 }
 
 // better version with parameters :
+// @GEN_FBM
 float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
         float a = amplitude;
         vec2 x = p*vec2(frequency,frequency);
@@ -50,7 +51,7 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
         const mat2 m2 = mat2(  0.80,  0.60, -0.60,  0.80 );
 
         for(int i=0;i<nboctaves;++i) {
-
+								// @FBM_NOISE
                 float n = gradient(x); // get noise + derivative at x
 
                 h = h+a*n; // accum noise with a given amplitude
@@ -61,3 +62,4 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
 
         return h;
 }
+// @END
