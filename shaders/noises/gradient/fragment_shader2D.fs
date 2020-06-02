@@ -50,7 +50,6 @@ float fbm(vec2 x, int num_octave) {
 	return v;
 }
 
-// @GEN_COMPUTATION
 vec3 compute_color(vec2 coord){
     return vec3(fbm(coord, NUM_OCTAVES))*.5+.5;
 }

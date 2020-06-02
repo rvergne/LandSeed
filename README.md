@@ -16,8 +16,8 @@ Annotate the differents part of the noise shader as follow
 - @GEN_HEADER : contain header and parameters (such as #define or const). Basically all global parameters
 - @GEN_REQ : requirements, all the functions needed for the noise function to work well
 - @GEN_NOISE : The noise function
-   
-Then call the generate_noise_code_fragments script to generate every components for the shader generation. Every component will be stored in the noise sub-dir code_gen. // WORK IN PROGRESS
+
+Then call the generate_noise_code_fragments script to generate every components for the shader generation. Every component will be stored in the noise sub-dir code_gen. 
 
 ## Noise tester
 To try a noise, use the test.sh script in the testnoise directory.
