@@ -32,8 +32,3 @@ float dist_alteration(float original){
     return original;
     // return 1-original;
 }
-
-// Random function is taken with arbitrary values who can be modified here
-vec2 rand2(vec2 st){
-    return motion(vec2(fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123),fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43897.5453123)));
-}

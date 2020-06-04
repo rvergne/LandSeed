@@ -3,7 +3,7 @@ float cellular(vec2 position, float numOfDiv){
 
     vec2 cellPosition = floor(position*numOfDiv);
     vec2 positionInCell = fract(position*numOfDiv);
-    vec2 pointPosition = rand2(cellPosition);
+    vec2 pointPosition = motion(rand2(cellPosition));
 
     float min_dist = my_distance(positionInCell, pointPosition);
 
@@ -13,7 +13,7 @@ float cellular(vec2 position, float numOfDiv){
         {
             if(vec2(i,j) != vec2(0.0)){
                 vec2 curr_cellPos = cellPosition + vec2(i,j);
-                vec2 curr_pointPosition = rand2(curr_cellPos)+vec2(i,j);
+                vec2 curr_pointPosition = motion(rand2(curr_cellPos))+vec2(i,j);
                 float curr_dist = my_distance(positionInCell, curr_pointPosition);
                 if(curr_dist < min_dist)
                     min_dist = curr_dist;
@@ -46,7 +46,7 @@ float cellular(vec2 position, float numOfDiv, int f){
     for(int i =-1; i<=1;i++){
         for(int j=-1;j<=1;j++){
             vec2 curr_cellPos = cellPosition + vec2(i,j);
-            vec2 curr_pointPosition = rand2(curr_cellPos)+vec2(i,j);
+            vec2 curr_pointPosition = motion(rand2(curr_cellPos))+vec2(i,j);
             distances[indice] = my_distance(positionInCell, curr_pointPosition);
             indice++;
         }

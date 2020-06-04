@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 import os
 
+oldDir= os.getcwd()
+
+# Get current path
+noises_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(noises_path)
 
 # copy the code fragment in the file
 # return last line checked
@@ -34,10 +39,7 @@ def clear_dir(dir):
 
 # Get all directories (noises)
 noises = os.listdir()
-noises.remove(__file__) #remove this script from the list
-
-# Get current path
-noises_path = os.path.dirname(os.path.realpath(__file__))
+noises.remove(os.path.basename(__file__)) #remove this script from the list
 
 # do every noises
 for noise in noises:
@@ -71,3 +73,6 @@ if not error:
     print("OK")
 else:
     print("ERROR IN FILE TREE")
+
+
+os.chdir(oldDir)

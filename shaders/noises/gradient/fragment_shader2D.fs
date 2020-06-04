@@ -12,6 +12,7 @@ out vec4 outColor;
 int NUM_OCTAVES = 6;
 
 // @GEN_REQ
+// @END
 // Random function is taken with arbitrary values who can be modified here
 // source : https://thebookofshaders.com/edit.php#11/2d-gnoise.frag
 vec2 rand2(vec2 st){
@@ -19,7 +20,6 @@ vec2 rand2(vec2 st){
               dot(st,vec2(269.5,183.3)) );
     return -1.0 + 2.0*fract(sin(st)*43758.5453123);
 }
-// @END
 
 // @GEN_NOISE
 // source : https://www.shadertoy.com/view/XdXGW8
