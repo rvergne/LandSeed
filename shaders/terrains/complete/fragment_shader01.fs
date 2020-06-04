@@ -18,76 +18,51 @@ struct Ray{
 ///////////////////PARAM/////////////////////
 /////////////////////////////////////////////
 // RayMarch param
-#define MOVEMENT true
+// @RAYMARCH_PARAM
+#define MOVEMENT false
 #define DIST_MIN 0.1 // minimum distance to objects
 #define DIST_MAX 5000.0 // maximum distance to render objects
 #define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
+// @END
 
 // Example param
+// @FEATURE_DEMO_PARAM
 #define AMP 400.0 // Amplitude
 #define FREQ 0.004 // Frequence
 #define PERS 0.250 // Persistence
 #define NUM_OCTAVES 5
+// @END
 
 // Terrain PARAM
+// @FEATURE_WATER
 #define WATER true
 #define WATER_HEIGHT -200
-
-// UTILS
-#define PI 3.14159265359
-
-// @INCLUDE_HEADER
+// @END
 
 int randcount =0;
 
-// @INCLUDE_REQ
-// @INCLUDE_NOISE
 /////////////////////////////////////////////
 //////////GRADIENT NOISE/////////////////////
 /////////////////////////////////////////////
 // Random function is taken with arbitrary values who can be modified here
 // source : https://thebookofshaders.com/edit.php#11/2d-gnoise.frag
 vec2 rand2(vec2 st){
-    st = vec2( dot(st,vec2(139.1,334.7)),
-              dot(st,vec2(269.5,193.3)) );
-    return -1.0 + 2.0*fract(sin(st)*44758.55123);
-}
-
-vec2 rand2mod(vec2 st, int offset){
-  st = vec2( dot(st,vec2(139.1,331.7)+offset*1478.57),
-            dot(st,vec2(269.5,193.3)+offset*2868.34) );
-  return -1.0 + 2.0*fract(sin(st)*44758.55123+offset*1548.69);
+  st = vec2( dot(st,vec2(139.1,331.7)+randcount*1478.57),
+            dot(st,vec2(269.5,193.3)+randcount*2868.34) );
+  return -1.0 + 2.0*fract(sin(st)*44758.55123+randcount*1548.69);
 }
 
 // noise gradient
-// source : https://www.shadertoy.com/view/XdXGW8
-float gradient(vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-
-    vec2 u = f*f*(3.0-2.0*f);
-
-    return mix( mix( dot( rand2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
-                     dot( rand2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
-                mix( dot( rand2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
-                     dot( rand2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
-}
-
-float gradientMod(vec2 st, int offset){
+float gradient(vec2 st){
   vec2 i = floor(st);
   vec2 f = fract(st);
 
   vec2 u = f*f*(3.0-2.0*f);
 
-  return mix( mix( dot( rand2mod(i + vec2(0.0,0.0), offset ), f - vec2(0.0,0.0) ),
-                   dot( rand2mod(i + vec2(1.0,0.0), offset ), f - vec2(1.0,0.0) ), u.x),
-              mix( dot( rand2mod(i + vec2(0.0,1.0), offset ), f - vec2(0.0,1.0) ),
-                   dot( rand2mod(i + vec2(1.0,1.0), offset ), f - vec2(1.0,1.0) ), u.x), u.y);
-}
-
-float compute_reliefs_cheap(vec2 pos, float amplitude, float frequence, int offset){
-  pos = pos*vec2(frequence);
-  return gradientMod(pos, offset)*amplitude;
+  return mix( mix( dot( rand2(i + vec2(0.0,0.0)), f - vec2(0.0,0.0) ),
+                   dot( rand2(i + vec2(1.0,0.0)), f - vec2(1.0,0.0) ), u.x),
+              mix( dot( rand2(i + vec2(0.0,1.0)), f - vec2(0.0,1.0) ),
+                   dot( rand2(i + vec2(1.0,1.0)), f - vec2(1.0,1.0) ), u.x), u.y);
 }
 
 /////////////////////////////////////////////
@@ -102,6 +77,7 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
 
         for(int i=0;i<nboctaves;++i) {
                 float n;
+                // @MANUAL
                 n = gradient(x); // get noise + derivative at x
                 h = h+a*n; // accum noise with a given amplitude
 
@@ -119,16 +95,20 @@ float terrainBase(vec2 pos, float amplitude, float frequence, float persistence,
   return fbm(pos, amplitude, frequence, persistence, nb_octave);
 }
 
-float montagnes(vec2 pos, float amplitude, float frequence){
-  float res = compute_reliefs_cheap(pos, amplitude, frequence, randcount);
+float mountains(vec2 pos, float amplitude, float frequence){
+  float res;
+  pos = pos*vec2(frequence);
+  res = gradient(pos);
+  res *= amplitude;
   randcount+=1;
   return res;
 }
 
+// @MANUAL
 // To create custom terrains, add code below
 // available features :
 // - water : will change but for now can be put on and set up in the define section
-// - montagnes(positionToCompute, amplitude, frequence, persistence, patternsize)
+// - mountains(positionToCompute, amplitude, frequence, persistence, patternsize)
 //     - positionToCompute : position on the terrain that you want to compute the height
 //     - amplitude : noise amplitudes
 //     - frequence : mountains periodes
@@ -143,9 +123,9 @@ float terrainMap(vec2 pos){
   randcount = 0;
   // --------------------------------------
   terrain += terrainBase(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
-  terrain += montagnes(pos, AMP*1.3, FREQ/2.5);
-  terrain += montagnes(pos, AMP*1.3, FREQ/2.5);
-  // terrain += montagnes(pos, AMP, FREQ);
+  terrain += mountains(pos, AMP*1.3, FREQ/2.5);
+  terrain += mountains(pos, AMP*1.3, FREQ/2.5);
+  // terrain += mountains(pos, AMP, FREQ);
   // --------------------------------------
   return (WATER && terrain<=WATER_HEIGHT)?WATER_HEIGHT:terrain;
 }
