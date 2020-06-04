@@ -106,7 +106,7 @@ float dist_alteration(float original){
 
 // Random function is taken with arbitrary values who can be modified here
 vec3 rand3(vec3 st){
-    return motion(vec3(fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*43758.5453123),fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*43897.5453123),fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*45758.5453123)));
+    return vec3(fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*43758.5453123),fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*43897.5453123),fract(sin(dot(st.xyz,vec3(65.48943,12.9898,78.233)))*45758.5453123));
 }
 
 // --------------------------
@@ -152,7 +152,7 @@ float cellular(vec3 position, float numOfDiv, int f){
         for(int j=-1;j<=1;j++){
             for(int k = -1; k <= 1; k++){
                 vec3 curr_cellPos = cellPosition + vec3(i,j,k);
-                vec3 curr_pointPosition = rand3(curr_cellPos)+vec3(i,j,k);
+                vec3 curr_pointPosition = motion(rand3(curr_cellPos))+vec3(i,j,k);
                 distances[indice] = my_distance(positionInCell, curr_pointPosition);
                 indice++;
             }
@@ -167,7 +167,7 @@ float cellular(vec3 position, float numOfDiv){
 
     vec3 cellPosition = floor(position*numOfDiv);
     vec3 positionInCell = fract(position*numOfDiv);
-    vec3 pointPosition = rand3(cellPosition);
+    vec3 pointPosition = motion(rand3(cellPosition));
 
     float min_dist = my_distance(positionInCell, pointPosition);
 
@@ -178,7 +178,7 @@ float cellular(vec3 position, float numOfDiv){
             for(int k = -1; k <= 1; k++){
                 if(vec3(i,j,k) != vec3(0.0)){
                     vec3 curr_cellPos = cellPosition + vec3(i,j,k);
-                    vec3 curr_pointPosition = rand3(curr_cellPos)+vec3(i,j,k);
+                    vec3 curr_pointPosition = motion(rand3(curr_cellPos))+vec3(i,j,k);
                     float curr_dist = my_distance(positionInCell, curr_pointPosition);
                     if(curr_dist < min_dist)
                         min_dist = curr_dist;

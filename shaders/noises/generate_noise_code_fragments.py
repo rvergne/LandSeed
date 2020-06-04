@@ -59,6 +59,7 @@ for noise in noises:
             i=skip
     shader_file.close()
 
+# check that every file have been created
 print("Checking that everything worked", end="...")
 for noise in noises:
     error=False
