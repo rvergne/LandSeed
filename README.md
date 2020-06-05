@@ -1,7 +1,7 @@
 # Procedural terrain generation
 
 ## How to generate terrain
-// WORK IN PROGRESS
+To generate a terrain, use the generate_terrain.py python script.
 
 ## How to add a new noise :
 First of all, create your noise shader following the next standards:
