@@ -27,8 +27,8 @@ struct Ray{
 #define AMP 400.0 // Amplitude
 #define FREQ 0.004 // Frequence
 #define PERS 0.250 // Persistence
-// @GEN_FEATURE_HEADER
 #define NUM_OCTAVES 5
+// @GEN_FEATURE_HEADER
 // @END
 
 // Terrain PARAM
@@ -88,8 +88,9 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
 // @END
 
 // @GEN_FEATURE_FUNCTION
-float terrainBase(vec2 pos, float amplitude, float frequence, float persistence, int nb_octave){
+float base_relief(vec2 pos, float amplitude, float frequence, float persistence, int nb_octave){
   return fbm(pos, amplitude, frequence, persistence, nb_octave);
+  randcount+=1;
 }
 // @END
 
@@ -97,7 +98,7 @@ float terrainMap(vec2 pos){
   float terrain = 0;
   randcount = 0;
   // --------------------------------------
-  terrain += terrainBase(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
+  terrain += base_relief(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
   // --------------------------------------
   return (WATER && terrain<=WATER_HEIGHT)?WATER_HEIGHT:terrain;
 }

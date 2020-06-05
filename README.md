@@ -34,6 +34,10 @@ Annotate the differents part of the noise shader as follow
 - @GEN_FEATURE_CODE : The feature function
 - @GEN_FEATURE_FUNCTION : The high-level function that will be called by the user to add your feature. Basically just calling your feature function
 
+The noise call must be in GEN_FEATURE_CODE part (for the moment) as follow :
+@NOISE
+n=noise_name(x);
+
 Then call the generate_feature_code_fragments python script to generate every components for the shader generation. Every component will be stored in the feature sub-dir code_gen.
 
 

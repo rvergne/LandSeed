@@ -27,7 +27,7 @@ struct Ray{
 #define NUM_OCTAVES 5
 
 // Terrain PARAM
-// @FEATURE_WATER
+// @FEATURE_WATER TODO
 #define WATER true
 #define WATER_HEIGHT -200
 
@@ -36,7 +36,12 @@ int randcount =0;
 // @NOISE_HEADER
 // @FEATURE_HEADER
 
-// @RAND_FUNCTION
+// @RAND_FUNCTION TODO
+vec2 rand2(vec2 st){
+  st = vec2( dot(st,vec2(139.1,331.7)+randcount*1478.57),
+            dot(st,vec2(269.5,193.3)+randcount*2868.34) );
+  return -1.0 + 2.0*fract(sin(st)*44758.55123+randcount*1548.69);
+}
 
 // @NOISE_REQUIREMENT
 // @FEATURE_REQUIREMENT

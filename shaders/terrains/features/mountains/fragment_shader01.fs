@@ -66,15 +66,19 @@ float gradient(vec2 st){
 // @END
 
 // @GEN_FEATURE_CODE
+float compute_mountain(vec2 x){
+  float n;
+  // @NOISE
+  n = gradient(x);
+  return n;
+}
 // @END
 
 // @GEN_FEATURE_FUNCTION
 float mountains(vec2 pos, float amplitude, float frequence){
   float res;
   pos = pos*vec2(frequence);
-  // @NOISE
-  res = gradient(pos);
-  res *= amplitude;
+  res = compute_mountain(pos)*amplitude;
   randcount+=1;
   return res;
 }

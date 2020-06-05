@@ -65,6 +65,13 @@ float gradient(vec2 st){
                    dot( rand2(i + vec2(1.0,1.0)), f - vec2(1.0,1.0) ), u.x), u.y);
 }
 
+float compute_mountain(x){
+  float n;
+  // @NOISE
+  n = gradient(x);
+  return n;
+}
+
 /////////////////////////////////////////////
 ////////////////RAYMARCHER///////////////////
 /////////////////////////////////////////////
@@ -91,15 +98,14 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
         return h;
 }
 
-float terrainBase(vec2 pos, float amplitude, float frequence, float persistence, int nb_octave){
+float base_relief(vec2 pos, float amplitude, float frequence, float persistence, int nb_octave){
   return fbm(pos, amplitude, frequence, persistence, nb_octave);
 }
 
 float mountains(vec2 pos, float amplitude, float frequence){
   float res;
   pos = pos*vec2(frequence);
-  res = gradient(pos);
-  res *= amplitude;
+  res = gradient(pos)*amplitude;
   randcount+=1;
   return res;
 }
@@ -112,7 +118,7 @@ float mountains(vec2 pos, float amplitude, float frequence){
 //     - positionToCompute : position on the terrain that you want to compute the height
 //     - amplitude : noise amplitudes
 //     - frequence : mountains periodes
-// - terrainBase(positionToCompute, amplitude, frequence, persistence, octaves)
+// - base_relief(positionToCompute, amplitude, frequence, persistence, octaves)
 //     - positionToCompute : position on the terrain that you want to compute the height
 //     - amplitude : noise amplitudes
 //     - frequence : noise periodes
@@ -122,7 +128,7 @@ float terrainMap(vec2 pos){
   float terrain = 0;
   randcount = 0;
   // --------------------------------------
-  terrain += terrainBase(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
+  terrain += base_relief(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
   terrain += mountains(pos, AMP*1.3, FREQ/2.5);
   terrain += mountains(pos, AMP*1.3, FREQ/2.5);
   // terrain += mountains(pos, AMP, FREQ);
