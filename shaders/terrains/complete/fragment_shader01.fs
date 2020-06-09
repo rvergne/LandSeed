@@ -21,8 +21,8 @@ struct Ray{
 // @RAYMARCH_PARAM
 #define MOVEMENT false
 #define DIST_MIN 0.1 // minimum distance to objects
-#define DIST_MAX 5000.0 // maximum distance to render objects
-#define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
+#define DIST_MAX 2000.0 // maximum distance to render objects
+#define RAY_MARCH_PRECI 20. // Ray march step (smaller = slower but more more accurate)
 // @END
 
 // Example param
@@ -65,7 +65,7 @@ float gradient(vec2 st){
                    dot( rand2(i + vec2(1.0,1.0)), f - vec2(1.0,1.0) ), u.x), u.y);
 }
 
-float compute_mountain(x){
+float compute_mountain(vec2 x){
   float n;
   // @NOISE
   n = gradient(x);
@@ -130,7 +130,7 @@ float terrainMap(vec2 pos){
   // --------------------------------------
   terrain += base_relief(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
   terrain += mountains(pos, AMP*1.3, FREQ/2.5);
-  terrain += mountains(pos, AMP*1.3, FREQ/2.5);
+  // terrain += mountains(pos, AMP*1.3, FREQ/2.5);
   // terrain += mountains(pos, AMP, FREQ);
   // --------------------------------------
   return (WATER && terrain<=WATER_HEIGHT)?WATER_HEIGHT:terrain;
