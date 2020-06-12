@@ -4,9 +4,9 @@
 //	(vec2, float, float, float, int) -> float
 // }
 // -------------USER-----------------
-// @NAME FBM gradient
+// @NAME fbm_gradient
 // @SPEC {
-// Compute the fractal brownian motion that will compute different level of a noise and add them to create a final noise.
+// Compute the gradient fractal brownian motion that will compute different level of a gradient noise and add them to create a final noise.
 // pos : position of the terrain where you want to compute the height
 // amplitude : the amplitude of the bigger noise we'll Compute
 // frequency : the frequency of the noise computed
@@ -16,7 +16,8 @@
 // -------------END------------------
 
 // @FBM_GRADIENT
-float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
+// @INCLUDE NOISE_GRADIENT_2D
+float fbm_gradient(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
         float a = amplitude;
         vec2 x = p*vec2(frequency,frequency);
         float h = 0.;
@@ -24,7 +25,6 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
         const mat2 m2 = mat2(  0.80,  0.60, -0.60,  0.80 );
 
         for(int i=0;i<nboctaves;++i) {
-								// @FBM_NOISE
                 float n = gradient(x); // get noise + derivative at x
 
                 h = h+a*n; // accum noise with a given amplitude

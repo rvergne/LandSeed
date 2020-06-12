@@ -80,7 +80,7 @@ vec3 hash33(vec3 p) {
   return fract(sin(q)*43758.5453123);
 }
 
-float wnoise(in vec3 x) {
+float voronoi(in vec3 x) {
 
   vec3 p = floor(x);
   vec3 f = fract(x);
@@ -114,7 +114,7 @@ float fnoise(in vec3 p,in float amplitude,in float frequency,in float persistenc
   float n = 0.0;
 
   for(int i=0;i<nboctaves;++i) {
-    n = n+a*wnoise(p*f);
+    n = n+a*voronoi(p*f);
     f = f*2.;
     a = a*persistence;
   }
@@ -124,7 +124,7 @@ float fnoise(in vec3 p,in float amplitude,in float frequency,in float persistenc
 // This is optionnal
 // you can also compute things like cellular(coord, DIVISION, 1)-cellular(coord, DIVISION, 0)
 vec3 compute_color(vec3 coord){
-  return vec3(fnoise(coord, 1.0,0.2,0.25,1)); 
+  return vec3(fnoise(coord, 1.0,0.2,0.25,1));
 }
 
 void main()

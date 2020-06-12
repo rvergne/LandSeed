@@ -12,13 +12,13 @@ int NUM_OCTAVES = 6;
 
 // Random function is taken with arbitrary values who can be modified here
 // source : https://thebookofshaders.com/edit.php#11/2d-gnoise.frag
-vec2 rand2(vec2 st){
+vec2 rand2_01(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
               dot(st,vec2(269.5,183.3)) );
     return fract(sin(st)*43758.5453123);
 }
 
-float wnoise(in vec2 x) {
+float voronoi(in vec2 x) {
 
   vec2 p = floor(x);
   vec2 f = fract(x);
@@ -29,7 +29,7 @@ float wnoise(in vec2 x) {
     for( int i=-1; i<=1; i++ ) {
 
       vec2 b = vec2( float(i), float(j) );
-      vec2 r = vec2( b ) - f + rand2( p + b );
+      vec2 r = vec2( b ) - f + rand2_01( p + b );
       float d = dot( r, r );
 
       if( d < res.x ) {
@@ -53,7 +53,7 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
 
         for(int i=0;i<nboctaves;++i) {
 								// @FBM_NOISE
-                float n = wnoise(x); // get noise + derivative at x
+                float n = voronoi(x); // get noise + derivative at x
 
                 h = h+a*n; // accum noise with a given amplitude
 

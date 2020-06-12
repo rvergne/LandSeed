@@ -7,7 +7,6 @@ uniform float aspectRatio;
 in vec2 fragCoord;
 
 out vec4 outColor;
-
 // Ray struct
 struct Ray{
     vec3 ro;    // ray origin
@@ -18,28 +17,22 @@ struct Ray{
 ///////////////////PARAM/////////////////////
 /////////////////////////////////////////////
 // RayMarch param
-// @RAYMARCH_PARAM
-#define MOVEMENT false
+#define MOVEMENT true
 #define DIST_MIN 0.1 // minimum distance to objects
 #define DIST_MAX 2000.0 // maximum distance to render objects
-#define RAY_MARCH_PRECI 20. // Ray march step (smaller = slower but more more accurate)
-// @END
+#define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
 
 // Example param
-// @FEATURE_DEMO_PARAM
 #define AMP 400.0 // Amplitude
 #define FREQ 0.004 // Frequence
 #define PERS 0.250 // Persistence
 #define NUM_OCTAVES 5
-// @END
 
 // Terrain PARAM
-// @FEATURE_WATER
-#define WATER true
-#define WATER_HEIGHT -200
-// @END
+#define WATER false
+#define WATER_HEIGHT -200.0
 
-int randcount =0;
+float randcount = 0.0;
 
 /////////////////////////////////////////////
 //////////GRADIENT NOISE/////////////////////
@@ -50,6 +43,12 @@ vec2 rand2(vec2 st){
   st = vec2( dot(st,vec2(139.1,331.7)+randcount*1478.57),
             dot(st,vec2(269.5,193.3)+randcount*2868.34) );
   return -1.0 + 2.0*fract(sin(st)*44758.55123+randcount*1548.69);
+}
+
+vec2 rand2_01(vec2 st){
+  st = vec2( dot(st,vec2(139.1,331.7)+randcount*1478.57),
+            dot(st,vec2(269.5,193.3)+randcount*2868.34) );
+  return fract(sin(st)*44758.55123+randcount*1548.69);
 }
 
 // noise gradient
@@ -67,7 +66,6 @@ float gradient(vec2 st){
 
 float compute_mountain(vec2 x){
   float n;
-  // @NOISE
   n = gradient(x);
   return n;
 }
@@ -84,7 +82,6 @@ float fbm(in vec2 p,in float amplitude,in float frequency,in float persistence, 
 
         for(int i=0;i<nboctaves;++i) {
                 float n;
-                // @MANUAL
                 n = gradient(x); // get noise + derivative at x
                 h = h+a*n; // accum noise with a given amplitude
 
@@ -106,32 +103,78 @@ float mountains(vec2 pos, float amplitude, float frequence){
   float res;
   pos = pos*vec2(frequence);
   res = gradient(pos)*amplitude;
-  randcount+=1;
+  randcount+=1.0;
   return res;
 }
 
-// @MANUAL
-// To create custom terrains, add code below
-// available features :
-// - water : will change but for now can be put on and set up in the define section
-// - mountains(positionToCompute, amplitude, frequence, persistence, patternsize)
-//     - positionToCompute : position on the terrain that you want to compute the height
-//     - amplitude : noise amplitudes
-//     - frequence : mountains periodes
-// - base_relief(positionToCompute, amplitude, frequence, persistence, octaves)
-//     - positionToCompute : position on the terrain that you want to compute the height
-//     - amplitude : noise amplitudes
-//     - frequence : noise periodes
-//     - persistence : decrease ratio for the amplitude
-//     - octaves : how much octaves for the noise
+float plateau(float terrainHeight,float plateauHeight, float delta){
+  if(terrainHeight >= plateauHeight - delta){
+    float t = smoothstep(plateauHeight - delta, plateauHeight, terrainHeight);
+    return mix(terrainHeight, plateauHeight, t);
+  }else{
+    return terrainHeight;
+  }
+}
+
+
+float voronoi(in vec2 x) {
+
+  vec2 p = floor(x);
+  vec2 f = fract(x);
+  float id = 0.0;
+  vec2 res = vec2( 100.0 );
+
+  for( int j=-1; j<=1; j++ )
+    for( int i=-1; i<=1; i++ ) {
+
+      vec2 b = vec2( float(i), float(j) );
+      vec2 r = vec2( b ) - f + rand2_01( p + b );
+      float d = dot( r, r );
+
+      if( d < res.x ) {
+        id = dot( p+b, vec2(1.0,57.0 ) );
+        res = vec2( d, res.x );
+      } else if( d < res.y ) {
+        res.y = d;
+      }
+    }
+
+  return sqrt(res.x);
+
+}
+
+float fbm_voronoi(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
+        float a = amplitude;
+        vec2 x = p*vec2(frequency,frequency);
+        float h = 0.;
+        mat2 m = mat2(1.,0.,0.,1.);
+        const mat2 m2 = mat2(  0.80,  0.60, -0.60,  0.80 );
+
+        for(int i=0;i<nboctaves;++i) {
+                float n = voronoi(x); // get noise + derivative at x
+
+                h = h+a*n; // accum noise with a given amplitude
+
+                a = a*persistence; // update amplitude for next octave
+                x = 2.5*m2*x; // scale point to the next octave and apply a rotation (avoid grid patterns?)
+        }
+
+        return h;
+}
+
 float terrainMap(vec2 pos){
-  float terrain = 0;
-  randcount = 0;
+  float terrain = 0.0;
+  randcount = 0.0;
   // --------------------------------------
-  terrain += base_relief(pos, AMP/3, FREQ*1.5, PERS, NUM_OCTAVES);
-  terrain += mountains(pos, AMP*1.3, FREQ/2.5);
-  // terrain += mountains(pos, AMP*1.3, FREQ/2.5);
-  // terrain += mountains(pos, AMP, FREQ);
+  terrain += base_relief(pos, 400.0, 0.002, .4, 5);
+  terrain += fbm_voronoi(pos,200.0, 0.004, .4, 2);
+  float maxHPlateau = 200.0;
+  float threshold = 60.0;
+  float maxTerrainH=266.4062;
+  terrain = plateau(terrain, maxHPlateau, threshold);
+  // if(terrain >= maxHPlateau)
+  //   terrain = 0;
+  // terrain += mountains(pos, 400, 0.002);
   // --------------------------------------
   return (WATER && terrain<=WATER_HEIGHT)?WATER_HEIGHT:terrain;
 }
@@ -159,7 +202,7 @@ float rayMarchTerrain(Ray r){
 
   }
 
-  return -1;
+  return -1.0;
 
 }
 
@@ -170,16 +213,16 @@ Ray generateRay(vec2 p){
 
   // p is the current pixel coord, in [-1,1]
 
-  // normalized mouse position
+  // mouse position
   vec2 m = mousePos;
 
   // camera position
   float d = DP/2.;
-  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+1000,d*sin(6.0*m.x) )+moveFact*time;
+  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+1000.0,d*sin(6.0*m.x) )+moveFact*iTime;
 
   // target point
-  vec3 ta = vec3(0.0,(DP/20.)+(AMP/3)+100,0.0)+moveFact*time;
-  // vec3 ta = vec3(0.0,200,0.0)+moveFact*time;
+  vec3 ta = vec3(-50.0,(DP/20.)+(AMP/3.0)+200.0,0.0)+moveFact*iTime;
+  // vec3 ta = vec3(0.0,200,0.0)+moveFact*iTime;
 
   // camera view vector
   vec3 cw = normalize(ta-ro);
@@ -201,7 +244,7 @@ Ray generateRay(vec2 p){
 
 vec3 applyFog ( vec3 color, float far) {
 	//just to hide clipping
-    return vec3( mix( color ,vec3(.8,.8,.8), smoothstep(0.0,1.0,far/(DIST_MAX+1000)) ) );
+    return vec3( mix( color ,vec3(.8,.8,.8), smoothstep(0.0,1.0,far/(DIST_MAX+1000.0)) ) );
 }
 
 
@@ -216,9 +259,8 @@ vec3 terrainNormal(in vec3 p, vec3 ro) {
 vec3 computeColor(in vec3 p, vec3 ro){
   // return vec3((p.y+AMP)/(2*AMP));
   return applyFog(terrainNormal(p, ro), distance(p, ro));
-  // return p;
+  // return terrainNormal(p, ro);
 }
-
 void main()
 {
     vec2 coord = vec2(fragCoord.x, fragCoord.y*aspectRatio);

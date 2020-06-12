@@ -20,45 +20,11 @@ struct Ray{
 #define DIST_MAX 5000.0 // maximum distance to render objects
 #define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
 
-// Example param
-#define AMP 400.0 // Amplitude
-#define FREQ 0.004 // Frequence
-#define PERS 0.250 // Persistence
-#define NUM_OCTAVES 5
-
-// Terrain PARAM
-// @FEATURE_WATER TODO
-#define WATER true
-#define WATER_HEIGHT -200
+#define AMP 400.0
 
 int randcount =0;
 
-// @NOISE_HEADER
-// @FEATURE_HEADER
-
-// @RAND_FUNCTION TODO
-vec2 rand2(vec2 st){
-  st = vec2( dot(st,vec2(139.1,331.7)+randcount*1478.57),
-            dot(st,vec2(269.5,193.3)+randcount*2868.34) );
-  return -1.0 + 2.0*fract(sin(st)*44758.55123+randcount*1548.69);
-}
-
-// @NOISE_REQUIREMENT
-// @FEATURE_REQUIREMENT
-
-// @NOISE_CODE
-// @FEATURE_CODE
-
-// @FEATURE_FUNCTIONS
-
-float terrainMap(vec2 pos){
-  float terrain = 0;
-  randcount = 0;
-  // --------------------------------------
-  // @FEATURE_USE
-  // --------------------------------------
-  return (WATER && terrain<=WATER_HEIGHT)?WATER_HEIGHT:terrain;
-}
+// @TERRAIN_MAP
 
 float rayMarchTerrain(Ray r){
   const float deltfac = RAY_MARCH_PRECI;
@@ -74,7 +40,7 @@ float rayMarchTerrain(Ray r){
 
     float h = terrainMap(curr_pos.xz);
 
-    if(curr_pos.y<h || (WATER && curr_pos.y <= WATER_HEIGHT))
+    if(curr_pos.y<h)
       return t - delt + delt*(lasth-lasty)/(curr_pos.y-lasty-h+lasth);
 
     delt = deltfac+t/AMP;
