@@ -7,10 +7,10 @@ import queue
 # Lib Paths
 inputDir = "input/"
 outputDir = "output/"
-noisesDir = "shaders/noises/"
-featuresDir = "shaders/terrains/features/"
-toolboxDir = "shaders/toolbox/"
-emptyShader = "shaders/terrains/empty/fragment_shader01.fs"
+noisesDir = "shaders/utils/noises/"
+featuresDir = "shaders/features/"
+utilsDir = "shaders/utils/"
+emptyShader = "generator/terrain_empty.fs"
 
 availableFeatureList = []
 libRootPath = ""
@@ -31,7 +31,7 @@ def includeDependency(dependencyName, output):
             noiseDimension = (dependencyName.replace("NOISE_", "").split("_")[1])
             dependencyFilePath = libRootPath+noisesDir+noiseName+"/"+noiseName+noiseDimension+".fs"
         else: # toolbox case
-            dependencyFilePath = libRootPath+toolboxDir+"random.fs" # TODO change this for more general architecture
+            dependencyFilePath = libRootPath+utilsDir+"random.fs" # TODO change this for more general architecture
 
         dependencyFile = open(dependencyFilePath, "r")
         dependencyFileContent = dependencyFile.readlines()
