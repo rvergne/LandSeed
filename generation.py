@@ -4,6 +4,9 @@ import re
 import sys
 import queue
 
+# TODO : Output global?
+# TODO : function to exit properly on error
+
 # Lib Paths
 inputDir = "input/"
 outputDir = "output/"
@@ -37,8 +40,13 @@ def includeDependency(dependencyName, output):
         dependencyFileContent = dependencyFile.readlines()
         line = 0
 
-        while not dependencyName in dependencyFileContent[line]: # skip lines until the dependency name is found
+        while (line < len(dependencyFileContent)) and (not dependencyName in dependencyFileContent[line]): # skip lines until the dependency name is found
             line += 1
+        if line >= len(dependencyFileContent):
+            print("Dependency uknown : " + dependencyName)
+            dependencyFile.close()
+            output.close()
+            sys.exit(1)
         line += 1
         while "@INCLUDE" in dependencyFileContent[line]: # include other dependencies recursively
             p = re.compile("@INCLUDE (.*)")
@@ -127,8 +135,10 @@ def main():
 
     inputFile = open(inputPath, "r")
     inputFileContent = inputFile.readlines()
+    inputFile.close()
     emptyShaderFile = open(libRootPath+emptyShader, "r")
     emptyShaderContent = emptyShaderFile.readlines()
+    emptyShaderFile.close()
     outputPath = libRootPath+outputDir+"fragment_shader01.fs"
     print("Output path : "+outputPath)
     if os.path.exists(outputPath):
@@ -138,7 +148,5 @@ def main():
     copyAndComplete(emptyShaderContent, inputFileContent, outputFile)
 
     outputFile.close()
-    emptyShaderFile.close()
-    inputFile.close()
 
 main()
