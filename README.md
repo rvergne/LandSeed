@@ -66,7 +66,7 @@ Your noise tag should start with @NOISE_
 
 Same operating mode as feature but functions are stored in the shaders/utils/ folder.
 
-For the moment, new feature need a modification in the python script to be operationnal. Will change.
+For the moment, new utils need a modification in the python script to be operationnal. Will change.
 
 ## Common Header
 See examples in any files using this header.
