@@ -1,5 +1,18 @@
 # Procedural terrain generation
 
+## Lib requirements
+
+To use the library, you'll need at least :
+
+- Python : version 3+
+- numpy : 1.11.0
+- glfw : 1.11.1
+- PyOpenGL : 3.1.5
+
+pipreqs have been used to get those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
+
+Debian packages installation command line are stored in [installation helper](./installationHelper.md).
+
 ## Generate terrain
 
 Fulfill input file in the input folder. It's purpose is to compute terrain height on a specific position.
@@ -8,7 +21,13 @@ To generate the shader, use the generate.py python script.
 
 Your generated shader is in the output folder with a python script allowing you to try it.
 
-Soon it will be possible to create the output file somewhere else.
+There is two ways to use the generation script :
+```
+python generation.py
+or
+python generation.py [input path] [output path]
+```
+The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
 ## Features
 
@@ -29,8 +48,8 @@ Put your feature code between your tag and @END tag. You can use any noise or fu
 // COMMON HEADER HERE
 //
 // @YOUR_FEATURE_TAG
-// @INCLUDE TAG 
-// @INCLUDE TAG 
+// @INCLUDE TAG
+// @INCLUDE TAG
 Your_feature_function(){
 ...
 }

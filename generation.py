@@ -8,6 +8,7 @@ import queue
 #   1 : keyword missing in a file
 #   2 : @END tag missing
 #   3 : dependency not recognize
+#   4 : script parameter error
 
 # Lib Paths
 inputDir = "input/"
@@ -148,24 +149,41 @@ def main():
     # user can enter a personnal input file or use the default one TODO : bug si fichier inexistant
     if len(sys.argv)==1:
         inputPath = libRootPath+inputDir+"input.fs"
+        outputPath = libRootPath+outputDir+"fragment_shader01.fs"
         print("Default input file is taken : "+inputPath)
-    else:
+        print("Default output file is taken : "+outputPath)
+    elif len(sys.argv)==3:
         inputPath = libRootPath+sys.argv[1]
         print("Input file : "+inputPath)
+        outputPath = libRootPath+sys.argv[2]
+        print("Output file : "+outputPath)
+    else:
+        print("Parameter error.")
+        print("Syntax : ")
+        print("python generation.py [inputPath] [outputPath]")
+        print("or")
+        print("python generation.py")
+        sys.exit(4)
 
+    if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
+        print("Please enter a valid or existing input file.")
+        sys.exit(4)
+    if os.path.exists(outputPath) and not os.path.isfile(outputPath):
+        print("Please enter a valid or non existing output file.")
+        sys.exit(4)
 
     inputFile = open(inputPath, "r")
     inputFileContent = inputFile.readlines()
     inputFile.close()
-    emptyShaderFile = open(libRootPath+emptyShader, "r")
-    emptyShaderContent = emptyShaderFile.readlines()
-    emptyShaderFile.close()
-    outputPath = libRootPath+outputDir+"fragment_shader01.fs"
-    print("Output path : "+outputPath)
+
     if os.path.exists(outputPath):
         os.remove(outputPath)
     global outputFile
     outputFile = open(outputPath, "w")
+
+    emptyShaderFile = open(libRootPath+emptyShader, "r")
+    emptyShaderContent = emptyShaderFile.readlines()
+    emptyShaderFile.close()
 
     copyAndComplete(emptyShaderContent, inputFileContent)
 
