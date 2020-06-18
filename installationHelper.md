@@ -9,7 +9,8 @@ apt install python3
 apt install python3-pip
 apt install libglfw3
 pip install glfw
-pip install PyOpenGL 
+pip install PyOpenGL
+pip install numpy
 ```
 
 ## In case of any problems
