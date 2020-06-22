@@ -6,7 +6,8 @@ import queue
 import importlib
 import subprocess
 
-# Error code meaning :
+# Return code meaning :
+#   0 : everything's ok
 #   1 : keyword missing in a file
 #   2 : @END tag missing
 #   3 : dependency not recognize
@@ -19,25 +20,36 @@ inputDir = libRootPath + "input/"
 outputDir = libRootPath + "output/"
 featuresDir = libRootPath + "shaders/features/"
 utilsDir = libRootPath + "shaders/utils/"
-emptyShader = libRootPath + "generator/terrain_empty.fs"
-generatorIndex = libRootPath+"generator/shader_index.py"
+emptyShader = libRootPath + "generatorUtils/terrain_empty.fs"
+generatorIndex = libRootPath+"generatorUtils/shader_index.py"
 
 availableFeatureList = []
 
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
 
+# import indexes. If the file doesn't exist, execute the updateIndex.py script and try again the importation
+# if the file exists, check if some features or utils file have changed since last update. if yes, rebuild index
 if os.path.exists(generatorIndex):
-    from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+    from generatorUtils.shader_index import updateDate
+    mostRecentFeature=max([f for f in os.scandir(featuresDir)], key=lambda x: x.stat().st_mtime)
+    mostRecentUtils=max([f for f in os.scandir(utilsDir)], key=lambda x: x.stat().st_mtime)
+    mostRecentlyChangedFile=max([mostRecentFeature,mostRecentUtils], key=lambda x: x.stat().st_mtime).path
+
+    if os.path.getmtime(mostRecentlyChangedFile) > updateDate:
+        print("Index outdated (some features or utils has changed).\nUpdating index..")
+        p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
+        p.wait()
 else:
-    print("Index not found.\nTrying auto-rebuild.")
+    print("Index not found.\nCreating it..")
     p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
     p.wait()
-    try:
-        from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
-    except:
-        print("Error while executing updateIndex script. Please fix it manualy")
-        sys.exit(5)
+
+try:
+    from generatorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+except:
+    print("Error while executing updateIndex script. Please fix it manualy")
+    sys.exit(5)
 
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
@@ -189,5 +201,6 @@ def main():
     copyAndComplete(emptyShaderContent, inputFileContent)
 
     outputFile.close()
+    sys.exit(0)
 
 main()

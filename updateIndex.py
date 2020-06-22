@@ -2,6 +2,7 @@
 import os
 import sys
 import re
+import time
 
 # return code
 #   0 : Everything's ok
@@ -9,7 +10,7 @@ import re
 
 featuresDir="shaders/features/"
 utilsDir="shaders/utils/"
-indexFileLocation="generator/"
+indexFileLocation="generatorUtils/"
 indexName="shader_index.py"
 
 def fulfill(path):
@@ -23,7 +24,7 @@ def fulfill(path):
                 p = re.compile("@TAG (.*)")
                 resultTag = p.search(currentFileContent[line]).group(1)
                 dictTagToPath[resultTag]=currentFilePath
-                if not "@FUNCTION_NAME" in currentFileContent[line+1]:
+                if not "@FUNCTION_NAME" in currentFileContent[line+1]:    # get the associated function name
                     print("Header badly written in "+currentFilePath)
                     print("@FUNCTION_NAME should follow @TAG line")
                     sys.exit(1)
@@ -49,6 +50,8 @@ def writeIndex():
     indexFile.write("dictTagToPath = "+repr(dictTagToPath).replace(", ",",\n"))
     indexFile.write("\n\n")
     indexFile.write("dictFeatureFunctionToTag = "+ repr(dictFeatureFunctionToTag).replace(", ",",\n"))
+    indexFile.write("\n\n")
+    indexFile.write("updateDate = "+str(time.time()))
     indexFile.close()
 
 def main():
