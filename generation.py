@@ -4,13 +4,13 @@ import re
 import sys
 import queue
 import importlib
-from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
 
 # Error code meaning :
 #   1 : keyword missing in a file
 #   2 : @END tag missing
 #   3 : dependency not recognize
 #   4 : script parameter error
+#   5 : index file error
 
 # Lib Paths
 inputDir = "input/"
@@ -18,13 +18,20 @@ outputDir = "output/"
 featuresDir = "shaders/features/"
 utilsDir = "shaders/utils/"
 emptyShader = "generator/terrain_empty.fs"
-generatorUtils = "generator/"
+generatorIndex = "generator/shader_index.py"
 
 availableFeatureList = []
 libRootPath = ""
 
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
+
+if os.path.exists(generatorIndex):
+    from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+else:
+    print("Index need to be built before calling this script.\nPlease use the updateIndex.py script")
+    sys.exit(5)
+
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
 # fileContent : where to search
