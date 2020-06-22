@@ -60,7 +60,7 @@ def main():
     dictFeatureFunctionToTag = {}
     fulfill(featuresDir)
     fulfill(utilsDir)
-    print_dictTagToPath()
+    #print_dictTagToPath()
     writeIndex()
     sys.exit(0)
 

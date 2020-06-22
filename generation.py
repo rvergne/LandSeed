@@ -4,6 +4,7 @@ import re
 import sys
 import queue
 import importlib
+import subprocess
 
 # Error code meaning :
 #   1 : keyword missing in a file
@@ -13,15 +14,15 @@ import importlib
 #   5 : index file error
 
 # Lib Paths
-inputDir = "input/"
-outputDir = "output/"
-featuresDir = "shaders/features/"
-utilsDir = "shaders/utils/"
-emptyShader = "generator/terrain_empty.fs"
-generatorIndex = "generator/shader_index.py"
+libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
+inputDir = libRootPath + "input/"
+outputDir = libRootPath + "output/"
+featuresDir = libRootPath + "shaders/features/"
+utilsDir = libRootPath + "shaders/utils/"
+emptyShader = libRootPath + "generator/terrain_empty.fs"
+generatorIndex = libRootPath+"generator/shader_index.py"
 
 availableFeatureList = []
-libRootPath = ""
 
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
@@ -29,8 +30,14 @@ includedDependencies = [] # to register which dependencies we already added
 if os.path.exists(generatorIndex):
     from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
 else:
-    print("Index need to be built before calling this script.\nPlease use the updateIndex.py script")
-    sys.exit(5)
+    print("Index not found.\nTrying auto-rebuild.")
+    p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
+    p.wait()
+    try:
+        from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+    except:
+        print("Error while executing updateIndex script. Please fix it manualy")
+        sys.exit(5)
 
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
@@ -140,13 +147,10 @@ def copyAndComplete(emptyShader, input):
 
 
 def main():
-    global libRootPath
-    libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
-
-    # user can enter a personnal input file or use the default one TODO : bug si fichier inexistant
+    # user can enter a personnal input file or use the default one
     if len(sys.argv)==1:
-        inputPath = libRootPath+inputDir+"input.fs"
-        outputPath = libRootPath+outputDir+"fragment_shader01.fs"
+        inputPath = inputDir+"input.fs"
+        outputPath = outputDir+"fragment_shader01.fs"
         print("Default input file is taken : "+inputPath)
         print("Default output file is taken : "+outputPath)
     elif len(sys.argv)==3:
@@ -178,7 +182,7 @@ def main():
     global outputFile
     outputFile = open(outputPath, "w")
 
-    emptyShaderFile = open(libRootPath+emptyShader, "r")
+    emptyShaderFile = open(emptyShader, "r")
     emptyShaderContent = emptyShaderFile.readlines()
     emptyShaderFile.close()
 
