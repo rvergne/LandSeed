@@ -21,22 +21,25 @@ outputDir = libRootPath + "output/"
 featuresDir = libRootPath + "shaders/features/"
 utilsDir = libRootPath + "shaders/utils/"
 emptyShader = libRootPath + "generatorUtils/terrain_empty.fs"
-generatorIndex = libRootPath+"generatorUtils/shader_index.py"
+generatorIndex = libRootPath + "generatorUtils/shader_index.py"
 
 availableFeatureList = []
 
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
 
+# TODO : detect new and removed file (remove bug) (new are added but not used in first executions)
 # import indexes. If the file doesn't exist, execute the updateIndex.py script and try again the importation
 # if the file exists, check if some features or utils file have changed since last update. if yes, rebuild index
 if os.path.exists(generatorIndex):
-    from generatorUtils.shader_index import updateDate
+    # from generatorUtils.shader_index import updateDate
+    updateDate = os.path.getmtime(generatorIndex)
     mostRecentFeature=max([f for f in os.scandir(featuresDir)], key=lambda x: x.stat().st_mtime)
     mostRecentUtils=max([f for f in os.scandir(utilsDir)], key=lambda x: x.stat().st_mtime)
     mostRecentlyChangedFile=max([mostRecentFeature,mostRecentUtils], key=lambda x: x.stat().st_mtime).path
 
     if os.path.getmtime(mostRecentlyChangedFile) > updateDate:
+        os.remove(generatorIndex)
         print("Index outdated (some features or utils has changed).\nUpdating index..")
         p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
         p.wait()

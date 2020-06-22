@@ -41,7 +41,7 @@ fbm_voronoi, fbm_gradient, plateau, you can see explanation in each file in the 
 
 ### Declare a new feature
 
-Create a new file with the name of your feature and .fs extention. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.
+Create a new file in shaders/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.
 
 Put your feature code between your tag and @END tag. You can use any noise or function adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
 ```
@@ -56,23 +56,17 @@ Your_feature_function(){
 // @END
 ```
 
-## Declare a new noise
+## Declare a new noise or utils function
 
-Same operating mode as feature but noises are stored in the shaders/utils/noises/ folder.
+Same operating mode as feature but are stored in the shaders/utils/ folder.
 
-Your noise tag should start with @NOISE_
-
-## Add a Utils function
-
-Same operating mode as feature but functions are stored in the shaders/utils/ folder.
-
-For the moment, new utils need a modification in the python script to be operationnal. Will change.
 
 ## Common Header
 See examples in any files using this header.
 ```
 // --------------DEV-----------------
 // @TAG TAG_USED_TO_INCLUDE
+// @FUNCTION_NAME name_of_the_function
 // @SPEC {
 //	(function_param_type) -> function_result_type
 // }
@@ -86,3 +80,10 @@ See examples in any files using this header.
 // }
 // -------------END------------------
 ```
+
+## Known bugs and work on progress
+add new feature or util is not auto detected in generation.py
+
+remove a feature or util make generation.py end on a error
+
+however those two bugs are solved by calling updateIndex.py separatly

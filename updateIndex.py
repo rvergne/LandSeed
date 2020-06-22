@@ -2,7 +2,6 @@
 import os
 import sys
 import re
-import time
 
 # return code
 #   0 : Everything's ok
@@ -50,8 +49,6 @@ def writeIndex():
     indexFile.write("dictTagToPath = "+repr(dictTagToPath).replace(", ",",\n"))
     indexFile.write("\n\n")
     indexFile.write("dictFeatureFunctionToTag = "+ repr(dictFeatureFunctionToTag).replace(", ",",\n"))
-    indexFile.write("\n\n")
-    indexFile.write("updateDate = "+str(time.time()))
     indexFile.close()
 
 def main():
