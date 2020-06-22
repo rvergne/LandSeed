@@ -2,6 +2,7 @@
 
 // --------------DEV-----------------
 // @TAG RANDOM_2D
+// @FUNCTION_NAME rand2
 // @SPEC {
 //	(vec2) -> vec2
 // }
@@ -24,6 +25,7 @@ vec2 rand2(vec2 st){
 
 // --------------DEV-----------------
 // @TAG RANDOM_3D
+// @FUNCTION_NAME rand3
 // @SPEC {
 //	(vec3) -> vec3
 // }

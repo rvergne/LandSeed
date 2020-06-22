@@ -3,6 +3,8 @@ import os
 import re
 import sys
 import queue
+import importlib
+from generator.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
 
 # Error code meaning :
 #   1 : keyword missing in a file
@@ -13,10 +15,10 @@ import queue
 # Lib Paths
 inputDir = "input/"
 outputDir = "output/"
-noisesDir = "shaders/utils/noises/"
 featuresDir = "shaders/features/"
 utilsDir = "shaders/utils/"
 emptyShader = "generator/terrain_empty.fs"
+generatorUtils = "generator/"
 
 availableFeatureList = []
 libRootPath = ""
@@ -55,22 +57,16 @@ def error(errorMessage, errCode):
     outputFile.close()
     sys.exit(errCode)
 
-# TODO : better if prebuild index as include_name -> path_to_file
 def includeDependency(dependencyName):
     global includedDependencies
     if not dependencyName in includedDependencies:
         includedDependencies.append(dependencyName)
 
-        print("Including dependency "+dependencyName.lower()+"..")
+        print("Including dependency "+dependencyName+"..")
 
-        if "NOISE" in dependencyName: # noise case
-            noiseName = (dependencyName.replace("NOISE_", "").split("_")[0].lower())
-            noiseDimension = (dependencyName.replace("NOISE_", "").split("_")[1])
-            dependencyFilePath = libRootPath+noisesDir+noiseName+"/"+noiseName+noiseDimension+".fs"
-        elif "RANDOM" in dependencyName: # toolbox case
-            dependencyFilePath = libRootPath+utilsDir+"random.fs" # TODO change this for more general architecture
-        else:
+        if not dependencyName in dictTagToPath:
             error("Dependency not recognized : "+dependencyName, 3)
+        dependencyFilePath = libRootPath+dictTagToPath[dependencyName]
 
         dependencyFile = open(dependencyFilePath, "r")
         dependencyFileContent = dependencyFile.readlines()
@@ -85,17 +81,17 @@ def includeDependency(dependencyName):
             line += 1
         copyUntilEnd(dependencyFileContent, line, dependencyFilePath.replace(libRootPath, ""))
 
-def includeFeature(featureName):
+def includeFeature(featureTag):
 
     global includedFeatures
-    if not featureName in includedFeatures:
-        includedFeatures.append(featureName)
-        featurePath = libRootPath+featuresDir+featureName+".fs"
+    if not featureTag in includedFeatures:
+        includedFeatures.append(featureTag)
+        featurePath = libRootPath+dictTagToPath[featureTag]
         featureFile = open(featurePath, "r")
         featureFileContent = featureFile.readlines()
         featureFile.close()
         line = 0
-        line = skipUntil(featureFileContent, "@"+featureName.upper(), featurePath.replace(libRootPath, ""))
+        line = skipUntil(featureFileContent, "@"+featureTag, featurePath.replace(libRootPath, ""))
         line += 1
 
         while "@INCLUDE" in featureFileContent[line]: # get dependency name by parsing the line (getting what is after the "@INCLUDE ")
@@ -104,7 +100,7 @@ def includeFeature(featureName):
             includeDependency(result)
             line += 1
 
-        print("Including feature "+featureName+"...")
+        print("Including feature "+featureTag+"...")
         copyUntilEnd(featureFileContent, line, featurePath.replace(libRootPath,""))
 
 
@@ -114,9 +110,10 @@ def includeTerrainMap(input, outputFile):
     line = skipUntil(input, "@FEATURES", "input/input.fs")
 
     while (line < len(input)) and not "@END" in input[line] : # add each features detected and her dependencies
-        for feature in availableFeatureList :
-            if feature in input[line]:
-                includeFeature(feature)
+        if not "//" in input[line].replace(" ", "")[0:2]:
+            for feature in dictFeatureFunctionToTag :
+                if feature in input[line]:
+                    includeFeature(dictFeatureFunctionToTag[feature])
         line +=1
     if line >= len(input):
         error("@END tag missing in input/input.fs file", 2)
@@ -134,17 +131,10 @@ def copyAndComplete(emptyShader, input):
         else :
             includeTerrainMap(input, outputFile)
 
-def getAvailableFeatures():
-    availableFeatureFile = os.listdir(libRootPath+featuresDir)
-    for i in range(len(availableFeatureFile)):
-        availableFeatureFile[i] = os.path.splitext(availableFeatureFile[i])[0]
-    return availableFeatureFile
 
 def main():
     global libRootPath
-    libRootPath=os.path.dirname(os.path.realpath(__file__))+"/"
-    global availableFeatureList
-    availableFeatureList = getAvailableFeatures()
+    libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
 
     # user can enter a personnal input file or use the default one TODO : bug si fichier inexistant
     if len(sys.argv)==1:

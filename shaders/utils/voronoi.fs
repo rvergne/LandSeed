@@ -1,5 +1,6 @@
 // --------------DEV-----------------
 // @TAG NOISE_VORONOI_2D
+// @FUNCTION_NAME voronoi
 // @SPEC {
 //	(vec2) -> float
 // }

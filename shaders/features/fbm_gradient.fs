@@ -1,10 +1,11 @@
 // --------------DEV-----------------
 // @TAG FBM_GRADIENT
+// @FUNCTION_NAME fbm_gradient
 // @SPEC {
 //	(vec2, float, float, float, int) -> float
 // }
 // -------------USER-----------------
-// @NAME fbm_gradient
+// @NAME fractal gradient
 // @SPEC {
 // Compute the gradient fractal brownian motion that will compute different level of a gradient noise and add them to create a final noise.
 // pos : position of the terrain where you want to compute the height

@@ -1,5 +1,6 @@
 // --------------DEV-----------------
 // @TAG NOISE_GRADIENT_2D
+// @FUNCTION_NAME gradient
 // @SPEC {
 //	(vec2) -> float
 // }

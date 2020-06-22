@@ -1,10 +1,11 @@
 // --------------DEV-----------------
 // @TAG FBM_VORONOI
+// @FUNCTION_NAME fbm_voronoi
 // @SPEC {
 //	(vec2, float, float, float, int) -> float
 // }
 // -------------USER-----------------
-// @NAME fbm_voronoi
+// @NAME fractal voronoi
 // @SPEC {
 // Compute the voronoi fractal brownian motion that will compute different level of a voronoi noise and add them to create a final noise.
 // pos : position of the terrain where you want to compute the height
