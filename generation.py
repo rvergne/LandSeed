@@ -3,8 +3,10 @@ import os
 import re
 import sys
 import queue
-import importlib
-import imp
+if sys.version_info.minor >= 4:
+    import importlib
+else:
+    import imp
 from updateIndex import shouldUpdateIndex, createIndex
 
 # Return code meaning :
@@ -31,12 +33,15 @@ includedDependencies = [] # to register which dependencies we already added
 
 if shouldUpdateIndex():
     print("Index outdated (some features or utils has changed).\nUpdating index..")
-    createIndex()
-    # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
-    if sys.version_info.minor >= 4:
-        importlib.reload(sys.modules["generatorUtils.shader_index"])
+    if os.path.exists(generatorIndex):
+        createIndex()
+        # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
+        if sys.version_info.minor >= 4:
+            importlib.reload(sys.modules["generatorUtils.shader_index"])
+        else:
+            imp.reload(sys.modules["generatorUtils.shader_index"])
     else:
-        imp.reload(sys.modules["generatorUtils.shader_index"])
+        createIndex()
 
 try:
     from generatorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
