@@ -2,17 +2,47 @@
 import os
 import sys
 import re
+import time
 
 # return code
 #   0 : Everything's ok
 #   1 : Header problem
+#   5 : index file error
 
 featuresDir="shaders/features/"
 utilsDir="shaders/utils/"
 indexFileLocation="generatorUtils/"
 indexName="shader_index.py"
+generatorIndex="generatorUtils/shader_index.py"
+
+# check if files changes, if there is new files, and if some files has been removed
+# return true if we should update index
+def shouldUpdateIndex():
+    print("Checking if index is up to date..")
+    if not os.path.exists(generatorIndex):
+        return True
+
+    try:
+        from generatorUtils.shader_index import dictTagToPath
+    except:
+        print("Error importing index. Please remove it and try again.")
+        sys.exit(5)
+
+    for line in dictTagToPath:
+        if not os.path.exists(dictTagToPath[line]):
+            return True
+
+    updateDate = os.path.getmtime(generatorIndex)   # Creation time of index
+    mostRecentFeature=max([f for f in os.scandir(featuresDir)], key=lambda x: x.stat().st_mtime) # last modified feature
+    mostRecentUtils=max([f for f in os.scandir(utilsDir)], key=lambda x: x.stat().st_mtime) # last modified util
+    mostRecentlyChangedFile=max([mostRecentFeature,mostRecentUtils], key=lambda x: x.stat().st_mtime).path # last overall modification
+    if os.path.getmtime(mostRecentlyChangedFile) > updateDate:
+        return True
+
+    return False
 
 def fulfill(path):
+    print("Getting "+path+" files informations..")
     availableFiles = os.listdir(libRootPath+path) # Get file name in path dir
     for file in availableFiles:                          # Open each one then for each line, check if there is @TAG (which define a tag for a feature/utils).
         currentFilePath = path+file
@@ -41,6 +71,7 @@ def print_dictTagToPath():
 
 # write the dictTagToPath in a file
 def writeIndex():
+    print("writting the index..",end="")
     indexPath = libRootPath+indexFileLocation+indexName
     if os.path.exists(indexPath):
         os.remove(indexPath)
@@ -51,7 +82,7 @@ def writeIndex():
     indexFile.write("dictFeatureFunctionToTag = "+ repr(dictFeatureFunctionToTag).replace(", ",",\n"))
     indexFile.close()
 
-def main():
+def createIndex():
     global libRootPath
     libRootPath=os.path.dirname(os.path.realpath(__file__))+"/"
     global dictTagToPath
@@ -62,6 +93,9 @@ def main():
     fulfill(utilsDir)
     #print_dictTagToPath()
     writeIndex()
-    sys.exit(0)
+    print("Complete")
 
-main()
+if __name__ == "__main__":
+   # stuff only to run when not called via 'import' here
+   createIndex()
+   sys.exit(0)

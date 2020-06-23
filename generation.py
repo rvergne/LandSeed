@@ -4,7 +4,7 @@ import re
 import sys
 import queue
 import importlib
-import subprocess
+from updateIndex import shouldUpdateIndex, createIndex
 
 # Return code meaning :
 #   0 : everything's ok
@@ -28,25 +28,14 @@ availableFeatureList = []
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
 
-# TODO : detect new and removed file (remove bug) (new are added but not used in first executions)
-# import indexes. If the file doesn't exist, execute the updateIndex.py script and try again the importation
-# if the file exists, check if some features or utils file have changed since last update. if yes, rebuild index
-if os.path.exists(generatorIndex):
-    # from generatorUtils.shader_index import updateDate
-    updateDate = os.path.getmtime(generatorIndex)
-    mostRecentFeature=max([f for f in os.scandir(featuresDir)], key=lambda x: x.stat().st_mtime)
-    mostRecentUtils=max([f for f in os.scandir(utilsDir)], key=lambda x: x.stat().st_mtime)
-    mostRecentlyChangedFile=max([mostRecentFeature,mostRecentUtils], key=lambda x: x.stat().st_mtime).path
-
-    if os.path.getmtime(mostRecentlyChangedFile) > updateDate:
-        os.remove(generatorIndex)
-        print("Index outdated (some features or utils has changed).\nUpdating index..")
-        p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
-        p.wait()
-else:
-    print("Index not found.\nCreating it..")
-    p = subprocess.Popen("python3 "+libRootPath+"updateIndex.py",stderr=subprocess.DEVNULL, shell=True)
-    p.wait()
+if shouldUpdateIndex():
+    print("Index outdated (some features or utils has changed).\nUpdating index..")
+    createIndex()
+    # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
+    if sys.version_info.minor >= 4:
+        importlib.reload(sys.modules["generatorUtils.shader_index"])
+    else:
+        imp.reload(sys.modules["generatorUtils.shader_index"])
 
 try:
     from generatorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
