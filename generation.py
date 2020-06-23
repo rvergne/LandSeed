@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+import sys
+if sys.version_info.major < 3:
+    print("Python version to old, please upgrade your python to 3 or more.")
+    sys.exit(6)
 import os
 import re
-import sys
 import queue
 if sys.version_info.minor >= 4:
     import importlib
@@ -16,6 +19,7 @@ from updateIndex import shouldUpdateIndex, createIndex
 #   3 : dependency not recognize
 #   4 : script parameter error
 #   5 : index file error
+#   6 : Python version too old
 
 # Lib Paths
 libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
