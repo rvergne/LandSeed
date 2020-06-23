@@ -80,10 +80,3 @@ See examples in any files using this header.
 // }
 // -------------END------------------
 ```
-
-## Known bugs and work on progress
-add new feature or util is not auto detected in generation.py
-
-remove a feature or util make generation.py end on a error
-
-however those two bugs are solved by calling updateIndex.py separatly

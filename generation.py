@@ -4,6 +4,7 @@ import re
 import sys
 import queue
 import importlib
+import imp
 from updateIndex import shouldUpdateIndex, createIndex
 
 # Return code meaning :
