@@ -2,6 +2,8 @@
 
 ## Features
 
+Features are the main functions you can use in your terrainMap fonction (inside your input file) without any import.
+
 | Function Name | Full Name | Tag | Complete Doc |
 |-|-|-|-|
 | fbm_gradient | fractal gradient | FBM_GRADIENT | [Here](features/fbm_gradient.md) |
@@ -10,6 +12,8 @@
 
 
 ## Utils
+
+Utils are the functions used to develop features. Soon utils will be possible to include in input file.
 
 | Function Name | Full Name | Tag | Complete Doc |
 |-|-|-|-|

@@ -98,6 +98,8 @@ def createMainDocPage():
     mainFile.write("\n\n")
     mainFile.write("## Features")
     mainFile.write("\n\n")
+    mainFile.write("Features are the main functions you can use in your terrainMap fonction (inside your input file) without any import.")
+    mainFile.write("\n\n")
     mainFile.write("| Function Name | Full Name | Tag | Complete Doc |\n")
     mainFile.write("|-|-|-|-|\n")
 
@@ -107,6 +109,8 @@ def createMainDocPage():
 
     mainFile.write("\n\n")
     mainFile.write("## Utils")
+    mainFile.write("\n\n")
+    mainFile.write("Utils are the functions used to develop features. Soon utils will be possible to include in input file.")
     mainFile.write("\n\n")
     mainFile.write("| Function Name | Full Name | Tag | Complete Doc |\n")
     mainFile.write("|-|-|-|-|\n")
