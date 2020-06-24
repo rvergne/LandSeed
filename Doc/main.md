@@ -1,25 +1,6 @@
-<style>
-    table{
-        border-collapse: collapse;
-        border-spacing: 0;
-        border:2px solid black;
-    }
+# Procedural Terrain Lib - Documentation
 
-    th{
-        border:2px solid #000000;
-        padding: 10px;
-    }
-
-    td{
-        border:1px solid #000000;
-        padding: 5px;
-    }
-    </style>
-    
-
-#Procedural Terrain Lib - Documentation
-
-##Features
+## Features
 
 | Function Name | Full Name | Tag | Complete Doc |
 |-|-|-|-|
@@ -28,7 +9,7 @@
 | plateau | plateau | PLATEAU | [Here](features/plateau.md) |
 
 
-##Utils
+## Utils
 
 | Function Name | Full Name | Tag | Complete Doc |
 |-|-|-|-|

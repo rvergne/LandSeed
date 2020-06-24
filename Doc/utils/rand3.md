@@ -1,4 +1,4 @@
-#3D hash function
+# 3D hash function
 
 **Category**: util
 

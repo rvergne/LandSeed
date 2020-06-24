@@ -59,7 +59,7 @@ class ShaderFragment:
         print("-----------------------------------------")
     def toMD(self):
         str = ""
-        str += "#"+self.name+"\n\n"
+        str += "# "+self.name+"\n\n"
         str += "**Category**: "+self.cat+"\n\n"
         str += "**Tag**: "+self.tag+"\n\n"
         str += "**Function Name**: "+self.funcName+"\n\n"
@@ -93,10 +93,10 @@ def createDocPages():
 def createMainDocPage():
     print("Writing main doc page..")
     mainFile = open(docDir+"main.md","w")
-    mainFile.write("<style>\n    table{\n        border-collapse: collapse;\n        border-spacing: 0;\n        border:2px solid black;\n    }\n\n    th{\n        border:2px solid #000000;\n        padding: 10px;\n    }\n\n    td{\n        border:1px solid #000000;\n        padding: 5px;\n    }\n    </style>\n    \n\n")
-    mainFile.write("#Procedural Terrain Lib - Documentation")
+    # mainFile.write("<style>\n    table{\n        border-collapse: collapse;\n        border-spacing: 0;\n        border:2px solid black;\n    }\n\n    th{\n        border:2px solid #000000;\n        padding: 10px;\n    }\n\n    td{\n        border:1px solid #000000;\n        padding: 5px;\n    }\n    </style>\n    \n\n")
+    mainFile.write("# Procedural Terrain Lib - Documentation")
     mainFile.write("\n\n")
-    mainFile.write("##Features")
+    mainFile.write("## Features")
     mainFile.write("\n\n")
     mainFile.write("| Function Name | Full Name | Tag | Complete Doc |\n")
     mainFile.write("|-|-|-|-|\n")
@@ -106,7 +106,7 @@ def createMainDocPage():
         mainFile.write("| "+feature.getFunctionName()+" | "+feature.getName()+" | "+feature.getTag()+" | "+completeDocPath+" |\n")
 
     mainFile.write("\n\n")
-    mainFile.write("##Utils")
+    mainFile.write("## Utils")
     mainFile.write("\n\n")
     mainFile.write("| Function Name | Full Name | Tag | Complete Doc |\n")
     mainFile.write("|-|-|-|-|\n")

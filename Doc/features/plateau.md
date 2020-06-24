@@ -1,4 +1,4 @@
-#plateau
+# plateau
 
 **Category**: feature
 

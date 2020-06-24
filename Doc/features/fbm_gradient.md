@@ -1,4 +1,4 @@
-#fractal gradient
+# fractal gradient
 
 **Category**: feature
 
