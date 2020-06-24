@@ -6,7 +6,7 @@
 
 **Function Name**: rand3
 
-**Signature**: (vec3) -> vec3
+**Signature**: (vec3 st) -> vec3
 
 **Name**: 3D hash function
 

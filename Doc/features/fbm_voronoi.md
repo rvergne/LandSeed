@@ -6,7 +6,7 @@
 
 **Function Name**: fbm_voronoi
 
-**Signature**: (vec2, float, float, float, int) -> float
+**Signature**: (vec2 pos, float amplitude, float frequency, float persistence, int nb_octave) -> float
 
 **Name**: fractal voronoi
 

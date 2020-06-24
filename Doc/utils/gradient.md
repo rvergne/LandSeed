@@ -6,7 +6,7 @@
 
 **Function Name**: gradient
 
-**Signature**: (vec2) -> float
+**Signature**: (vec2 st) -> float
 
 **Name**: Gradient noise
 

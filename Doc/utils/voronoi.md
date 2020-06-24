@@ -6,7 +6,7 @@
 
 **Function Name**: voronoi
 
-**Signature**: (vec2) -> float
+**Signature**: (vec2 st) -> float
 
 **Name**: Voronoi noise
 

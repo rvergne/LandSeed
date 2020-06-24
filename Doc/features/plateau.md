@@ -6,7 +6,7 @@
 
 **Function Name**: plateau
 
-**Signature**: (float, float, float) -> float
+**Signature**: (float terrainHeight, float plateauHeight, float delta) -> float
 
 **Name**: plateau
 

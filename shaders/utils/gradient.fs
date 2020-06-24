@@ -1,7 +1,7 @@
 // --------------DEV-----------------
 // @TAG NOISE_GRADIENT_2D
 // @FUNCTION_NAME gradient
-// @SIGNATURE (vec2) -> float
+// @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
 // @NAME Gradient noise
 // @SPEC {

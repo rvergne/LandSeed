@@ -1,7 +1,7 @@
 // --------------DEV-----------------
 // @TAG NOISE_VORONOI_2D
 // @FUNCTION_NAME voronoi
-// @SIGNATURE (vec2) -> float
+// @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
 // @NAME Voronoi noise
 // @SPEC {

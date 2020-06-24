@@ -1,7 +1,7 @@
 // --------------DEV-----------------
 // @TAG PLATEAU
 // @FUNCTION_NAME plateau
-// @SIGNATURE (float, float, float) -> float
+// @SIGNATURE (float terrainHeight, float plateauHeight, float delta) -> float
 // -------------USER-----------------
 // @NAME plateau
 // @SPEC {

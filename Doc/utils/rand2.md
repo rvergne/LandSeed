@@ -6,7 +6,7 @@
 
 **Function Name**: rand2
 
-**Signature**: (vec2) -> vec2
+**Signature**: (vec2 st) -> vec2
 
 **Name**: 2D hash function
 
