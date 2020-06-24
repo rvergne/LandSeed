@@ -1,9 +1,7 @@
 // --------------DEV-----------------
 // @TAG PLATEAU
 // @FUNCTION_NAME plateau
-// @SPEC {
-//	(float, float, float) -> float
-// }
+// @SIGNATURE (float, float, float) -> float
 // -------------USER-----------------
 // @NAME plateau
 // @SPEC {

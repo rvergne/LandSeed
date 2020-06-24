@@ -1,9 +1,7 @@
 // --------------DEV-----------------
 // @TAG FBM_VORONOI
 // @FUNCTION_NAME fbm_voronoi
-// @SPEC {
-//	(vec2, float, float, float, int) -> float
-// }
+// @SIGNATURE (vec2, float, float, float, int) -> float
 // -------------USER-----------------
 // @NAME fractal voronoi
 // @SPEC {

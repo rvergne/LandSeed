@@ -29,15 +29,13 @@ python generation.py [input path] [output path]
 ```
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
+## Documentation
+
+To know more about implemented features and utils, check the [documentation](Doc/main.md)
+
 ## Features
 
 Features are the functions used by the user in the terrainMap function to compute terrain height for a specific position on the terrain.
-
-### Current features
-
-fbm_voronoi, fbm_gradient, plateau, you can see explanation in each file in the shaders/features/ folder.
-
-(Documentation will come)
 
 ### Declare a new feature
 

@@ -1,9 +1,7 @@
 // --------------DEV-----------------
 // @TAG FBM_GRADIENT
 // @FUNCTION_NAME fbm_gradient
-// @SPEC {
-//	(vec2, float, float, float, int) -> float
-// }
+// @SIGNATURE (vec2, float, float, float, int) -> float
 // -------------USER-----------------
 // @NAME fractal gradient
 // @SPEC {
