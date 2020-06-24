@@ -31,7 +31,8 @@ The first one will choose default input and output files. The second will take i
 
 ## Documentation
 
-To know more about implemented features and utils, check the [documentation](Doc/main.md)
+To know more about implemented features and utils, check the [documentation](Doc/main.md).
+To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
 ## Features
 
@@ -65,9 +66,7 @@ See examples in any files using this header.
 // --------------DEV-----------------
 // @TAG TAG_USED_TO_INCLUDE
 // @FUNCTION_NAME name_of_the_function
-// @SPEC {
-//	(function_param_type) -> function_result_type
-// }
+// @SIGNATURE (function_param_type) -> function_result_type
 // -------------USER-----------------
 // @NAME name used for user doc
 // @SPEC {
