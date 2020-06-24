@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-if sys.version_info.major < 3:
+if sys.version_info.major < 3: # python version should be 3+
     print("Python version to old, please upgrade your python to 3 or more.")
     sys.exit(6)
 import os
@@ -10,7 +10,7 @@ if sys.version_info.minor >= 4:
     import importlib
 else:
     import imp
-from updateIndex import shouldUpdateIndex, createIndex
+from UpdateIndex import shouldUpdateIndex, createIndex
 
 # Return code meaning :
 #   0 : everything's ok
@@ -23,6 +23,7 @@ from updateIndex import shouldUpdateIndex, createIndex
 
 # Lib Paths
 libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
+sys.path.append(libRootPath)
 inputDir = libRootPath + "input/"
 outputDir = libRootPath + "output/"
 featuresDir = libRootPath + "shaders/features/"

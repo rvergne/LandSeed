@@ -9,11 +9,12 @@ import time
 #   1 : Header problem
 #   5 : index file error
 
-featuresDir="shaders/features/"
-utilsDir="shaders/utils/"
-indexFileLocation="generatorUtils/"
+libRootPath=os.path.dirname(os.path.realpath(__file__))+"/"
+featuresDir=libRootPath+"shaders/features/"
+utilsDir=libRootPath+"shaders/utils/"
+indexFileLocation=libRootPath+"generatorUtils/"
 indexName="shader_index.py"
-generatorIndex="generatorUtils/shader_index.py"
+generatorIndex=libRootPath + "generatorUtils/shader_index.py"
 
 # check if files changes, if there is new files, and if some files has been removed
 # return true if we should update index
@@ -25,11 +26,11 @@ def shouldUpdateIndex():
     try:
         from generatorUtils.shader_index import dictTagToPath
     except:
-        print("Error importing index. Please remove it and try again.")
+        print("Error importing index. Please remove it and try again.(generatorUtils/shader_index.py)")
         sys.exit(5)
 
     for line in dictTagToPath:
-        if not os.path.exists(dictTagToPath[line]):
+        if not os.path.exists(libRootPath+dictTagToPath[line]):
             return True
 
     updateDate = os.path.getmtime(generatorIndex)   # Creation time of index
@@ -43,16 +44,17 @@ def shouldUpdateIndex():
 
 def fulfill(path):
     print("Getting "+path+" files informations..")
-    availableFiles = os.listdir(libRootPath+path) # Get file name in path dir
+    availableFiles = os.listdir(path) # Get file name in path dir
     for file in availableFiles:                          # Open each one then for each line, check if there is @TAG (which define a tag for a feature/utils).
         currentFilePath = path+file
-        currentFile = open(libRootPath+path+file, "r")
+        currentFile = open(currentFilePath, "r")
         currentFileContent = currentFile.readlines()
+        currentFile.close()
         for line in range(len(currentFileContent)):
             if "@TAG" in currentFileContent[line]:
                 p = re.compile("@TAG (.*)")
                 resultTag = p.search(currentFileContent[line]).group(1)
-                dictTagToPath[resultTag]=currentFilePath
+                dictTagToPath[resultTag]=currentFilePath.replace(libRootPath,"")
                 if not "@FUNCTION_NAME" in currentFileContent[line+1]:    # get the associated function name
                     print("Header badly written in "+currentFilePath)
                     print("@FUNCTION_NAME should follow @TAG line")
@@ -62,7 +64,6 @@ def fulfill(path):
                         p = re.compile("@FUNCTION_NAME (.*)")
                         resultFunctionName = p.search(currentFileContent[line+1]).group(1)
                         dictFeatureFunctionToTag[resultFunctionName]=resultTag
-        currentFile.close()
 
 # print dictTagToPath content (in a readable way) to debug
 def print_dictTagToPath():
@@ -72,7 +73,7 @@ def print_dictTagToPath():
 # write the dictTagToPath in a file
 def writeIndex():
     print("writting the index..",end="")
-    indexPath = libRootPath+indexFileLocation+indexName
+    indexPath = indexFileLocation+indexName
     if os.path.exists(indexPath):
         os.remove(indexPath)
     indexFile = open(indexPath, "w")
@@ -83,8 +84,6 @@ def writeIndex():
     indexFile.close()
 
 def createIndex():
-    global libRootPath
-    libRootPath=os.path.dirname(os.path.realpath(__file__))+"/"
     global dictTagToPath
     dictTagToPath = {}
     global dictFeatureFunctionToTag
