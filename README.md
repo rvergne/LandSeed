@@ -66,13 +66,13 @@ See examples in any files using this header.
 // --------------DEV-----------------
 // @TAG TAG_USED_TO_INCLUDE
 // @FUNCTION_NAME name_of_the_function
-// @SIGNATURE (function_param_type) -> function_result_type
+// @SIGNATURE (param1_type param1_name,...) -> function_result_type
 // -------------USER-----------------
 // @NAME name used for user doc
 // @SPEC {
 // definition of the function functionnement, effect...everything needed to use it
-// param1 : description of parameter 1
-// param2 : description of parameter 2
+// param1_name : description of parameter 1
+// param2_name : description of parameter 2
 // ...
 // }
 // -------------END------------------
