@@ -4,20 +4,20 @@
 
 Features are the main functions you can use in your terrainMap fonction (inside your input file) without any import.
 
-| Function Name | Full Name | Tag | Complete Doc |
+| Function Name | Full Name | Tag |
 |-|-|-|-|
-| fbm_gradient | fractal gradient | FBM_GRADIENT | [Here](features/fbm_gradient.md) |
-| fbm_voronoi | fractal voronoi | FBM_VORONOI | [Here](features/fbm_voronoi.md) |
-| plateau | plateau | PLATEAU | [Here](features/plateau.md) |
+| [fbm_gradient](features/fbm_gradient.md) | fractal gradient | FBM_GRADIENT |
+| [fbm_voronoi](features/fbm_voronoi.md) | fractal voronoi | FBM_VORONOI |
+| [plateau](features/plateau.md) | plateau | PLATEAU |
 
 
 ## Utils
 
 Utils are the functions used to develop features. Soon utils will be possible to include in input file.
 
-| Function Name | Full Name | Tag | Complete Doc |
+| Function Name | Full Name | Tag |
 |-|-|-|-|
-| gradient | Gradient noise | NOISE_GRADIENT_2D | [Here](utils/gradient.md) |
-| rand2 | 2D hash function | RANDOM_2D | [Here](utils/rand2.md) |
-| rand3 | 3D hash function | RANDOM_3D | [Here](utils/rand3.md) |
-| voronoi | Voronoi noise | NOISE_VORONOI_2D | [Here](utils/voronoi.md) |
+| [gradient](utils/gradient.md) | Gradient noise | NOISE_GRADIENT_2D |
+| [rand2](utils/rand2.md) | 2D hash function | RANDOM_2D |
+| [rand3](utils/rand3.md) | 3D hash function | RANDOM_3D |
+| [voronoi](utils/voronoi.md) | Voronoi noise | NOISE_VORONOI_2D |
