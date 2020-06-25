@@ -141,7 +141,7 @@ def includeTerrainMap(input, outputFile):
     while (line < len(input)) and not "@END" in input[line] : # add each features detected and her dependencies
         if not "//" in input[line].replace(" ", "")[0:2]:
             for feature in dictFeatureFunctionToTag :
-                if feature in input[line]:
+                if feature in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(feature)+len(feature)]=="("):
                     includeFeature(dictFeatureFunctionToTag[feature])
         line +=1
     if line >= len(input):
