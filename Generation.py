@@ -72,6 +72,7 @@ def skipUntil(fileContent, keyword, fileName):
 # fileName is the filename where your searching with his path in the lib. For error printing
 def copyUntilEnd(fileContent, start, fileName):
     line = start
+    outputFile.write("#line "+str(start+1)+" \""+fileName+"\"\n")
     while (line < len(fileContent)) and (not "@END" in fileContent[line]):
         outputFile.write(fileContent[line])
         line += 1

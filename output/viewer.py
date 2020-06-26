@@ -30,7 +30,11 @@ class Shader:
             log = GL.glGetShaderInfoLog(shader).decode('ascii')
             GL.glDeleteShader(shader)
             src = '\n'.join(src)
-            print('Compile failed for %s\n%s\n%s' % (shader_type, log, src))
+            print('Compile failed for %s' % (shader_type))
+            print("---------------------------------------")
+            print('Error in %s' % (log.replace(" : ", "\n")), end="")
+            print("---------------------------------------")
+            print("Remember to generate your shader again after changing something in Features or Utils.")
             return None
         return shader
 

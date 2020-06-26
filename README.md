@@ -1,17 +1,20 @@
 # Procedural terrain generation
 
-## Lib requirements
+## Lib installation and requirements
 
-To use the library, you'll need at least :
+To install everything you need please do the following steps :
 
-- Python : version 3+
-- numpy : 1.11.0
-- glfw : 1.11.1
-- PyOpenGL : 3.1.5
-
-pipreqs have been used to get those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
-
-Debian packages installation command line are stored in [installation helper](./installationHelper.md).
+- If you don't have python, pip and glfw installed (python 3+ is needed):
+```
+apt install python3
+apt install python3-pip
+apt install libglfw3
+```
+- To install dependencies :
+```
+pip install -r requirements.txt
+```
+pipreqs have been used to generate those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
 
 ## Generate terrain
 
