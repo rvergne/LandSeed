@@ -34,7 +34,7 @@ class Shader:
             print("---------------------------------------")
             print('Error in %s' % (log.replace(" : ", "\n")), end="")
             print("---------------------------------------")
-            print("Remember to generate your shader again after changing something in Features or Utils.")
+            print("Remember to generate your shader again after changing something in Features, Utils or input files.")
             return None
         return shader
 

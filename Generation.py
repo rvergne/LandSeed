@@ -80,6 +80,7 @@ def copyUntilEnd(fileContent, start, fileName):
         error("@END tag missing in "+fileName, 2)
     else:
         outputFile.write("\n")
+    # print("#line "+str(len(outputFile.readlines()))+" \""+outputPath.replace(libRootPath, "")+"\"\n")
 
 # Exit the script properly with errMessage printed and the code errCode
 def error(errorMessage, errCode):
@@ -148,8 +149,11 @@ def includeTerrainMap(input, outputFile):
     if line >= len(input):
         error("@END tag missing in input/input.fs file", 2)
 
+    outputFile.write("#line 1 \""+inputPath.replace(libRootPath, "")+"\"\n")
     for line in input : # finally copy the terrainMap function after adding all dependencies
         outputFile.write(line)
+    outputFile.seek(0)
+    outputFile.write("#line "+str(len(outputFile.readlines())+2)+" \""+outputPath.replace(libRootPath, "")+"\"\n")
     outputFile.write("\n")
 
 
@@ -157,6 +161,8 @@ def includeTerrainMap(input, outputFile):
 def copyAndComplete(emptyShader, input):
     for line in range(len(emptyShader)):
         if not "@TERRAIN_MAP" in emptyShader[line]:
+            if line == 1:
+                outputFile.write("#line 3 \""+outputPath.replace(libRootPath, "")+"\"\n")
             outputFile.write(emptyShader[line])
         else :
             includeTerrainMap(input, outputFile)
@@ -164,6 +170,8 @@ def copyAndComplete(emptyShader, input):
 
 def main():
     # user can enter a personnal input file or use the default one
+    global outputPath
+    global inputPath
     if len(sys.argv)==1:
         inputPath = inputDir+"input.fs"
         outputPath = outputDir+"fragment_shader01.fs"
@@ -196,7 +204,7 @@ def main():
     if os.path.exists(outputPath):
         os.remove(outputPath)
     global outputFile
-    outputFile = open(outputPath, "w")
+    outputFile = open(outputPath, "w+")
 
     emptyShaderFile = open(emptyShader, "r")
     emptyShaderContent = emptyShaderFile.readlines()
