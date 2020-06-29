@@ -32,6 +32,8 @@ python generation.py
 or
 python generation.py [input path] [output path]
 ```
+Please give relative paths.
+
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
 ## Documentation

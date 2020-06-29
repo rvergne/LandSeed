@@ -3,18 +3,13 @@ import os
 import sys
 import re
 import time
+from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
+from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 
 # return code
 #   0 : Everything's ok
-#   1 : Header problem
+#   1 : keyword missing in a file
 #   5 : index file error
-
-libRootPath=os.path.dirname(os.path.realpath(__file__))+"/"
-featuresDir=libRootPath+"shaders/features/"
-utilsDir=libRootPath+"shaders/utils/"
-indexFileLocation=libRootPath+"generatorUtils/"
-indexName="shader_index.py"
-generatorIndex=libRootPath + "generatorUtils/shader_index.py"
 
 # check if files changes, if there is new files, and if some files has been removed
 # return true if we should update index
@@ -24,7 +19,7 @@ def shouldUpdateIndex():
         return True
 
     try:
-        from generatorUtils.shader_index import dictTagToPath
+        from GeneratorUtils.shader_index import dictTagToPath
     except:
         print("Error importing index. Please remove it and try again.(generatorUtils/shader_index.py)")
         sys.exit(5)
@@ -43,27 +38,22 @@ def shouldUpdateIndex():
     return False
 
 def fulfill(path):
-    print("Getting "+path+" files informations..")
+    print("Getting "+path.replace(libRootPath, "")+" files informations..")
+    cat=""
+    if "features" in path:
+        cat = "feature"
+    else:
+        cat = "util"
     availableFiles = os.listdir(path) # Get file name in path dir
-    for file in availableFiles:                          # Open each one then for each line, check if there is @TAG (which define a tag for a feature/utils).
+    for file in availableFiles:
         currentFilePath = path+file
-        currentFile = open(currentFilePath, "r")
-        currentFileContent = currentFile.readlines()
-        currentFile.close()
-        for line in range(len(currentFileContent)):
-            if "@TAG" in currentFileContent[line]:
-                p = re.compile("@TAG (.*)")
-                resultTag = p.search(currentFileContent[line]).group(1)
-                dictTagToPath[resultTag]=currentFilePath.replace(libRootPath,"")
-                if not "@FUNCTION_NAME" in currentFileContent[line+1]:    # get the associated function name
-                    print("Header badly written in "+currentFilePath)
-                    print("@FUNCTION_NAME should follow @TAG line")
-                    sys.exit(1)
-                else:
-                    if path == featuresDir:
-                        p = re.compile("@FUNCTION_NAME (.*)")
-                        resultFunctionName = p.search(currentFileContent[line+1]).group(1)
-                        dictFeatureFunctionToTag[resultFunctionName]=resultTag
+        lastLine=0
+        for nb in range(ShaderFragmentInfo.getFragmentCounter(currentFilePath)):
+            currentFragment = ShaderFragmentInfo(cat, currentFilePath, lastLine)
+            dictTagToPath[currentFragment.getTag()]=currentFragment.getRelativePath()
+            if currentFragment.getCat() == "feature":
+                dictFeatureFunctionToTag[currentFragment.getFunctionName()]=currentFragment.getTag()
+            lastLine=currentFragment.getLastLine()
 
 # print dictTagToPath content (in a readable way) to debug
 def print_dictTagToPath():
@@ -84,9 +74,9 @@ def writeIndex():
     indexFile.close()
 
 def createIndex():
-    global dictTagToPath
+    global dictTagToPath # dict with TAG for key and relative path for value
     dictTagToPath = {}
-    global dictFeatureFunctionToTag
+    global dictFeatureFunctionToTag # features dict with FUNCTION_NAME for key and tag for value
     dictFeatureFunctionToTag = {}
     fulfill(featuresDir)
     fulfill(utilsDir)

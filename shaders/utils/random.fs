@@ -1,5 +1,3 @@
-// TODO add offset version
-
 // --------------DEV-----------------
 // @TAG RANDOM_2D
 // @FUNCTION_NAME rand2

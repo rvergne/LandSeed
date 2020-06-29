@@ -1,14 +1,12 @@
 # plateau
 
-**Category**: feature
-
 **Tag**: PLATEAU
+
+**Category**: feature
 
 **Function Name**: plateau
 
 **Signature**: (float terrainHeight, float plateauHeight, float delta) -> float
-
-**Name**: plateau
 
 **Spec**: Compute the new terrain height according to parameters, to smoothly make it flat at plateauHeight if terrainHeight is above plateauHeight.
 

@@ -1,14 +1,12 @@
 # 2D hash function
 
-**Category**: util
-
 **Tag**: RANDOM_2D
+
+**Category**: util
 
 **Function Name**: rand2
 
 **Signature**: (vec2 st) -> vec2
-
-**Name**: 2D hash function
 
 **Spec**: compute a "random" vec2. Values will be in [0,1]
 

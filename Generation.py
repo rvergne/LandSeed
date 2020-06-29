@@ -11,25 +11,18 @@ if sys.version_info.minor >= 4:
 else:
     import imp
 from UpdateIndex import shouldUpdateIndex, createIndex
+from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex
 
 # Return code meaning :
 #   0 : everything's ok
 #   1 : keyword missing in a file
-#   2 : @END tag missing
+#   2 : path error
 #   3 : dependency not recognize
 #   4 : script parameter error
 #   5 : index file error
 #   6 : Python version too old
 
-# Lib Paths
-libRootPath=os.path.dirname(os.path.realpath(__file__))+"/" # get lib absolute path
 sys.path.append(libRootPath)
-inputDir = libRootPath + "input/"
-outputDir = libRootPath + "output/"
-featuresDir = libRootPath + "shaders/features/"
-utilsDir = libRootPath + "shaders/utils/"
-emptyShader = libRootPath + "generatorUtils/terrain_empty.fs"
-generatorIndex = libRootPath + "generatorUtils/shader_index.py"
 
 availableFeatureList = []
 
@@ -42,14 +35,14 @@ if shouldUpdateIndex():
         createIndex()
         # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
         if sys.version_info.minor >= 4:
-            importlib.reload(sys.modules["generatorUtils.shader_index"])
+            importlib.reload(sys.modules["GeneratorUtils.shader_index"])
         else:
-            imp.reload(sys.modules["generatorUtils.shader_index"])
+            imp.reload(sys.modules["GeneratorUtils.shader_index"])
     else:
         createIndex()
 
 try:
-    from generatorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+    from GeneratorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
 except:
     print("Error while executing updateIndex script. Please fix it manualy")
     sys.exit(5)
@@ -175,8 +168,8 @@ def main():
     if len(sys.argv)==1:
         inputPath = inputDir+"input.fs"
         outputPath = outputDir+"fragment_shader01.fs"
-        print("Default input file is taken : "+inputPath)
-        print("Default output file is taken : "+outputPath)
+        print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
+        print("Default output file is taken : "+outputPath.replace(libRootPath, ""))
     elif len(sys.argv)==3:
         inputPath = libRootPath+sys.argv[1]
         print("Input file : "+inputPath)

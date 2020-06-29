@@ -1,14 +1,12 @@
 # Gradient noise
 
-**Category**: util
-
 **Tag**: NOISE_GRADIENT_2D
+
+**Category**: util
 
 **Function Name**: gradient
 
 **Signature**: (vec2 st) -> float
-
-**Name**: Gradient noise
 
 **Spec**: Compute the gradient noise with a given vec2 seed.
 

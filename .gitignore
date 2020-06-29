@@ -1,8 +1,8 @@
 testnoise/fragment_shader01.fs
 output/fragment_shader01.fs
 notes.txt
-generatorUtils/__pycache__/
-generatorUtils/__pycache__/*
-generatorUtils/shader_index.py
+GeneratorUtils/__pycache__/
+GeneratorUtils/__pycache__/*
+GeneratorUtils/shader_index.py
 __pycache__/
 __pycache__/*

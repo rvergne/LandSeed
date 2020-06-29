@@ -1,14 +1,12 @@
 # fractal voronoi
 
-**Category**: feature
-
 **Tag**: FBM_VORONOI
+
+**Category**: feature
 
 **Function Name**: fbm_voronoi
 
 **Signature**: (vec2 pos, float amplitude, float frequency, float persistence, int nb_octave) -> float
-
-**Name**: fractal voronoi
 
 **Spec**: Compute the voronoi fractal brownian motion that will compute different level of a voronoi noise and add them to create a final noise.
 

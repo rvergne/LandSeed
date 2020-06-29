@@ -1,14 +1,12 @@
 # 3D hash function
 
-**Category**: util
-
 **Tag**: RANDOM_3D
+
+**Category**: util
 
 **Function Name**: rand3
 
 **Signature**: (vec3 st) -> vec3
-
-**Name**: 3D hash function
 
 **Spec**: compute a "random" vec3. Values will be in [0,1]
 
