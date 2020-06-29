@@ -20,7 +20,9 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 
 Fulfill input file in the input folder. It's purpose is to compute terrain height on a specific position.
 
-To generate the shader, use the generate.py python script.
+Use the features functions inside it. You can also add functions in input file.
+
+To generate the shader, use the Generate.py python script.
 
 Your generated shader is in the output folder with a python script allowing you to try it.
 
@@ -35,6 +37,7 @@ The first one will choose default input and output files. The second will take i
 ## Documentation
 
 To know more about implemented features and utils, check the [documentation](Doc/main.md).
+
 To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
 ## Features
@@ -45,7 +48,7 @@ Features are the functions used by the user in the terrainMap function to comput
 
 Create a new file in shaders/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.
 
-Put your feature code between your tag and @END tag. You can use any noise or function adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
+Put your feature code between your tag and @END tag. You can use any existing util or feature adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
 ```
 // COMMON HEADER HERE
 //
