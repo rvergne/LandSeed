@@ -79,6 +79,7 @@ def copyUntilEnd(fileContent, start, fileName):
 def error(errorMessage, errCode):
     print(errorMessage)
     outputFile.close()
+    os.remove(outputPath)
     sys.exit(errCode)
 
 def includeDependency(dependencyName):
