@@ -63,6 +63,8 @@ Your_feature_function(){
 // @END
 ```
 
+When your feature is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.))
+
 ## Declare a new noise or utils function
 
 Same operating mode as feature but are stored in the shaders/utils/ folder.
