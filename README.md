@@ -1,4 +1,8 @@
-# Procedural terrain generation
+# LandSeed
+
+LandSeed is a python library used to generate fragments shaders computing procedural terrains.
+
+The idea is to use, combine or create features to generate various terrains with a single height function. The height mapping function will be used inside a terrain marcher to give the final result.
 
 ## Lib installation and requirements
 
@@ -18,7 +22,7 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 
 ## Generate terrain
 
-Fulfill input file in the input folder. It's purpose is to compute terrain height on a specific position.
+Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.
 
 Use the features functions inside it. You can also add functions in input file.
 
@@ -28,9 +32,9 @@ Your generated shader is in the output folder with a python script allowing you 
 
 There is two ways to use the generation script :
 ```
-python generation.py
+python Generation.py
 or
-python generation.py [input path] [output path]
+python Generation.py [input path] [output path]
 ```
 Please give relative paths.
 
@@ -87,3 +91,8 @@ See examples in any files using this header.
 // }
 // -------------END------------------
 ```
+
+## Future improvement
+
+- Define in the input file if the output should give priority to quality or computation speed.
+- Implement the possibility to get differents output type.

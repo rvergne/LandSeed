@@ -1,4 +1,4 @@
-# Procedural Terrain Lib - Documentation
+# LandSeed - Documentation
 
 ## Features
 

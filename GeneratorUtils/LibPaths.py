@@ -2,7 +2,6 @@
 import os
 import pathlib
 
-# libRootPath=str(pathlib.Path().absolute())+"/" # get lib absolute path
 libRootPath = os.path.dirname(os.path.realpath(__file__))+"/../"
 inputDir = libRootPath + "input/"
 outputDir = libRootPath + "output/"

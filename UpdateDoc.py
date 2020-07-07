@@ -13,6 +13,7 @@ from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 features = []
 utils = []
 
+# exiting properly on error
 def abort(returnCode):
     print("Aborting..")
     for i in features:
@@ -21,10 +22,11 @@ def abort(returnCode):
         del i
     sys.exit(returnCode)
 
+# write every single doc pages except main
 def createDocPages():
     print("Writing specific documentations pages..")
-    os.makedirs(docDir+"features/")
-    os.makedirs(docDir+"utils/")
+    os.makedirs(docDir+"features/") # TODO check python version
+    os.makedirs(docDir+"utils/") # TODO check python version
     for feature in features:
         featureFile = open(docDir+"features/"+feature.getFunctionName()+".md","w")
         featureFile.write(feature.toMD())
@@ -38,8 +40,7 @@ def createDocPages():
 def createMainDocPage():
     print("Writing main doc page..")
     mainFile = open(docDir+"main.md","w")
-    # mainFile.write("<style>\n    table{\n        border-collapse: collapse;\n        border-spacing: 0;\n        border:2px solid black;\n    }\n\n    th{\n        border:2px solid #000000;\n        padding: 10px;\n    }\n\n    td{\n        border:1px solid #000000;\n        padding: 5px;\n    }\n    </style>\n    \n\n")
-    mainFile.write("# Procedural Terrain Lib - Documentation")
+    mainFile.write("# LandSeed - Documentation")
     mainFile.write("\n\n")
     mainFile.write("## Features")
     mainFile.write("\n\n")
@@ -66,6 +67,7 @@ def createMainDocPage():
 
     mainFile.close()
 
+# read shaders fragments files to get informations
 def getInfo():
     print("Getting features and utils informations..")
 
@@ -90,6 +92,7 @@ def getInfo():
     features.sort(key=lambda feature: feature.getFunctionName())
     utils.sort(key=lambda util: util.getFunctionName())
 
+# print all fragment info to debug
 def displayDebug():
     for i in features:
         i.displayInfo()
