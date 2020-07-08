@@ -11,11 +11,11 @@ if sys.version_info.minor >= 4:
 else:
     import imp
 from UpdateIndex import shouldUpdateIndex, createIndex
-from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex
+from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappers
 
 # Return code meaning :
 #   0 : everything's ok
-#   1 : keyword missing in a file
+#   1 : keyword missing in a file or badly written
 #   2 : path error
 #   3 : dependency not recognize
 #   4 : script parameter error
@@ -71,7 +71,7 @@ def copyUntilEnd(fileContent, start, fileName):
         outputFile.write(fileContent[line])
         line += 1
     if line >= len(fileContent):
-        error("@END tag missing in "+fileName, 2)
+        error("@END tag missing in "+fileName, 1)
     else:
         outputFile.write("\n")
 
@@ -172,15 +172,43 @@ def includeTerrainMap(input, outputFile):
 
 
 # copy the wrapper into the output shader and detect where includes have to be done
-def copyAndComplete(emptyShader, input):
+# first analyze input file to get wrapper and quality
+def copyAndComplete(input):
+    wrapper = None
+    qualityValue = None
+    firstLines = 0
+    while qualityValue == None or wrapper == None:
+        if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
+            p = re.compile("@QUALITY (.*)")
+            qualityValue = p.search(input[firstLines]).group(1)
+            try:
+                qualityValue = float(qualityValue)
+            except Exception as e:
+                error("@QUALITY param should be float in "+inputPath.replace(libRootPath, ""), 2)
+        if "@WRAPPER" in input[firstLines] and input[firstLines][input[firstLines].find("@WRAPPER")+8] == " ":
+            p = re.compile("@WRAPPER (.*)")
+            wrapper = p.search(input[firstLines]).group(1)
+            if not ".fs" in wrapper:
+                wrapper += ".fs"
+            if not os.path.exists(wrappers+wrapper) or not os.path.isfile(wrappers+wrapper):
+                error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappers.replace(libRootPath, ""), 1)
+        firstLines += 1
+    print("Quality : "+str(qualityValue)+"/ 100")
+    print("Wrapper : "+wrapper)
+
+    # getting wrapper content
+    emptyShaderFile = open(wrappers+wrapper, "r")
+    emptyShaderContent = emptyShaderFile.readlines()
+    emptyShaderFile.close()
+
     # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
-    for line in range(len(emptyShader)):
-        if not "@TERRAIN_MAP" in emptyShader[line]:
+    for line in range(len(emptyShaderContent)):
+        if not "@TERRAIN_MAP" in emptyShaderContent[line]:
             if line == 1:
                 outputFile.write("#line 3 \""+outputPath.replace(libRootPath, "")+"\"\n")
-            outputFile.write(emptyShader[line])
+            outputFile.write(emptyShaderContent[line])
         else :
             includeTerrainMap(input, outputFile)
 
@@ -220,8 +248,7 @@ def main():
         sys.exit(4)
     # checking that the path to the output file exist, if not, create it
     if not os.path.exists(os.path.dirname(outputPath)):
-        # TODO create dir
-        print("WORK IN PROGRESS : create path to the output file")
+        os.makedirs(os.path.dirname(outputPath))
 
     # opening and getting input file content
     inputFile = open(inputPath, "r")
@@ -234,13 +261,8 @@ def main():
     global outputFile
     outputFile = open(outputPath, "w+")
 
-    # getting wrapper content
-    emptyShaderFile = open(emptyShader, "r")
-    emptyShaderContent = emptyShaderFile.readlines()
-    emptyShaderFile.close()
-
     # fulfill wrapper with input file and dependencies
-    copyAndComplete(emptyShaderContent, inputFileContent)
+    copyAndComplete(inputFileContent)
 
     # close output file and exit
     outputFile.close()
