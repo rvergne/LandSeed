@@ -1,7 +1,7 @@
 // Define quality on a [0.0,100.0] range
 // @QUALITY 50.6
 // Define the wrapper (use the wrapper file name)
-// @WRAPPER wrap2.fs
+// @WRAPPER classic_shader
 // terrainMap compute the height value for the terrain on pos
 float terrainMap(vec2 pos){
   float terrain = 0;

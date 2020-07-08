@@ -193,7 +193,7 @@ def copyAndComplete(input):
             if not os.path.exists(wrappers+wrapper) or not os.path.isfile(wrappers+wrapper):
                 error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappers.replace(libRootPath, ""), 1)
         firstLines += 1
-    print("Quality : "+str(qualityValue)+"/ 100")
+    print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
     print("Wrapper : "+wrapper)
 
     # getting wrapper content
