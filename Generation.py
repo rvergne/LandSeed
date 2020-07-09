@@ -11,7 +11,7 @@ if sys.version_info.minor >= 4:
 else:
     import imp
 from UpdateIndex import shouldUpdateIndex, createIndex
-from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappers
+from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappersDir
 
 # Return code meaning :
 #   0 : everything's ok
@@ -190,14 +190,14 @@ def copyAndComplete(input):
             wrapper = p.search(input[firstLines]).group(1)
             if not ".fs" in wrapper:
                 wrapper += ".fs"
-            if not os.path.exists(wrappers+wrapper) or not os.path.isfile(wrappers+wrapper):
-                error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappers.replace(libRootPath, ""), 1)
+            if not os.path.exists(wrappersDir+wrapper) or not os.path.isfile(wrappersDir+wrapper):
+                error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappersDir.replace(libRootPath, ""), 1)
         firstLines += 1
     print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
     print("Wrapper : "+wrapper)
 
     # getting wrapper content
-    emptyShaderFile = open(wrappers+wrapper, "r")
+    emptyShaderFile = open(wrappersDir+wrapper, "r")
     emptyShaderContent = emptyShaderFile.readlines()
     emptyShaderFile.close()
 
