@@ -200,11 +200,12 @@ def copyAndComplete(input):
     emptyShaderFile = open(wrappers+wrapper, "r")
     emptyShaderContent = emptyShaderFile.readlines()
     emptyShaderFile.close()
+    line = skipUntil(emptyShaderContent, "END", wrapper)+1
 
     # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
-    for line in range(len(emptyShaderContent)):
+    for line in range(line, len(emptyShaderContent)):
         if not "@TERRAIN_MAP" in emptyShaderContent[line]:
             if line == 1:
                 outputFile.write("#line 3 \""+outputPath.replace(libRootPath, "")+"\"\n")
@@ -220,7 +221,7 @@ def main():
     # no parameters -> default input and output
     if len(sys.argv)==1:
         inputPath = inputDir+"input.fs"
-        outputPath = outputDir+"fragment_shader01.fs"
+        outputPath = outputDir+"output.fs"
         print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
         print("Default output file is taken : "+outputPath.replace(libRootPath, ""))
     # parameters given

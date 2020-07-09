@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-import os
 import sys
+if sys.version_info.major < 3: # python version should be 3+
+    print("Python version to old, please upgrade your python to 3 or more.")
+    sys.exit(6)
+import os
 import re
 import time
 from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex

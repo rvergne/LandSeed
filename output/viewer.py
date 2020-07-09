@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-"""
-Python OpenGL practical application.
-"""
+import sys
 # Python built-in modules
-import os                          # exit, system arguments
 
 # External, non-python built-in modules
+import os                          # exit, system arguments
 import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
 
 vs_file = "vertex_shader.vs"
-fs_file = "fragment_shader01.fs"
+fs_file = "output.fs"
 
 # ------------ low level OpenGL object wrappers ----------------------------
 class Shader:

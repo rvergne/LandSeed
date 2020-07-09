@@ -21,3 +21,8 @@ Utils are the functions used to develop features. Soon utils will be possible to
 | [rand2](utils/rand2.md) | 2D hash function | RANDOM_2D |
 | [rand3](utils/rand3.md) | 3D hash function | RANDOM_3D |
 | [voronoi](utils/voronoi.md) | Voronoi noise | NOISE_VORONOI_2D |
+
+
+## Wrappers
+
+__Work in progress__

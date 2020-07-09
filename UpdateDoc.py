@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import sys
+if sys.version_info.major < 3: # python version should be 3+
+    print("Python version to old, please upgrade your python to 3 or more.")
+    sys.exit(6)
 import os
 import re
 import shutil
@@ -64,6 +67,11 @@ def createMainDocPage():
     for util in utils:
         completeDocPath="(utils/"+util.getFunctionName()+".md)"
         mainFile.write("| ["+util.getFunctionName()+"]"+completeDocPath+" | "+util.getName()+" | "+util.getTag()+" |\n")
+
+    mainFile.write("\n\n")
+    mainFile.write("## Wrappers")
+    mainFile.write("\n\n")
+    mainFile.write("__Work in progress__")
 
     mainFile.close()
 

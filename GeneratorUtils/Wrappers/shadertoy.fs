@@ -1,36 +1,28 @@
 // --------------DEV-----------------
-// @LINE_DIRECTIVE TRUE
+// @LINE_DIRECTIVE FALSE
 // --------------USER----------------
-// @NAME classic_shader
+// @NAME shadertoy
 // @DESC {
-// Default fragment shader. Can be used with the python viewer script (in the output/ dir) to display it.
+// Fragment shader you can copy and paste in Shadertoy
 // }
 // --------------END-----------------
-#version 330 core
-
-uniform vec2 mousePos;
-uniform float time;
-uniform float aspectRatio;
-
-in vec2 fragCoord;
-
-out vec4 outColor;
-
 // Ray struct
 struct Ray{
     vec3 ro;    // ray origin
     vec3 rd;    // ray direction
 };
 
-// Ray march parameters
-#define MOVEMENT false
+/////////////////////////////////////////////
+///////////////////PARAM/////////////////////
+/////////////////////////////////////////////
+// RayMarch param
+#define MOVEMENT true
 #define DIST_MIN 0.1 // minimum distance to objects
-#define DIST_MAX 5000.0 // maximum distance to render objects
+#define DIST_MAX 2000.0 // maximum distance to render objects
 #define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
 
-#define AMP 400.0
-
-int randcount =0;
+#define AMP 400.0 // Amplitude
+float randcount = 0.0;
 
 // @TERRAIN_MAP
 
@@ -57,7 +49,7 @@ float rayMarchTerrain(Ray r){
 
   }
 
-  return -1;
+  return -1.0;
 
 }
 
@@ -69,15 +61,18 @@ Ray generateRay(vec2 p){
   // p is the current pixel coord, in [-1,1]
 
   // normalized mouse position
-  vec2 m = mousePos;
+  //vec2 m = normalize(iMouse.xy);
+        vec2 m = vec2( iMouse.xy - 0.5*iResolution.xy );
+	m = 2.0 * m.xy / iResolution.xy;
+    m.x *= iResolution.x / iResolution.y;
 
   // camera position
   float d = DP/2.;
-  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+1000,d*sin(6.0*m.x) )+moveFact*time;
+  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+700.0,d*sin(6.0*m.x) )+moveFact*iTime;
 
   // target point
-  vec3 ta = vec3(0.0,(DP/20.)+(AMP/3)+100,0.0)+moveFact*time;
-  // vec3 ta = vec3(0.0,200,0.0)+moveFact*time;
+  vec3 ta = vec3(-50.0,(DP/20.)+(AMP/3.0)+200.0,0.0)+moveFact*iTime;
+  // vec3 ta = vec3(0.0,200,0.0)+moveFact*iTime;
 
   // camera view vector
   vec3 cw = normalize(ta-ro);
@@ -99,7 +94,7 @@ Ray generateRay(vec2 p){
 
 vec3 applyFog ( vec3 color, float far) {
 	//just to hide clipping
-    return vec3( mix( color ,vec3(.8,.8,.8), smoothstep(0.0,1.0,far/(DIST_MAX+1000)) ) );
+    return vec3( mix( color ,vec3(.8,.8,.8), smoothstep(0.0,1.0,far/(DIST_MAX+1000.0)) ) );
 }
 
 
@@ -114,21 +109,27 @@ vec3 terrainNormal(in vec3 p, vec3 ro) {
 vec3 computeColor(in vec3 p, vec3 ro){
   // return vec3((p.y+AMP)/(2*AMP));
   return applyFog(terrainNormal(p, ro), distance(p, ro));
-  // return p;
+  // return terrainNormal(p, ro);
 }
 
-void main()
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
-    vec2 coord = vec2(fragCoord.x, fragCoord.y*aspectRatio);
+    vec2 coord = vec2( fragCoord.xy - 0.5*iResolution.xy );
+	coord = 2.0 * coord.xy / iResolution.xy;
+    coord.x *= iResolution.x / iResolution.y;
+    //fragCoord.x = (fragCoord.x*2.0)-1.0;
+    //fragCoord.y = (fragCoord.y*2.0)-1.0;
+    //vec2 coord = fragCoord/iResolution.xy;
+    //vec2 coord = vec2(fragCoord.x, fragCoord.y*aspectRatio);
     Ray r = generateRay(coord);
     float res = rayMarchTerrain(r);
     vec3 rendu = vec3(0.0);
 
-    if( res != -1){
+    if( res != -1.0){
       vec3 intersectionPoint = (r.ro + res*r.rd);
       rendu = computeColor(intersectionPoint, r.ro);
-      outColor = vec4(rendu,1.0);
+      fragColor = vec4(rendu,1.0);
     }else{
-      outColor = vec4(0.80);
+      fragColor = vec4(0.80);
     }
 }
