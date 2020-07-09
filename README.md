@@ -38,9 +38,9 @@ To generate the shader, use the Generate.py python script.
 
 There is two ways to use the generation script :
 ```
-python Generation.py
+./Generation.py
 or
-python Generation.py [input path] [output path]
+./Generation.py [input path] [output path]
 ```
 Please give relative paths.
 
