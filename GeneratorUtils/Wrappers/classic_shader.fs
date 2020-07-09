@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @LINE_DIRECTIVE TRUE
+// @LINE_DIRECTIVE_ON TRUE
 // --------------USER----------------
 // @NAME classic_shader
 // @DESC {

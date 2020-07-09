@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys
-# Python built-in modules
 
 # External, non-python built-in modules
 import os                          # exit, system arguments

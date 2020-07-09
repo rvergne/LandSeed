@@ -13,7 +13,7 @@ Features are the main functions you can use in your terrainMap fonction (inside 
 
 ## Utils
 
-Utils are the functions used to develop features. Soon utils will be possible to include in input file.
+Utils are the functions used to develop features.
 
 | Function Name | Full Name | Tag |
 |-|-|-|
@@ -25,4 +25,10 @@ Utils are the functions used to develop features. Soon utils will be possible to
 
 ## Wrappers
 
-__Work in progress__
+Wrappers are a way to gett different kind of output.  
+The name is what you have to write in the input to choose which wrapper to use for the output
+
+| Name | Description |
+|-|-|
+| shadertoy |  Fragment shader you can copy and paste in Shadertoy |
+| classic_shader |  Default fragment shader. Can be used with the python viewer script (in the output/ dir) to display it. |

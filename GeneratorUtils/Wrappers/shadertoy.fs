@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @LINE_DIRECTIVE FALSE
+// @LINE_DIRECTIVE_ON FALSE
 // --------------USER----------------
 // @NAME shadertoy
 // @DESC {

@@ -200,6 +200,8 @@ def copyAndComplete(input):
     emptyShaderFile = open(wrappers+wrapper, "r")
     emptyShaderContent = emptyShaderFile.readlines()
     emptyShaderFile.close()
+
+    # TODO : replace that with getting wrappers info
     line = skipUntil(emptyShaderContent, "END", wrapper)+1
 
     # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.

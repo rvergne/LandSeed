@@ -6,8 +6,9 @@ if sys.version_info.major < 3: # python version should be 3+
 import os
 import re
 import shutil
-from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, docDir
+from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, docDir, wrappersDir
 from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+from GeneratorUtils.WrapperInfoClass import WrapperInfo
 
 # Return values
 #   0 : Everything's ok
@@ -15,6 +16,7 @@ from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 
 features = []
 utils = []
+wrappers = []
 
 # exiting properly on error
 def abort(returnCode):
@@ -22,6 +24,8 @@ def abort(returnCode):
     for i in features:
         del i
     for i in utils:
+        del i
+    for i in wrappers:
         del i
     sys.exit(returnCode)
 
@@ -59,7 +63,7 @@ def createMainDocPage():
     mainFile.write("\n\n")
     mainFile.write("## Utils")
     mainFile.write("\n\n")
-    mainFile.write("Utils are the functions used to develop features. Soon utils will be possible to include in input file.")
+    mainFile.write("Utils are the functions used to develop features.")
     mainFile.write("\n\n")
     mainFile.write("| Function Name | Full Name | Tag |\n")
     mainFile.write("|-|-|-|\n")
@@ -71,7 +75,14 @@ def createMainDocPage():
     mainFile.write("\n\n")
     mainFile.write("## Wrappers")
     mainFile.write("\n\n")
-    mainFile.write("__Work in progress__")
+    mainFile.write("Wrappers are a way to gett different kind of output.  \n")
+    mainFile.write("The name is what you have to write in the input to choose which wrapper to use for the output")
+    mainFile.write("\n\n")
+    mainFile.write("| Name | Description |\n")
+    mainFile.write("|-|-|\n")
+
+    for wrapper in wrappers:
+        mainFile.write("| "+wrapper.getName()+" | "+wrapper.getDesc()+" |\n")
 
     mainFile.close()
 
@@ -97,6 +108,12 @@ def getInfo():
             utils.append(currentFragment)
             lastLine=currentFragment.getLastLine()
 
+    wrappersDirContent = os.listdir(wrappersDir)
+    for wrapper in wrappersDirContent:
+        currentFilePath = wrappersDir+wrapper
+        currentWrapper = WrapperInfo(currentFilePath)
+        wrappers.append(currentWrapper)
+
     features.sort(key=lambda feature: feature.getFunctionName())
     utils.sort(key=lambda util: util.getFunctionName())
 
@@ -105,6 +122,8 @@ def displayDebug():
     for i in features:
         i.displayInfo()
     for i in utils:
+        i.displayInfo()
+    for i in wrappers:
         i.displayInfo()
 
 def main():

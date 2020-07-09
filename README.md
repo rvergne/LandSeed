@@ -74,6 +74,8 @@ Your_feature_function(){
 // @END
 ```
 
+Once you finished writting your feature, please call the UpdateDoc.py script to update the documentation.
+
 When your feature is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.)).
 
 ### Use a utils
@@ -106,6 +108,22 @@ See examples in any files using this header.
 ## <a name="wrapper"></a>Wrappers
 
 Wrappers allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every wrappers.(Work in progress)
+
+A wrapper should always start with the following header :
+```
+// --------------DEV-----------------
+// @LINE_DIRECTIVE_ON BOOLEAN
+// --------------USER----------------
+// @NAME name of the wrapper (currently the name of the file)
+// @DESC {
+// Description of the wrapper for the documentation
+// }
+// --------------END-----------------
+```
+
+Once you finished writting your wrapper, please call the UpdateDoc.py script to update the documentation. (Work on progress)
+
+When your wrapper is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
 
 ## <a name="doc"></a>Documentation
 
