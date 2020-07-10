@@ -12,6 +12,7 @@ else:
     import imp
 from UpdateIndex import shouldUpdateIndex, createIndex
 from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappersDir
+from GeneratorUtils.WrapperInfoClass import WrapperInfo
 
 # Return code meaning :
 #   0 : everything's ok
@@ -48,6 +49,9 @@ except:
     print("Error while executing updateIndex script. Please fix it manualy")
     sys.exit(5)
 
+def writeLineDirective(line, file):
+    if wrapper.getLineDirective():
+        outputFile.write("#line "+str(line)+" \""+file+"\"\n")
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
 # fileContent : where to search
@@ -66,7 +70,7 @@ def skipUntil(fileContent, keyword, fileName):
 # fileName is the filename where your searching with his path in the lib. For error printing
 def copyUntilEnd(fileContent, start, fileName):
     line = start
-    outputFile.write("#line "+str(start+1)+" \""+fileName+"\"\n")
+    writeLineDirective(start+1, fileName)
     while (line < len(fileContent)) and (not "@END" in fileContent[line]):
         outputFile.write(fileContent[line])
         line += 1
@@ -161,23 +165,23 @@ def includeTerrainMap(input, outputFile):
     # if we have reached the end of the file without finding any @END tag
     if line >= len(input):
         error("@END tag missing in input/input.fs file", 2)
-
-    outputFile.write("#line 1 \""+inputPath.replace(libRootPath, "")+"\"\n")
+    writeLineDirective(1, inputPath.replace(libRootPath, ""))
     # finally copy the terrainMap function after adding all dependencies
     for line in input :
         outputFile.write(line)
     outputFile.seek(0) # used in order to readlines again to count the number of lines
-    outputFile.write("#line "+str(len(outputFile.readlines())+2)+" \""+outputPath.replace(libRootPath, "")+"\"\n") # replace GLSL line counter as it should be
+    writeLineDirective(len(outputFile.readlines())+2, outputPath.replace(libRootPath, ""))
     outputFile.write("\n")
 
 
 # copy the wrapper into the output shader and detect where includes have to be done
 # first analyze input file to get wrapper and quality
 def copyAndComplete(input):
-    wrapper = None
+    global wrapper
+    wrapperName = None
     qualityValue = None
     firstLines = 0
-    while qualityValue == None or wrapper == None:
+    while qualityValue == None or wrapperName == None:
         if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
             p = re.compile("@QUALITY (.*)")
             qualityValue = p.search(input[firstLines]).group(1)
@@ -187,30 +191,30 @@ def copyAndComplete(input):
                 error("@QUALITY param should be float in "+inputPath.replace(libRootPath, ""), 2)
         if "@WRAPPER" in input[firstLines] and input[firstLines][input[firstLines].find("@WRAPPER")+8] == " ":
             p = re.compile("@WRAPPER (.*)")
-            wrapper = p.search(input[firstLines]).group(1)
-            if not ".fs" in wrapper:
-                wrapper += ".fs"
-            if not os.path.exists(wrappersDir+wrapper) or not os.path.isfile(wrappersDir+wrapper):
+            wrapperName = p.search(input[firstLines]).group(1)
+            if not ".fs" in wrapperName:
+                wrapperName += ".fs"
+            if not os.path.exists(wrappersDir+wrapperName) or not os.path.isfile(wrappersDir+wrapperName):
                 error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappersDir.replace(libRootPath, ""), 1)
         firstLines += 1
     print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
-    print("Wrapper : "+wrapper)
+    print("Wrapper : "+wrapperName)
+    wrapper = WrapperInfo(wrappersDir + wrapperName)
 
     # getting wrapper content
-    emptyShaderFile = open(wrappersDir+wrapper, "r")
-    emptyShaderContent = emptyShaderFile.readlines()
-    emptyShaderFile.close()
-
+    emptyShaderContent = wrapper.getContent()
+    # print(repr(emptyShaderContent))
     # TODO : replace that with getting wrappers info
-    line = skipUntil(emptyShaderContent, "END", wrapper)+1
+    # line = skipUntil(emptyShaderContent, "END", wrapperName)+1
 
     # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
-    for line in range(line, len(emptyShaderContent)):
+    # for line in range(line, len(emptyShaderContent)):
+    for line in range(len(emptyShaderContent)):
         if not "@TERRAIN_MAP" in emptyShaderContent[line]:
             if line == 1:
-                outputFile.write("#line 3 \""+outputPath.replace(libRootPath, "")+"\"\n")
+                writeLineDirective(3, outputPath.replace(libRootPath, ""))
             outputFile.write(emptyShaderContent[line])
         else :
             includeTerrainMap(input, outputFile)

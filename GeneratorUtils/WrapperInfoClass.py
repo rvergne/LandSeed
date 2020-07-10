@@ -22,9 +22,11 @@ class WrapperInfo:
                 if "@LINE_DIRECTIVE_ON" in wrapperContent[line] and wrapperContent[line][wrapperContent[line].find("@LINE_DIRECTIVE_ON")+18] != "\n":
                     p = re.compile("@LINE_DIRECTIVE_ON (.*)")
                     line_directive = p.search(wrapperContent[line]).group(1)
-                    try:
-                        line_directive = bool(line_directive)
-                    except Exception as e:
+                    if "true" in line_directive.lower():
+                        line_directive = True
+                    elif "false" in line_directive.lower():
+                        line_directive = False
+                    else:
                         print("@LINE_DIRECTIVE_ON should be a boolean in "+path.replace(libRootPath, ""))
                         sys.exit(1)
                     self.setLineDirective(line_directive)
