@@ -43,11 +43,21 @@ uint phasor_morton(uint x, uint y) {
     return z;
 }
 
-vec3 gaussian(vec2 x, float b) {
-    float a = exp(-M_PI * (b * b) * ((x.x * x.x) + (x.y * x.y)));
-    vec2 d = -2. * M_PI * b * b * x;
-    // Gaussian value, X derivative, Y derivative
-    return a * vec3(1., d.x, d.y);
+float bessel_3(float x) {
+    float y = 0.5 * x;
+    float y2 = (y * y);
+    return (y2 * y *
+            (1.0 / 6.0 +
+             y2 * (1.0 / 24.0 +
+                   y2 * (1.0 / 240.0 + y2 * (1.0 / 4320.0 + y2 / 120960.0)))));
+}
+
+float phasor_window(vec2 x, float radius) {
+    // Kaiser-Bessel window function for continuity
+    float r = length(x) / radius;
+
+    float t = sqrt(1.0 - pow(r, 2.0));
+    return float(bessel_3(3.0 * M_PI * t) / bessel_3(M_PI * 3.0));
 }
 
 float phasor(vec2 pos, float amplitude, float angle, float frequency,
@@ -63,7 +73,7 @@ float phasor(vec2 pos, float amplitude, float angle, float frequency,
 
     // Static configuration
     const int LOOKAHEAD = 1;
-    const int NKERNELS = 8;
+    const int NKERNELS = 4;
 
     // Complex accumulator
     vec2 res = vec2(0.);
@@ -87,12 +97,9 @@ float phasor(vec2 pos, float amplitude, float angle, float frequency,
                 // Vector from current pos to impulse center
                 vec2 d = pos - impulseCenter;
                 // Gaussian parameter
-                float g = gaussian(d, bandwidth).x;
-                // No contribution from kernels < 5% intensity
-                if (g > THRESHOLD) {
-                    // Scale gaussian contribution to avoid discontinuity
-                    g = (g - THRESHOLD) * (1. + THRESHOLD);
+                float g = phasor_window(d, RADIUS);
 
+                if (g >= 0.0) {
                     // Contribute oscillating part
                     float ph = 2. * M_PI * frequency * dot(d, w);
                     res += g * vec2(cos(ph), sin(ph));
