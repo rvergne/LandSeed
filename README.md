@@ -9,7 +9,7 @@ The idea is to use, combine or create features to generate various terrains with
  - [Installation](#install)
  - [Generation](#generation)
  - [Fragments (features and Utils)](#feature)
- - [Wrappers](#wrapper)
+ - [Templates](#template)
  - [Documentation](#doc)
 
 ## <a name="install"></a>Lib installation and requirements
@@ -31,7 +31,7 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 ## <a name="generation"></a>Generate terrain
 
 Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.  
-It has two parameters at the begining of the file, the first is the quality indice, a percentage defining if the output should give priority to speed or render quality (Work in progress).  The second one is used to choose a wrapper, in order to get different kind of output.
+It has two parameters at the begining of the file, the first is the quality indice, a percentage defining if the output should give priority to speed or render quality (Work in progress).  The second one is used to choose a template, in order to get different kind of output.
 Use the features functions inside it. You can also add functions in input file.
 
 To generate the shader, use the Generate.py python script.
@@ -44,7 +44,7 @@ or
 ```
 Please give relative paths.
 
-By default, your generated shader is in the output folder with a python script allowing you to try it (assuming your're using default values and classic_shader wrapper).
+By default, your generated shader is in the output folder with a python script allowing you to try it (assuming your're using default values and classic_shader template).
 
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
@@ -105,29 +105,29 @@ See examples in any files using this header.
 // -------------END------------------
 ```
 
-## <a name="wrapper"></a>Wrappers
+## <a name="template"></a>Templates
 
-Wrappers allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every wrappers.(Work in progress)
+Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every templates.(Work in progress)
 
-A wrapper should always start with the following header :
+A template should always start with the following header :
 ```
 // --------------DEV-----------------
 // @LINE_DIRECTIVE_ON BOOLEAN
 // --------------USER----------------
-// @NAME name of the wrapper (currently the name of the file)
+// @NAME name of the template (currently the name of the file)
 // @DESC {
-// Description of the wrapper for the documentation
+// Description of the template for the documentation
 // }
 // --------------END-----------------
 ```
 
-Once you finished writting your wrapper, please call the UpdateDoc.py script to update the documentation. (Work on progress)
+Once you finished writting your template, please call the UpdateDoc.py script to update the documentation. (Work on progress)
 
-When your wrapper is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
+When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
 
 ## <a name="doc"></a>Documentation
 
-To know more about implemented features, utils and wrappers, check the [documentation](Doc/main.md).
+To know more about implemented features, utils and templates, check the [documentation](Doc/main.md).
 
 To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
@@ -136,4 +136,4 @@ To update the documentation with your modifications or new files, just call the 
 - Define in the input file if the output should give priority to quality or computation speed.
     - put tag before quality param : with a RANGE definition
 - Implement the possibility to get differents output type.
-    - choose if you put the #line directive in output depending of wrapper  
+    - choose if you put the #line directive in output depending of template  
