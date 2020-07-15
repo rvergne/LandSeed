@@ -4,8 +4,10 @@ import re
 import sys
 from GeneratorUtils.LibPaths import libRootPath
 
+# class used to get all inforamtions about a feaeture or a util
 class ShaderFragmentInfo:
-    def __init__(self, featOrUtil, path, beginLine): # read the file path, from the line from
+    # initialize the object by reading the file path, from the line beginLine (for the case where there is more than one fragment in the same file)
+    def __init__(self, featOrUtil, path, beginLine):
         self.cat = featOrUtil # 2 values : "feature" or "util"
         self.path = path
         self.tag = ""
@@ -17,6 +19,7 @@ class ShaderFragmentInfo:
         self.beginLine = beginLine
         self.lastLine = 0
         self.extractInfo(path)
+    # extract all info from the file define by path
     def extractInfo(self, path):
         if os.path.isfile(path):
             fragmentFile = open(path, "r")
@@ -103,10 +106,12 @@ class ShaderFragmentInfo:
         return self.path
     def getLastLine(self):
         return self.lastLine
+    # check if the object contains all the informations it should
     def isHeaderComplete(self):
         if not (self.tag == "" or self.funcName == "" or self.signature == "" or self.name == "" or self.spec == ""):
             return True
         return False
+    # display informations about the fragment. Used to debug
     def displayInfo(self):
         print("-----------------------------------------")
         print("Category: "+self.cat)
@@ -117,6 +122,7 @@ class ShaderFragmentInfo:
         print("Spec: "+self.spec)
         print("Tag presence: "+str(self.tagPresence))
         print("-----------------------------------------")
+    # convert the object to markdown format for the documentation
     def toMD(self):
         str = ""
         str += "# "+self.name+"\n\n"
@@ -126,8 +132,9 @@ class ShaderFragmentInfo:
         str += "**Signature**: "+self.signature+"\n\n"
         str += "**Spec**: "+self.spec+"\n\n"
         return str
+    # return how much feature or utils there is in the file by counting the number of "@TAG" in the file
     @staticmethod
-    def getFragmentCounter(path): # return how much feature or utils there is in the file
+    def getFragmentCounter(path):
         c=0
         file = open(path, "r")
         content = file.readlines()

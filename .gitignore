@@ -1,4 +1,3 @@
-testnoise/fragment_shader01.fs
 output/output.fs
 notes.txt
 GeneratorUtils/__pycache__/

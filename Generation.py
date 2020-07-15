@@ -11,11 +11,12 @@ if sys.version_info.minor >= 4:
 else:
     import imp
 from UpdateIndex import shouldUpdateIndex, createIndex
-from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex
+from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappersDir
+from GeneratorUtils.WrapperInfoClass import WrapperInfo
 
 # Return code meaning :
 #   0 : everything's ok
-#   1 : keyword missing in a file
+#   1 : keyword missing in a file or badly written
 #   2 : path error
 #   3 : dependency not recognize
 #   4 : script parameter error
@@ -24,12 +25,13 @@ from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDi
 
 sys.path.append(libRootPath)
 
-availableFeatureList = []
-
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
 
+# check if we need to update index (function from UpdateIndex.py)
 if shouldUpdateIndex():
+    # in the shouldUpdateIndex function, if the index exist we have to import it to check that all features and utils are still there
+    # so after re create it, we need to reload the module cause it has change
     print("Index outdated (some features or utils has changed).\nUpdating index..")
     if os.path.exists(generatorIndex):
         createIndex()
@@ -47,6 +49,9 @@ except:
     print("Error while executing updateIndex script. Please fix it manualy")
     sys.exit(5)
 
+def writeLineDirective(line, file):
+    if wrapper.getLineDirective():
+        outputFile.write("#line "+str(line)+" \""+file+"\"\n")
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
 # fileContent : where to search
@@ -65,15 +70,14 @@ def skipUntil(fileContent, keyword, fileName):
 # fileName is the filename where your searching with his path in the lib. For error printing
 def copyUntilEnd(fileContent, start, fileName):
     line = start
-    outputFile.write("#line "+str(start+1)+" \""+fileName+"\"\n")
+    writeLineDirective(start+1, fileName)
     while (line < len(fileContent)) and (not "@END" in fileContent[line]):
         outputFile.write(fileContent[line])
         line += 1
     if line >= len(fileContent):
-        error("@END tag missing in "+fileName, 2)
+        error("@END tag missing in "+fileName, 1)
     else:
         outputFile.write("\n")
-    # print("#line "+str(len(outputFile.readlines()))+" \""+outputPath.replace(libRootPath, "")+"\"\n")
 
 # Exit the script properly with errMessage printed and the code errCode
 def error(errorMessage, errCode):
@@ -82,35 +86,43 @@ def error(errorMessage, errCode):
     os.remove(outputPath)
     sys.exit(errCode)
 
+# include a dependency a the dependencies of this dependency recursively
 def includeDependency(dependencyName):
     global includedDependencies
-    if not dependencyName in includedDependencies:
+    # if this dependency hasn't been added yet
+    if not dependencyName in includedDependencies and not dependencyName in includedFeatures:
         includedDependencies.append(dependencyName)
 
-        print("Including dependency "+dependencyName+"..")
-
+        # check if the dependency name refer to an existing dependency
         if not dependencyName in dictTagToPath:
             error("Dependency not recognized : "+dependencyName, 3)
+        # get dependency content
         dependencyFilePath = libRootPath+dictTagToPath[dependencyName]
-
         dependencyFile = open(dependencyFilePath, "r")
         dependencyFileContent = dependencyFile.readlines()
         dependencyFile.close()
         line = 0
         line = skipUntil(dependencyFileContent, "@"+dependencyName, dependencyFilePath.replace(libRootPath, ""))
         line += 1
+
+        # include dependencies
         while "@INCLUDE" in dependencyFileContent[line]: # include other dependencies recursively
             p = re.compile("@INCLUDE (.*)")
             result = p.search(dependencyFileContent[line]).group(1)
             includeDependency(result)
             line += 1
+
+        # finally copy the dependency after every dependencies have been added
+        print("Including dependency "+dependencyName+"..")
         copyUntilEnd(dependencyFileContent, line, dependencyFilePath.replace(libRootPath, ""))
 
+# include a feature, starting by including all the dependencies
 def includeFeature(featureTag):
-
     global includedFeatures
+    # if we didn't already add this feature
     if not featureTag in includedFeatures:
-        includedFeatures.append(featureTag)
+        includedFeatures.append(featureTag) # keep this feature in added features
+        # get feature content
         featurePath = libRootPath+dictTagToPath[featureTag]
         featureFile = open(featurePath, "r")
         featureFileContent = featureFile.readlines()
@@ -119,45 +131,92 @@ def includeFeature(featureTag):
         line = skipUntil(featureFileContent, "@"+featureTag, featurePath.replace(libRootPath, ""))
         line += 1
 
-        while "@INCLUDE" in featureFileContent[line]: # get dependency name by parsing the line (getting what is after the "@INCLUDE ")
+        # include feature dependency by parsing the line (getting what is after the "@INCLUDE ")
+        while "@INCLUDE" in featureFileContent[line]:
             p = re.compile("@INCLUDE (.*)")
             result = p.search(featureFileContent[line]).group(1)
             includeDependency(result)
             line += 1
 
+        # finally copy the feature after every dependencies have been added
         print("Including feature "+featureTag+"...")
         copyUntilEnd(featureFileContent, line, featurePath.replace(libRootPath,""))
 
-
+# start including input.
+# Run two times through the input file's line
+# the first time, detect every features used and include them
+# the second time, assuming all dependencies have been included, copy the terrainMap function.
 def includeTerrainMap(input, outputFile):
     # include what is necessary
     line = 0
-    line = skipUntil(input, "@FEATURES", "input/input.fs")
+    line = skipUntil(input, "@FEATURES", "input/input.fs") # get the line number where is the keyword FEATURES
 
-    while (line < len(input)) and not "@END" in input[line] : # add each features detected and her dependencies
+    # add each features detected and her dependencies
+    # for each not commented lines, if there is a feature in it, call includeFeature
+    while (line < len(input)) and not "@END" in input[line] :
+         #if the line is not commented
         if not "//" in input[line].replace(" ", "")[0:2]:
+            # check every features
             for feature in dictFeatureFunctionToTag :
+                # if the feature is in the line, include it
                 if feature in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(feature)+len(feature)]=="("):
                     includeFeature(dictFeatureFunctionToTag[feature])
         line +=1
+
+    # if we have reached the end of the file without finding any @END tag
     if line >= len(input):
         error("@END tag missing in input/input.fs file", 2)
-
-    outputFile.write("#line 1 \""+inputPath.replace(libRootPath, "")+"\"\n")
-    for line in input : # finally copy the terrainMap function after adding all dependencies
+    writeLineDirective(1, inputPath.replace(libRootPath, ""))
+    # finally copy the terrainMap function after adding all dependencies
+    for line in input :
         outputFile.write(line)
-    outputFile.seek(0)
-    outputFile.write("#line "+str(len(outputFile.readlines())+2)+" \""+outputPath.replace(libRootPath, "")+"\"\n")
+    outputFile.seek(0) # used in order to readlines again to count the number of lines
+    writeLineDirective(len(outputFile.readlines())+2, outputPath.replace(libRootPath, ""))
     outputFile.write("\n")
 
 
-# copy the empty shader into the output shader and detect where includes have to be done
-def copyAndComplete(emptyShader, input):
-    for line in range(len(emptyShader)):
-        if not "@TERRAIN_MAP" in emptyShader[line]:
+# copy the wrapper into the output shader and detect where includes have to be done
+# first analyze input file to get wrapper and quality
+def copyAndComplete(input):
+    global wrapper
+    wrapperName = None
+    qualityValue = None
+    firstLines = 0
+    while qualityValue == None or wrapperName == None:
+        if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
+            p = re.compile("@QUALITY (.*)")
+            qualityValue = p.search(input[firstLines]).group(1)
+            try:
+                qualityValue = float(qualityValue)
+            except Exception as e:
+                error("@QUALITY param should be float in "+inputPath.replace(libRootPath, ""), 2)
+        if "@WRAPPER" in input[firstLines] and input[firstLines][input[firstLines].find("@WRAPPER")+8] == " ":
+            p = re.compile("@WRAPPER (.*)")
+            wrapperName = p.search(input[firstLines]).group(1)
+            if not ".fs" in wrapperName:
+                wrapperName += ".fs"
+            if not os.path.exists(wrappersDir+wrapperName) or not os.path.isfile(wrappersDir+wrapperName):
+                error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappersDir.replace(libRootPath, ""), 1)
+        firstLines += 1
+    print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
+    print("Wrapper : "+wrapperName)
+    wrapper = WrapperInfo(wrappersDir + wrapperName)
+
+    # getting wrapper content
+    emptyShaderContent = wrapper.getContent()
+    # print(repr(emptyShaderContent))
+    # TODO : replace that with getting wrappers info
+    # line = skipUntil(emptyShaderContent, "END", wrapperName)+1
+
+    # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.
+    # if it's not present, copy the current line then go on the next one
+    # if it's on the line, include the input and all the dependencies
+    # for line in range(line, len(emptyShaderContent)):
+    for line in range(len(emptyShaderContent)):
+        if not "@TERRAIN_MAP" in emptyShaderContent[line]:
             if line == 1:
-                outputFile.write("#line 3 \""+outputPath.replace(libRootPath, "")+"\"\n")
-            outputFile.write(emptyShader[line])
+                writeLineDirective(3, outputPath.replace(libRootPath, ""))
+            outputFile.write(emptyShaderContent[line])
         else :
             includeTerrainMap(input, outputFile)
 
@@ -166,16 +225,19 @@ def main():
     # user can enter a personnal input file or use the default one
     global outputPath
     global inputPath
+    # no parameters -> default input and output
     if len(sys.argv)==1:
         inputPath = inputDir+"input.fs"
-        outputPath = outputDir+"fragment_shader01.fs"
+        outputPath = outputDir+"output.fs"
         print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
         print("Default output file is taken : "+outputPath.replace(libRootPath, ""))
+    # parameters given
     elif len(sys.argv)==3:
         inputPath = libRootPath+sys.argv[1]
         print("Input file : "+inputPath)
         outputPath = libRootPath+sys.argv[2]
         print("Output file : "+outputPath)
+    # wrong number of parameters
     else:
         print("Parameter error.")
         print("Syntax : ")
@@ -184,28 +246,33 @@ def main():
         print("python generation.py")
         sys.exit(4)
 
+    # checking that input exist and that it's a file
     if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
         print("Please enter a valid or existing input file.")
         sys.exit(4)
+    # checking that if output file exist, it's a file
     if os.path.exists(outputPath) and not os.path.isfile(outputPath):
         print("Please enter a valid or non existing output file.")
         sys.exit(4)
+    # checking that the path to the output file exist, if not, create it
+    if not os.path.exists(os.path.dirname(outputPath)):
+        os.makedirs(os.path.dirname(outputPath))
 
+    # opening and getting input file content
     inputFile = open(inputPath, "r")
     inputFileContent = inputFile.readlines()
     inputFile.close()
 
+    # if output file exists, remove it, then open it
     if os.path.exists(outputPath):
         os.remove(outputPath)
     global outputFile
     outputFile = open(outputPath, "w+")
 
-    emptyShaderFile = open(emptyShader, "r")
-    emptyShaderContent = emptyShaderFile.readlines()
-    emptyShaderFile.close()
+    # fulfill wrapper with input file and dependencies
+    copyAndComplete(inputFileContent)
 
-    copyAndComplete(emptyShaderContent, inputFileContent)
-
+    # close output file and exit
     outputFile.close()
     sys.exit(0)
 

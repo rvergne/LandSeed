@@ -4,7 +4,15 @@ LandSeed is a python library used to generate fragments shaders computing proced
 
 The idea is to use, combine or create features to generate various terrains with a single height function. The height mapping function will be used inside a terrain marcher to give the final result.
 
-## Lib installation and requirements
+## Table of content
+
+ - [Installation](#install)
+ - [Generation](#generation)
+ - [Fragments (features and Utils)](#feature)
+ - [Wrappers](#wrapper)
+ - [Documentation](#doc)
+
+## <a name="install"></a>Lib installation and requirements
 
 To install everything you need please do the following steps :
 
@@ -20,37 +28,36 @@ pip install -r requirements.txt
 ```
 pipreqs have been used to generate those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
 
-## Generate terrain
+## <a name="generation"></a>Generate terrain
 
-Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.
-
+Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.  
+It has two parameters at the begining of the file, the first is the quality indice, a percentage defining if the output should give priority to speed or render quality (Work in progress).  The second one is used to choose a wrapper, in order to get different kind of output.
 Use the features functions inside it. You can also add functions in input file.
 
 To generate the shader, use the Generate.py python script.
 
-Your generated shader is in the output folder with a python script allowing you to try it.
-
 There is two ways to use the generation script :
 ```
-python Generation.py
+./Generation.py or python Generation.py
 or
-python Generation.py [input path] [output path]
+./Generation.py [input path] [output path] or python Generation.py [input path] [output path]
 ```
 Please give relative paths.
 
+By default, your generated shader is in the output folder with a python script allowing you to try it (assuming your're using default values and classic_shader wrapper).
+
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
-## Documentation
+## <a name="feature"></a>Features and Utils
 
-To know more about implemented features and utils, check the [documentation](Doc/main.md).
+__Features__ are the functions used by the user in the terrainMap function to compute terrain height for a specific position on the terrain.  
+__Utils__ are the functions you want to use inside your features without writting it everytime you need them.
 
-To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
+### Use a feature
 
-## Features
+To use a feature, you just have to call the function in the input without doing anything else.
 
-Features are the functions used by the user in the terrainMap function to compute terrain height for a specific position on the terrain.
-
-### Declare a new feature
+### Declare a new feature<a name="newfeature"></a>
 
 Create a new file in shaders/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.
 
@@ -67,12 +74,18 @@ Your_feature_function(){
 // @END
 ```
 
-When your feature is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.))
+Once you finished writting your feature, please call the UpdateDoc.py script to update the documentation.
 
-## Declare a new noise or utils function
+When your feature is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.)).
+
+### Use a utils
+
+As explained in the [Declare a new feature](#newfeature) section, to use a util in a feature (or Util) file, please use the @INCLUDE tag with the tag of the util.  
+To know the tag of the feature you want to use, please refer to the [documentation](Doc/main.md).
+
+### Declare a new utils function
 
 Same operating mode as feature but are stored in the shaders/utils/ folder.
-
 
 ## Common Header
 See examples in any files using this header.
@@ -92,7 +105,35 @@ See examples in any files using this header.
 // -------------END------------------
 ```
 
+## <a name="wrapper"></a>Wrappers
+
+Wrappers allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every wrappers.(Work in progress)
+
+A wrapper should always start with the following header :
+```
+// --------------DEV-----------------
+// @LINE_DIRECTIVE_ON BOOLEAN
+// --------------USER----------------
+// @NAME name of the wrapper (currently the name of the file)
+// @DESC {
+// Description of the wrapper for the documentation
+// }
+// --------------END-----------------
+```
+
+Once you finished writting your wrapper, please call the UpdateDoc.py script to update the documentation. (Work on progress)
+
+When your wrapper is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
+
+## <a name="doc"></a>Documentation
+
+To know more about implemented features, utils and wrappers, check the [documentation](Doc/main.md).
+
+To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
+
 ## Future improvement
 
 - Define in the input file if the output should give priority to quality or computation speed.
+    - put tag before quality param : with a RANGE definition
 - Implement the possibility to get differents output type.
+    - choose if you put the #line directive in output depending of wrapper  
