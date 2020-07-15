@@ -30,5 +30,6 @@ The name is what you have to write in the input to choose which wrapper to use f
 
 | Name | Description |
 |-|-|
-| shadertoy |  Fragment shader you can copy and paste in Shadertoy |
 | classic_shader |  Default fragment shader. Can be used with the python viewer script (in the output/ dir) to display it. |
+| heightmap |  Heightmap fragment shader. Can be used with the python viewer script (in the output/ dir) to display it. |
+| shadertoy |  Fragment shader you can copy and paste in Shadertoy |
