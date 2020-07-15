@@ -6,9 +6,9 @@ if sys.version_info.major < 3: # python version should be 3+
 import os
 import re
 import shutil
-from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, docDir, wrappersDir
-from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
-from GeneratorUtils.WrapperInfoClass import WrapperInfo
+from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, docDir, templatesDir
+from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+from src.LibUtils.TemplateInfoClass import TemplateInfo
 
 # Return values
 #   0 : Everything's ok
@@ -16,7 +16,7 @@ from GeneratorUtils.WrapperInfoClass import WrapperInfo
 
 features = []
 utils = []
-wrappers = []
+templates = []
 
 # exiting properly on error
 def abort(returnCode):
@@ -25,7 +25,7 @@ def abort(returnCode):
         del i
     for i in utils:
         del i
-    for i in wrappers:
+    for i in templates:
         del i
     sys.exit(returnCode)
 
@@ -73,16 +73,16 @@ def createMainDocPage():
         mainFile.write("| ["+util.getFunctionName()+"]"+completeDocPath+" | "+util.getName()+" | "+util.getTag()+" |\n")
 
     mainFile.write("\n\n")
-    mainFile.write("## Wrappers")
+    mainFile.write("## Templates")
     mainFile.write("\n\n")
-    mainFile.write("Wrappers are a way to gett different kind of output.  \n")
-    mainFile.write("The name is what you have to write in the input to choose which wrapper to use for the output")
+    mainFile.write("Templates are a way to gett different kind of output.  \n")
+    mainFile.write("The name is what you have to write in the input to choose which template to use for the output")
     mainFile.write("\n\n")
     mainFile.write("| Name | Description |\n")
     mainFile.write("|-|-|\n")
 
-    for wrapper in wrappers:
-        mainFile.write("| "+wrapper.getName()+" | "+wrapper.getDesc()+" |\n")
+    for template in templates:
+        mainFile.write("| "+template.getName()+" | "+template.getDesc()+" |\n")
 
     mainFile.close()
 
@@ -108,14 +108,15 @@ def getInfo():
             utils.append(currentFragment)
             lastLine=currentFragment.getLastLine()
 
-    wrappersDirContent = os.listdir(wrappersDir)
-    for wrapper in wrappersDirContent:
-        currentFilePath = wrappersDir+wrapper
-        currentWrapper = WrapperInfo(currentFilePath)
-        wrappers.append(currentWrapper)
+    templatesDirContent = os.listdir(templatesDir)
+    for template in templatesDirContent:
+        currentFilePath = templatesDir+template
+        currentTemplate = TemplateInfo(currentFilePath)
+        templates.append(currentTemplate)
 
     features.sort(key=lambda feature: feature.getFunctionName())
     utils.sort(key=lambda util: util.getFunctionName())
+    templates.sort(key=lambda template: template.getName())
 
 # print all fragment info to debug
 def displayDebug():
@@ -123,7 +124,7 @@ def displayDebug():
         i.displayInfo()
     for i in utils:
         i.displayInfo()
-    for i in wrappers:
+    for i in templates:
         i.displayInfo()
 
 def main():

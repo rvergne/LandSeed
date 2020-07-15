@@ -2,7 +2,11 @@
 import os
 import re
 import sys
-from GeneratorUtils.LibPaths import libRootPath
+try: # Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+    from src.LibUtils.LibPaths import libRootPath
+except Exception as e:
+    from LibPaths import libRootPath
+
 
 # class used to get all inforamtions about a feaeture or a util
 class ShaderFragmentInfo:

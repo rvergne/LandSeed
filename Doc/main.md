@@ -24,10 +24,10 @@ Utils are the functions used to develop features.
 | [voronoi](utils/voronoi.md) | Voronoi noise | NOISE_VORONOI_2D |
 
 
-## Wrappers
+## Templates
 
-Wrappers are a way to gett different kind of output.  
-The name is what you have to write in the input to choose which wrapper to use for the output
+Templates are a way to gett different kind of output.  
+The name is what you have to write in the input to choose which template to use for the output
 
 | Name | Description |
 |-|-|

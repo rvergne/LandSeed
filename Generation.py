@@ -10,9 +10,9 @@ if sys.version_info.minor >= 4:
     import importlib
 else:
     import imp
-from UpdateIndex import shouldUpdateIndex, createIndex
-from GeneratorUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, wrappersDir
-from GeneratorUtils.WrapperInfoClass import WrapperInfo
+from src.LibUtils.UpdateIndex import shouldUpdateIndex, createIndex
+from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, templatesDir
+from src.LibUtils.TemplateInfoClass import TemplateInfo
 
 # Return code meaning :
 #   0 : everything's ok
@@ -37,20 +37,20 @@ if shouldUpdateIndex():
         createIndex()
         # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
         if sys.version_info.minor >= 4:
-            importlib.reload(sys.modules["GeneratorUtils.shader_index"])
+            importlib.reload(sys.modules["src.LibUtils.shader_index"])
         else:
-            imp.reload(sys.modules["GeneratorUtils.shader_index"])
+            imp.reload(sys.modules["src.LibUtils.shader_index"])
     else:
         createIndex()
 
 try:
-    from GeneratorUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+    from src.LibUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
 except:
     print("Error while executing updateIndex script. Please fix it manualy")
     sys.exit(5)
 
 def writeLineDirective(line, file):
-    if wrapper.getLineDirective():
+    if template.getLineDirective():
         outputFile.write("#line "+str(line)+" \""+file+"\"\n")
 
 # Return index of the line where keyword has been found. Create an error and leave script if the keyword is not found
@@ -175,14 +175,14 @@ def includeTerrainMap(input, outputFile):
     outputFile.write("\n")
 
 
-# copy the wrapper into the output shader and detect where includes have to be done
-# first analyze input file to get wrapper and quality
+# copy the template into the output shader and detect where includes have to be done
+# first analyze input file to get template and quality
 def copyAndComplete(input):
-    global wrapper
-    wrapperName = None
+    global template
+    templateName = None
     qualityValue = None
     firstLines = 0
-    while qualityValue == None or wrapperName == None:
+    while qualityValue == None or templateName == None:
         if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
             p = re.compile("@QUALITY (.*)")
             qualityValue = p.search(input[firstLines]).group(1)
@@ -190,25 +190,25 @@ def copyAndComplete(input):
                 qualityValue = float(qualityValue)
             except Exception as e:
                 error("@QUALITY param should be float in "+inputPath.replace(libRootPath, ""), 2)
-        if "@WRAPPER" in input[firstLines] and input[firstLines][input[firstLines].find("@WRAPPER")+8] == " ":
-            p = re.compile("@WRAPPER (.*)")
-            wrapperName = p.search(input[firstLines]).group(1)
-            if not ".fs" in wrapperName:
-                wrapperName += ".fs"
-            if not os.path.exists(wrappersDir+wrapperName) or not os.path.isfile(wrappersDir+wrapperName):
-                error("@WRAPPER declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing wrapper.\nPlease pick a existing one in "+wrappersDir.replace(libRootPath, ""), 1)
+        if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
+            p = re.compile("@TEMPLATE (.*)")
+            templateName = p.search(input[firstLines]).group(1)
+            if not ".fs" in templateName:
+                templateName += ".fs"
+            if not os.path.exists(templatesDir+templateName) or not os.path.isfile(templatesDir+templateName):
+                error("@TEMPLATE declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing template.\nPlease pick a existing one in "+templatesDir.replace(libRootPath, ""), 1)
         firstLines += 1
     print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
-    print("Wrapper : "+wrapperName)
-    wrapper = WrapperInfo(wrappersDir + wrapperName)
+    print("Template : "+templateName)
+    template = TemplateInfo(templatesDir + templateName)
 
-    # getting wrapper content
-    emptyShaderContent = wrapper.getContent()
+    # getting template content
+    emptyShaderContent = template.getContent()
     # print(repr(emptyShaderContent))
-    # TODO : replace that with getting wrappers info
-    # line = skipUntil(emptyShaderContent, "END", wrapperName)+1
+    # TODO : replace that with getting templates info
+    # line = skipUntil(emptyShaderContent, "END", templateName)+1
 
-    # run through every lines of the wrapper, seeking for the @TERRAIN_MAP tag.
+    # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
     # for line in range(line, len(emptyShaderContent)):
@@ -269,7 +269,7 @@ def main():
     global outputFile
     outputFile = open(outputPath, "w+")
 
-    # fulfill wrapper with input file and dependencies
+    # fulfill template with input file and dependencies
     copyAndComplete(inputFileContent)
 
     # close output file and exit

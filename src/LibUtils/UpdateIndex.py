@@ -6,8 +6,14 @@ if sys.version_info.major < 3: # python version should be 3+
 import os
 import re
 import time
-from GeneratorUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
-from GeneratorUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+try:# Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+    from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
+except Exception as e:
+    from LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
+try:# Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+    from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+except Exception as e:
+    from ShaderFragmentInfoClass import ShaderFragmentInfo
 
 # return code
 #   0 : Everything's ok
@@ -26,7 +32,10 @@ def shouldUpdateIndex():
 
     # import index to check if a feature or util has been removed
     try:
-        from GeneratorUtils.shader_index import dictTagToPath
+        try:
+            from src.LibUtils.shader_index import dictTagToPath
+        except Exception as e:
+            from shader_index import dictTagToPath
     except:
         print("Error importing index. Please remove it and try again.("+indexFileLocation.replace(libRootPath, "")+")")
         sys.exit(5)
