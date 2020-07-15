@@ -108,7 +108,7 @@ float phasor(vec2 pos, float amplitude, float angle, float frequency,
         }
     }
 
-    res /= sqrt(NKERNELS);
+    res /= sqrt(float(NKERNELS));
 
     // Compute phasor noise at the right amplitude
     return amplitude * (normalized ? 1.0 : length(res)) *
