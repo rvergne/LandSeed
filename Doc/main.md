@@ -8,6 +8,7 @@ Features are the main functions you can use in your terrainMap fonction (inside 
 |-|-|-|
 | [fbm_gradient](features/fbm_gradient.md) | fractal gradient | FBM_GRADIENT |
 | [fbm_voronoi](features/fbm_voronoi.md) | fractal voronoi | FBM_VORONOI |
+| [phasor](features/phasor.md) | Phasor noise height map | PHASOR |
 | [plateau](features/plateau.md) | plateau | PLATEAU |
 
 
