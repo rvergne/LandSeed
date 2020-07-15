@@ -107,7 +107,7 @@ See examples in any files using this header.
 
 ## <a name="template"></a>Templates
 
-Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every templates.(Work in progress)
+Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every templates.
 
 A template should always start with the following header :
 ```
