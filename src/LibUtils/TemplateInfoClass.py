@@ -93,6 +93,7 @@ class TemplateInfo:
                 sys.exit(1)
             if not self.isComplete():
                 print("Template badly written, header element missing")
+                sys.exit(1)
             line += 1
             while line < len(templateContent):
                 self.content.append(templateContent[line])
