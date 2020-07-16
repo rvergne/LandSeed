@@ -6,6 +6,7 @@ if sys.version_info.major < 3: # python version should be 3+
 import os
 import re
 import queue
+import shutil
 if sys.version_info.minor >= 4:
     import importlib
 else:
@@ -44,7 +45,7 @@ if shouldUpdateIndex():
         createIndex()
 
 try:
-    from src.LibUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag # importing pre-built dict containing key-value as TAG-PATH
+    from src.LibUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag, dictTemplateTagToPath # importing pre-built dict containing key-value as TAG-PATH
 except:
     print("Error while executing updateIndex script. Please fix it manualy")
     sys.exit(5)
@@ -82,8 +83,10 @@ def copyUntilEnd(fileContent, start, fileName):
 # Exit the script properly with errMessage printed and the code errCode
 def error(errorMessage, errCode):
     print(errorMessage)
-    outputFile.close()
-    os.remove(outputPath)
+    if outputFile != None:
+        outputFile.close()
+    if os.path.exists(outputPath):
+        shutil.rmtree(outputPath)
     sys.exit(errCode)
 
 # include a dependency a the dependencies of this dependency recursively
@@ -193,20 +196,25 @@ def copyAndComplete(input):
         if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
             p = re.compile("@TEMPLATE (.*)")
             templateName = p.search(input[firstLines]).group(1)
-            if not ".frag" in templateName:
-                templateName += ".frag"
-            if not os.path.exists(templatesDir+templateName) or not os.path.isfile(templatesDir+templateName):
-                error("@TEMPLATE declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing template.\nPlease pick a existing one in "+templatesDir.replace(libRootPath, ""), 1)
+            if not templateName in dictTemplateTagToPath:
+                error("Unknown template name : "+templateName, 3)
         firstLines += 1
     print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
     print("Template : "+templateName)
-    template = TemplateInfo(templatesDir + templateName)
 
+    templateDirPath=libRootPath + dictTemplateTagToPath[templateName]
+    template = TemplateInfo(templateDirPath)
     # getting template content
     emptyShaderContent = template.getContent()
-    # print(repr(emptyShaderContent))
-    # TODO : replace that with getting templates info
-    # line = skipUntil(emptyShaderContent, "END", templateName)+1
+    shutil.copytree(templateDirPath, outputPath)
+
+    outputFilePath=outputPath+(template.getPathToFileToFill().replace(template.getPath(), ""))+template.getFileTofillName()
+
+    # if output file exists, remove it, then open it
+    if os.path.exists(outputFilePath):
+        os.remove(outputFilePath)
+    global outputFile
+    outputFile = open(outputFilePath, "w+")
 
     # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
@@ -215,22 +223,23 @@ def copyAndComplete(input):
     for line in range(len(emptyShaderContent)):
         if not "@TERRAIN_MAP" in emptyShaderContent[line]:
             if line == 1:
-                writeLineDirective(3, outputPath.replace(libRootPath, ""))
+                writeLineDirective(3, outputFilePath.replace(libRootPath, ""))
             outputFile.write(emptyShaderContent[line])
         else :
             includeTerrainMap(input, outputFile)
-
+    outputFile.close()
 
 def main():
     # user can enter a personnal input file or use the default one
     global outputPath
+    global outputFile
     global inputPath
     # no parameters -> default input and output
     if len(sys.argv)==1:
         inputPath = inputDir+"input.frag"
-        outputPath = outputDir+"output.frag"
+        outputPath = outputDir
         print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
-        print("Default output file is taken : "+outputPath.replace(libRootPath, ""))
+        print("Default output directory is taken : "+outputPath.replace(libRootPath, ""))
     # parameters given
     elif len(sys.argv)==3:
         inputPath = libRootPath+sys.argv[1]
@@ -250,30 +259,21 @@ def main():
     if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
         print("Please enter a valid or existing input file.")
         sys.exit(4)
-    # checking that if output file exist, it's a file
-    if os.path.exists(outputPath) and not os.path.isfile(outputPath):
-        print("Please enter a valid or non existing output file.")
-        sys.exit(4)
-    # checking that the path to the output file exist, if not, create it
-    if not os.path.exists(os.path.dirname(outputPath)):
-        os.makedirs(os.path.dirname(outputPath))
 
     # opening and getting input file content
     inputFile = open(inputPath, "r")
     inputFileContent = inputFile.readlines()
     inputFile.close()
 
-    # if output file exists, remove it, then open it
+    outputFile = None
+
     if os.path.exists(outputPath):
-        os.remove(outputPath)
-    global outputFile
-    outputFile = open(outputPath, "w+")
+        shutil.rmtree(outputPath)
 
     # fulfill template with input file and dependencies
     copyAndComplete(inputFileContent)
 
-    # close output file and exit
-    outputFile.close()
+    # exit
     sys.exit(0)
 
 main()

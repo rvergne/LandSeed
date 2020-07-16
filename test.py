@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-from src.LibUtils.TemplateInfoClass import TemplateInfo
-from src.LibUtils.LibPaths import templatesDir
+from src.LibUtils.UpdateIndex import getMostRecentTemplateChange
+import os
+from src.LibUtils.LibPaths import templatesDir, generatorIndex
 
-print("Test for : "+templatesDir+"classic_shader")
-x = TemplateInfo(templatesDir+"classic_shader")
-print("Test for : "+templatesDir+"heightmap")
-y = TemplateInfo(templatesDir+"heightmap/")
-print("Test for : "+templatesDir+"shadertoy")
-z = TemplateInfo(templatesDir+"shadertoy/")
+updateDate = os.path.getmtime(generatorIndex)   # Creation time of index
+templateUpdateDate = os.path.getmtime(getMostRecentTemplateChange(templatesDir).path)
+print(templateUpdateDate)
+if updateDate > os.path.getmtime(templateUpdateDate):
+    print("Index more recent")
+else:
+    print("template more recent")

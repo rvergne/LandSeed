@@ -1,8 +1,8 @@
 // --------------DEV-----------------
 // @LINE_DIRECTIVE_ON TRUE
-// @TAG heightmap
+// @TAG heightmap
 // --------------USER----------------
-// @NAME Heightmap
+// @NAME heightmap
 // @DESC {
 // Heightmap fragment shader. Can be used with the python viewer script (in the output/ dir) to display it.
 // }

@@ -1,4 +1,4 @@
-# fractal voronoi
+# Fractal voronoi
 
 **Tag**: FBM_VORONOI
 
@@ -22,3 +22,4 @@
 
 
 
+**Path**: src/shader_code/features/fbm_voronoi.frag

@@ -78,11 +78,11 @@ def createMainDocPage():
     mainFile.write("Templates are a way to gett different kind of output.  \n")
     mainFile.write("The name is what you have to write in the input to choose which template to use for the output")
     mainFile.write("\n\n")
-    mainFile.write("| Name | Description |\n")
-    mainFile.write("|-|-|\n")
+    mainFile.write("| Name | Tag | Description |\n")
+    mainFile.write("|-|-|-|\n")
 
     for template in templates:
-        mainFile.write("| "+template.getName()+" | "+template.getDesc()+" |\n")
+        mainFile.write("| "+template.getName()+" | "+template.getTag()+" | "+template.getDesc()+" |\n")
 
     mainFile.close()
 

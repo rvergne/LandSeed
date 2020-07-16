@@ -7,18 +7,23 @@ import os
 import re
 import time
 try:# Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
-    from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
+    from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex, templatesDir
 except Exception as e:
-    from LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
+    from LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex, templatesDir
 try:# Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 except Exception as e:
     from ShaderFragmentInfoClass import ShaderFragmentInfo
+try:
+    from src.LibUtils.TemplateInfoClass import TemplateInfo
+except Exception as e:
+    from TemplateInfoClass import TemplateInfo
 
 # return code
 #   0 : Everything's ok
 #   1 : keyword missing in a file
 #   5 : index file error
+
 
 # check if files changed, if there is new files, and if some files has been removed
 # return true if we should update index
@@ -54,7 +59,7 @@ def shouldUpdateIndex():
     return False
 
 # fulfill dictionnaries with file informations
-def fulfill(path):
+def fulfillShaderCode(path):
     print("Getting "+path.replace(libRootPath, "")+" files informations..")
     # get category
     cat=""
@@ -75,6 +80,14 @@ def fulfill(path):
                 dictFeatureFunctionToTag[currentFragment.getFunctionName()]=currentFragment.getTag()
             lastLine=currentFragment.getLastLine()
 
+def fulfillTemplate(path):
+    print("Getting "+path.replace(libRootPath, "")+" files informations..")
+    availablesTemplatesDir = os.listdir(path)
+    for template in availablesTemplatesDir:
+        currentTemplatePath = templatesDir+template
+        currentTemplate = TemplateInfo(currentTemplatePath)
+        dictTemplateTagToPath[currentTemplate.getTag()] = currentTemplate.getPath().replace(libRootPath, "")
+
 # print dictTagToPath content (in a readable way) to debug
 def print_dictTagToPath():
     for i in dictTagToPath:
@@ -91,6 +104,8 @@ def writeIndex():
     indexFile.write("dictTagToPath = "+repr(dictTagToPath).replace(", ",",\n"))
     indexFile.write("\n\n")
     indexFile.write("dictFeatureFunctionToTag = "+ repr(dictFeatureFunctionToTag).replace(", ",",\n"))
+    indexFile.write("\n\n")
+    indexFile.write("dictTemplateTagToPath = "+ repr(dictTemplateTagToPath).replace(",",",\n"))
     indexFile.close()
     print("Complete")
 
@@ -100,8 +115,11 @@ def createIndex():
     dictTagToPath = {}
     global dictFeatureFunctionToTag # features dict with FUNCTION_NAME for key and tag for value
     dictFeatureFunctionToTag = {}
-    fulfill(featuresDir)
-    fulfill(utilsDir)
+    global dictTemplateTagToPath
+    dictTemplateTagToPath = {}
+    fulfillShaderCode(featuresDir)
+    fulfillShaderCode(utilsDir)
+    fulfillTemplate(templatesDir)
     writeIndex()
 
 if __name__ == "__main__":

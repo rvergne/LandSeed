@@ -3,7 +3,7 @@ import os
 import pathlib
 
 libRootPath = os.path.dirname(os.path.realpath(__file__+"/../../"))+"/"
-libSrc = libRootPath+"/src/"
+libSrc = libRootPath+"src/"
 inputDir = libRootPath + "input/"
 outputDir = libRootPath + "output/"
 featuresDir = libSrc + "shader_code/features/"

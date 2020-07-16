@@ -135,6 +135,7 @@ class ShaderFragmentInfo:
         str += "**Function Name**: "+self.funcName+"\n\n"
         str += "**Signature**: "+self.signature+"\n\n"
         str += "**Spec**: "+self.spec+"\n\n"
+        str += "**Path**: "+self.path.replace(libRootPath, "")+"\n\n"
         return str
     # return how much feature or utils there is in the file by counting the number of "@TAG" in the file
     @staticmethod

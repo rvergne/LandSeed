@@ -1,4 +1,4 @@
-# fractal gradient
+# Fractal gradient
 
 **Tag**: FBM_GRADIENT
 
@@ -22,3 +22,4 @@
 
 
 
+**Path**: src/shader_code/features/fbm_gradient.frag

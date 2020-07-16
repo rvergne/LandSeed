@@ -14,6 +14,7 @@ class TemplateInfo:
             path += "/"
         self.path = path
         self.lineDirective = None
+        self.pathToFileToFill = ""
         self.fileToFill = ""
         self.tag = ""
         self.name = ""
@@ -24,20 +25,28 @@ class TemplateInfo:
             sys.exit(2)
         self.extractInfo()
         # self.displayInfo()
-    def findFileToFill(self):
-        for fname in os.listdir(self.getPath()):
-            if os.path.isfile(self.getPath()+"/"+fname):
-                with open(self.getPath()+"/"+fname, "r") as f:
+    def findFileToFill(self, path):
+        for fname in os.listdir(path):
+            if os.path.isfile(path+fname):
+                with open(path+fname, "r") as f:
                     for line in f:
-                        if '@TAG' in line:
+                        if '@TERRAIN_MAP' in line:
                             self.setFileToFillName(fname)
+                            self.setPathToFileToFill(path)
                             return
+            elif os.path.isdir(path+fname):
+                if not fname[-1:]=="/":
+                    fname += "/"
+                self.findFileToFill(path+fname)
+                if self.getFileTofillName() != "":
+                    break
+        return
     def extractInfo(self):
-        self.findFileToFill()
+        self.findFileToFill(self.getPath())
         if self.getFileTofillName() == "":
             print("Template at "+self.getPath().replace(libRootPath, "")+" don't contains any file with correct header.")
             sys.exit(2)
-        fileToFillPath=self.getPath()+self.getFileTofillName()
+        fileToFillPath=self.getPathToFileToFill()+self.getFileTofillName()
         if os.path.isfile(fileToFillPath):
             templateFile = open(fileToFillPath, "r")
             templateContent = templateFile.readlines()
@@ -101,7 +110,10 @@ class TemplateInfo:
         print("Tag : "+self.getTag())
         print("Line directive on : "+str(self.getLineDirective()))
         print("Desc : "+self.getDesc())
-        print("Path : "+self.getPath()+self.getFileTofillName())
+        print("FileToFill : "+self.getFileTofillName())
+        print("Path : "+self.getPath())
+        print("pathToFileToFill : "+self.getPathToFileToFill())
+        print("pathToFileToFill+fileToFill : "+self.getPathToFileToFill()+self.getFileTofillName())
         print("-------------------------------------------")
         print("Content : ")
         print(repr(self.getContent()))
@@ -136,3 +148,7 @@ class TemplateInfo:
         self.path = str
     def getPath(self):
         return self.path
+    def setPathToFileToFill(self, str):
+        self.pathToFileToFill = str
+    def getPathToFileToFill(self):
+        return self.pathToFileToFill

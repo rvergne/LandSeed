@@ -1,4 +1,4 @@
-# plateau
+# Plateau
 
 **Tag**: PLATEAU
 
@@ -18,3 +18,4 @@
 
 
 
+**Path**: src/shader_code/features/plateau.frag

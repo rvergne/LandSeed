@@ -4,3 +4,6 @@ src/LibUtils/__pycache__/
 src/LibUtils/__pycache__/*
 __pycache__/
 __pycache__/*
+test.py
+output/
+output/*
