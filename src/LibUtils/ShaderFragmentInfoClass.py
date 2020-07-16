@@ -2,7 +2,7 @@
 import os
 import re
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.LibPaths import libRootPath
 except Exception as e:
     from LibPaths import libRootPath

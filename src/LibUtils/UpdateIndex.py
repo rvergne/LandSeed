@@ -6,11 +6,11 @@ if sys.version_info.major < 3: # python version should be 3+
 import os
 import re
 import time
-try:# Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+try:# Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
 except Exception as e:
     from LibPaths import libRootPath, featuresDir, utilsDir, indexFileLocation, indexName, generatorIndex
-try:# Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+try:# Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 except Exception as e:
     from ShaderFragmentInfoClass import ShaderFragmentInfo

@@ -2,7 +2,7 @@
 import os
 import re
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appelé le script depuis de dossier src/LibUtils/
+try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.LibPaths import libRootPath
 except Exception as e:
     from LibPaths import libRootPath
@@ -10,14 +10,36 @@ except Exception as e:
 class TemplateInfo:
     # initialize the object by reading the file path, from the line beginLine (for the case where there is more than one fragment in the same file)
     def __init__(self, path):
+        if not path[-1:]=="/":
+            path += "/"
+        self.path = path
         self.lineDirective = None
+        self.fileToFill = ""
+        self.tag = ""
         self.name = ""
         self.desc = ""
         self.content = []
-        self.extractInfo(path)
-    def extractInfo(self, path):
-        if os.path.isfile(path):
-            templateFile = open(path, "r")
+        if not os.path.isdir(path):
+            print("The template path given should be a directory containing all template files.\nWrong file path given : "+path)
+            sys.exit(2)
+        self.extractInfo()
+        # self.displayInfo()
+    def findFileToFill(self):
+        for fname in os.listdir(self.getPath()):
+            if os.path.isfile(self.getPath()+"/"+fname):
+                with open(self.getPath()+"/"+fname, "r") as f:
+                    for line in f:
+                        if '@TAG' in line:
+                            self.setFileToFillName(fname)
+                            return
+    def extractInfo(self):
+        self.findFileToFill()
+        if self.getFileTofillName() == "":
+            print("Template at "+self.getPath().replace(libRootPath, "")+" don't contains any file with correct header.")
+            sys.exit(2)
+        fileToFillPath=self.getPath()+self.getFileTofillName()
+        if os.path.isfile(fileToFillPath):
+            templateFile = open(fileToFillPath, "r")
             templateContent = templateFile.readlines()
             templateFile.close()
             line = 0
@@ -30,9 +52,13 @@ class TemplateInfo:
                     elif "false" in line_directive.lower():
                         line_directive = False
                     else:
-                        print("@LINE_DIRECTIVE_ON should be a boolean in "+path.replace(libRootPath, ""))
+                        print("@LINE_DIRECTIVE_ON should be a boolean in "+fileToFillPath.replace(libRootPath, ""))
                         sys.exit(1)
                     self.setLineDirective(line_directive)
+                elif "@TAG" in templateContent[line] and templateContent[line][templateContent[line].find("@TAG")+4] != "\n":
+                    p = re.compile("@TAG (.*)")
+                    res_tag = p.search(templateContent[line]).group(1)
+                    self.setTag(res_tag)
                 elif "@NAME" in templateContent[line] and templateContent[line][templateContent[line].find("@NAME")+5] != "\n":
                     p = re.compile("@NAME (.*)")
                     res_name = p.search(templateContent[line]).group(1)
@@ -63,17 +89,19 @@ class TemplateInfo:
                 self.content.append(templateContent[line])
                 line += 1
         else:
-            print("Wrong path to file given : "+path.replace(libRootPath, ""))
+            print("Wrong path to file given : "+fileToFillPath.replace(libRootPath, ""))
             del self
             sys.exit(2)
     def isComplete(self):
-        return self.lineDirective != None and self.name != "" and self.desc != ""
+        return self.lineDirective != None and self.name != "" and self.desc != "" and self.tag != ""
     # use the display function to debug
     def displayInfo(self):
         print("-------------------------------------------")
         print("Name : "+self.getName())
-        print("Line direction on : "+str(self.getLineDirective()))
+        print("Tag : "+self.getTag())
+        print("Line directive on : "+str(self.getLineDirective()))
         print("Desc : "+self.getDesc())
+        print("Path : "+self.getPath()+self.getFileTofillName())
         print("-------------------------------------------")
         print("Content : ")
         print(repr(self.getContent()))
@@ -90,9 +118,21 @@ class TemplateInfo:
         self.name = n
     def getName(self):
         return self.name
+    def setTag(self, n):
+        self.tag = n
+    def getTag(self):
+        return self.tag
     def setDesc(self, d):
         self.desc = d
     def getDesc(self):
         return self.desc
     def getContent(self):
         return self.content
+    def setFileToFillName(self, str):
+        self.fileToFill = str
+    def getFileTofillName(self):
+        return self.fileToFill
+    def setPath(self, str):
+        self.path = str
+    def getPath(self):
+        return self.path
