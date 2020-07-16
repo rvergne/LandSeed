@@ -149,7 +149,7 @@ def includeFeature(featureTag):
 def includeTerrainMap(input, outputFile):
     # include what is necessary
     line = 0
-    line = skipUntil(input, "@FEATURES", "input/input.fs") # get the line number where is the keyword FEATURES
+    line = skipUntil(input, "@FEATURES", "input/input.frag") # get the line number where is the keyword FEATURES
 
     # add each features detected and her dependencies
     # for each not commented lines, if there is a feature in it, call includeFeature
@@ -165,7 +165,7 @@ def includeTerrainMap(input, outputFile):
 
     # if we have reached the end of the file without finding any @END tag
     if line >= len(input):
-        error("@END tag missing in input/input.fs file", 2)
+        error("@END tag missing in input/input.frag file", 2)
     writeLineDirective(1, inputPath.replace(libRootPath, ""))
     # finally copy the terrainMap function after adding all dependencies
     for line in input :
@@ -193,8 +193,8 @@ def copyAndComplete(input):
         if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
             p = re.compile("@TEMPLATE (.*)")
             templateName = p.search(input[firstLines]).group(1)
-            if not ".fs" in templateName:
-                templateName += ".fs"
+            if not ".frag" in templateName:
+                templateName += ".frag"
             if not os.path.exists(templatesDir+templateName) or not os.path.isfile(templatesDir+templateName):
                 error("@TEMPLATE declared in "+inputPath.replace(libRootPath, "")+" is not refering to any existing template.\nPlease pick a existing one in "+templatesDir.replace(libRootPath, ""), 1)
         firstLines += 1
@@ -227,8 +227,8 @@ def main():
     global inputPath
     # no parameters -> default input and output
     if len(sys.argv)==1:
-        inputPath = inputDir+"input.fs"
-        outputPath = outputDir+"output.fs"
+        inputPath = inputDir+"input.frag"
+        outputPath = outputDir+"output.frag"
         print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
         print("Default output file is taken : "+outputPath.replace(libRootPath, ""))
     # parameters given

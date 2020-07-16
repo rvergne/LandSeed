@@ -1,6 +1,6 @@
-// Define quality on a [0.0,100.0] range, 0.0 being the faster and 100.0 being the more qualitative
+// Define quality on a [0.0,100.0] range, 0.0 being the faster and 100.0 being the more qualitati*ne the wrapper (use the template file name)
 // @QUALITY 50.6
-// Define the wrapper (use the template file name)
+// Define the template (use the template file name)
 // @TEMPLATE heightmap
 // terrainMap compute the height value for the terrain on pos
 float terrainMap(vec2 pos){

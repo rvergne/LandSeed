@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-dictTagToPath = {'PLATEAU': '/src/shader_code/features/plateau.fs',
-'FBM_GRADIENT': '/src/shader_code/features/fbm_gradient.fs',
-'PHASOR': '/src/shader_code/features/phasor.fs',
-'FBM_VORONOI': '/src/shader_code/features/fbm_voronoi.fs',
-'NOISE_VORONOI_2D': '/src/shader_code/utils/voronoi.fs',
-'RANDOM_2D': '/src/shader_code/utils/random.fs',
-'RANDOM_3D': '/src/shader_code/utils/random.fs',
-'NOISE_GRADIENT_2D': '/src/shader_code/utils/gradient.fs'}
+dictTagToPath = {'PLATEAU': '/src/shader_code/features/plateau.frag',
+'FBM_GRADIENT': '/src/shader_code/features/fbm_gradient.frag',
+'FBM_VORONOI': '/src/shader_code/features/fbm_voronoi.frag',
+'PHASOR': '/src/shader_code/features/phasor.frag',
+'NOISE_VORONOI_2D': '/src/shader_code/utils/voronoi.frag',
+'RANDOM_2D': '/src/shader_code/utils/random.frag',
+'RANDOM_3D': '/src/shader_code/utils/random.frag',
+'NOISE_GRADIENT_2D': '/src/shader_code/utils/gradient.frag'}
 
 dictFeatureFunctionToTag = {'plateau': 'PLATEAU',
 'fbm_gradient': 'FBM_GRADIENT',
-'phasor': 'PHASOR',
-'fbm_voronoi': 'FBM_VORONOI'}
+'fbm_voronoi': 'FBM_VORONOI',
+'phasor': 'PHASOR'}

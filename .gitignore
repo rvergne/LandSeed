@@ -1,4 +1,4 @@
-output/output.fs
+output/output.frag
 notes.txt
 src/LibUtils/__pycache__/
 src/LibUtils/__pycache__/*
