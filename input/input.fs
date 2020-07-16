@@ -10,7 +10,7 @@ float terrainMap(vec2 pos){
   // terrain = plateau(terrain, 200.0, 25.0);
   terrain += fbm_gradient(pos, 400.0, .002, .4, 5);
   // terrain += fbm_voronoi(pos, 200.0, .004, .25, 2);
-  terrain = phasor(pos, 200.0, 0.0, 0.001, 0.002, false);
+  terrain += phasor(pos, 200.0, 0.0, 0.001, 0.002, false);
   // @END
   return terrain;
 }
