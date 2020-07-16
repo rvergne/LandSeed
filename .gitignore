@@ -1,7 +1,6 @@
 output/output.fs
 notes.txt
-GeneratorUtils/__pycache__/
-GeneratorUtils/__pycache__/*
-GeneratorUtils/shader_index.py
+src/LibUtils/__pycache__/
+src/LibUtils/__pycache__/*
 __pycache__/
 __pycache__/*
