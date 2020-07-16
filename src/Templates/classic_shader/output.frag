@@ -4,7 +4,7 @@
 // --------------USER----------------
 // @NAME Classic shader
 // @DESC {
-// Default fragment shader. Can be used with the python viewer script (in the output/ dir) to display it.
+// Default fragment shader. Can be used with the python viewer script (in the output dir) to display it.
 // }
 // --------------END-----------------
 #version 330 core

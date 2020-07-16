@@ -14,7 +14,7 @@ The idea is to use, combine or create features to generate various terrains with
 
 ## <a name="install"></a>Lib installation and requirements
 
-To install everything you need please do the following steps :
+To install everything you need, please do the following steps :
 
 - If you don't have python, pip and glfw installed (python 3+ is needed):
 ```
@@ -44,7 +44,7 @@ or
 ```
 Please give relative paths.
 
-By default, your generated shader is in the output folder with a python script allowing you to try it (assuming your're using default values and classic_shader template).
+By default, your generated shader is in the output folder.
 
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
@@ -113,15 +113,18 @@ A template should always start with the following header :
 ```
 // --------------DEV-----------------
 // @LINE_DIRECTIVE_ON BOOLEAN
+// @TAG [your template tag used in the input file]
 // --------------USER----------------
-// @NAME name of the template (currently the name of the file)
+// @NAME [name of the template]
 // @DESC {
 // Description of the template for the documentation
 // }
 // --------------END-----------------
 ```
 
-Once you finished writting your template, please call the UpdateDoc.py script to update the documentation. (Work on progress)
+The LINE_DIRECTIVE_ON enable the #line directive usage in the output shader.
+
+Once you finished writting your template, please call the UpdateDoc.py script to update the documentation.
 
 When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
 
@@ -135,5 +138,4 @@ To update the documentation with your modifications or new files, just call the 
 
 - Define in the input file if the output should give priority to quality or computation speed.
     - put tag before quality param : with a RANGE definition
-- Implement the possibility to get differents output type.
-    - choose if you put the #line directive in output depending of template  
+- Packaging

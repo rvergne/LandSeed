@@ -31,6 +31,6 @@ The name is what you have to write in the input to choose which template to use 
 
 | Name | Tag | Description |
 |-|-|-|
-| Classic shader | classic_shader |  Default fragment shader. Can be used with the python viewer script (in the output/ dir) to display it. |
+| Classic shader | classic_shader |  Default fragment shader. Can be used with the python viewer script (in the output dir) to display it. |
+| Heightmap | heightmap |  Heightmap fragment shader. Can be used with the python viewer script (in the output dir) to display it. |
 | Shadertoy | shadertoy |  Fragment shader you can copy and paste in Shadertoy |
-| heightmap | heightmap |  Heightmap fragment shader. Can be used with the python viewer script (in the output/ dir) to display it. |
