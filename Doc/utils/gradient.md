@@ -1,6 +1,6 @@
 # Gradient noise
 
-**Tag**: NOISE_GRADIENT_2D
+**Tag**: GRADIENT_2D
 
 **Category**: util
 
@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/gradient.frag
+**Path**: src/shader_code/utils/gradient_2D.frag
 

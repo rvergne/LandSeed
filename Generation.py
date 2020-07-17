@@ -11,9 +11,9 @@ if sys.version_info.minor >= 4:
     import importlib
 else:
     import imp
-from src.LibUtils.UpdateIndex import shouldUpdateIndex, createIndex
 from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, templatesDir
 from src.LibUtils.TemplateInfoClass import TemplateInfo
+from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 
 # Return code meaning :
 #   0 : everything's ok
@@ -28,27 +28,6 @@ sys.path.append(libRootPath)
 
 includedFeatures = [] # to register which feature we already added
 includedDependencies = [] # to register which dependencies we already added
-
-# check if we need to update index (function from UpdateIndex.py)
-if shouldUpdateIndex():
-    # in the shouldUpdateIndex function, if the index exist we have to import it to check that all features and utils are still there
-    # so after re create it, we need to reload the module cause it has change
-    print("Index outdated (some features or utils has changed).\nUpdating index..")
-    if os.path.exists(generatorIndex):
-        createIndex()
-        # the generatorUtils.shader_index package is imported in shouldUpdateIndex functions so we need to reload it to get last version
-        if sys.version_info.minor >= 4:
-            importlib.reload(sys.modules["src.LibUtils.shader_index"])
-        else:
-            imp.reload(sys.modules["src.LibUtils.shader_index"])
-    else:
-        createIndex()
-
-try:
-    from src.LibUtils.shader_index import dictTagToPath, dictFeatureFunctionToTag, dictTemplateTagToPath # importing pre-built dict containing key-value as TAG-PATH
-except:
-    print("Error while executing updateIndex script. Please fix it manualy")
-    sys.exit(5)
 
 def writeLineDirective(line, file):
     if template.getLineDirective():
@@ -67,19 +46,6 @@ def skipUntil(fileContent, keyword, fileName):
     else:
         return line
 
-# Copy fileContent in the outputFile starting at start line.
-# fileName is the filename where your searching with his path in the lib. For error printing
-def copyUntilEnd(fileContent, start, fileName):
-    line = start
-    writeLineDirective(start+1, fileName)
-    while (line < len(fileContent)) and (not "@END" in fileContent[line]):
-        outputFile.write(fileContent[line])
-        line += 1
-    if line >= len(fileContent):
-        error("@END tag missing in "+fileName, 1)
-    else:
-        outputFile.write("\n")
-
 # Exit the script properly with errMessage printed and the code errCode
 def error(errorMessage, errCode):
     print(errorMessage)
@@ -91,59 +57,35 @@ def error(errorMessage, errCode):
 
 # include a dependency a the dependencies of this dependency recursively
 def includeDependency(dependencyName):
-    global includedDependencies
-    # if this dependency hasn't been added yet
-    if not dependencyName in includedDependencies and not dependencyName in includedFeatures:
-        includedDependencies.append(dependencyName)
-
-        # check if the dependency name refer to an existing dependency
-        if not dependencyName in dictTagToPath:
-            error("Dependency not recognized : "+dependencyName, 3)
-        # get dependency content
-        dependencyFilePath = libRootPath+dictTagToPath[dependencyName]
-        dependencyFile = open(dependencyFilePath, "r")
-        dependencyFileContent = dependencyFile.readlines()
-        dependencyFile.close()
-        line = 0
-        line = skipUntil(dependencyFileContent, "@"+dependencyName, dependencyFilePath.replace(libRootPath, ""))
-        line += 1
-
-        # include dependencies
-        while "@INCLUDE" in dependencyFileContent[line]: # include other dependencies recursively
-            p = re.compile("@INCLUDE (.*)")
-            result = p.search(dependencyFileContent[line]).group(1)
-            includeDependency(result)
-            line += 1
-
-        # finally copy the dependency after every dependencies have been added
-        print("Including dependency "+dependencyName+"..")
-        copyUntilEnd(dependencyFileContent, line, dependencyFilePath.replace(libRootPath, ""))
-
-# include a feature, starting by including all the dependencies
-def includeFeature(featureTag):
     global includedFeatures
-    # if we didn't already add this feature
-    if not featureTag in includedFeatures:
-        includedFeatures.append(featureTag) # keep this feature in added features
-        # get feature content
-        featurePath = libRootPath+dictTagToPath[featureTag]
-        featureFile = open(featurePath, "r")
-        featureFileContent = featureFile.readlines()
-        featureFile.close()
-        line = 0
-        line = skipUntil(featureFileContent, "@"+featureTag, featurePath.replace(libRootPath, ""))
-        line += 1
+    global includedDependencies
+    dependency = None
+    # if this dependency hasn't been added yet
+    if not dependencyName.lower() in includedDependencies and not dependencyName.lower() in includedFeatures:
 
-        # include feature dependency by parsing the line (getting what is after the "@INCLUDE ")
-        while "@INCLUDE" in featureFileContent[line]:
-            p = re.compile("@INCLUDE (.*)")
-            result = p.search(featureFileContent[line]).group(1)
-            includeDependency(result)
-            line += 1
+        for feat in os.listdir(featuresDir):
+            if feat.replace(".frag", "").upper() == dependencyName.upper():
+                dependencyPath = os.path.join(featuresDir, feat)
+                dependency = ShaderFragmentInfo("feature", dependencyPath)
+                includedFeatures.append(dependencyName.lower())
+                break
+        if dependency == None:
+            for util in os.listdir(utilsDir):
+                if util.replace(".frag", "").upper() == dependencyName.upper():
+                    dependencyPath = os.path.join(utilsDir, util)
+                    dependency = ShaderFragmentInfo("utils", dependencyPath)
+                    includedDependencies.append(dependencyName.lower())
+                    break
+        if dependency == None:
+            error("Dependency not recognize : "+dependencyName, 3)
 
-        # finally copy the feature after every dependencies have been added
-        print("Including feature "+featureTag+"...")
-        copyUntilEnd(featureFileContent, line, featurePath.replace(libRootPath,""))
+        for dep in dependency.getDependencies():
+            includeDependency(dep)
+
+        print("Including "+dependency.getCat()+" "+dependencyName+"...")
+        writeLineDirective(dependency.getBeginLine(), dependencyPath.replace("libRootPath", ""))
+        outputFile.write(dependency.getFunctionCode())
+
 
 # start including input.
 # Run two times through the input file's line
@@ -152,7 +94,7 @@ def includeFeature(featureTag):
 def includeTerrainMap(input, outputFile):
     # include what is necessary
     line = 0
-    line = skipUntil(input, "@FEATURES", "input/input.frag") # get the line number where is the keyword FEATURES
+    line = skipUntil(input, "@FEATURES", inputPath) # get the line number where is the keyword FEATURES
 
     # add each features detected and her dependencies
     # for each not commented lines, if there is a feature in it, call includeFeature
@@ -160,10 +102,11 @@ def includeTerrainMap(input, outputFile):
          #if the line is not commented
         if not "//" in input[line].replace(" ", "")[0:2]:
             # check every features
-            for feature in dictFeatureFunctionToTag :
+            for featureFile in os.listdir(featuresDir) :
+                feature = featureFile.replace(".frag","")
                 # if the feature is in the line, include it
                 if feature in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(feature)+len(feature)]=="("):
-                    includeFeature(dictFeatureFunctionToTag[feature])
+                    includeDependency(feature)
         line +=1
 
     # if we have reached the end of the file without finding any @END tag
@@ -185,7 +128,7 @@ def copyAndComplete(input):
     templateName = None
     qualityValue = None
     firstLines = 0
-    while qualityValue == None or templateName == None:
+    while firstLines < len(input) and (qualityValue == None or templateName == None):
         if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
             p = re.compile("@QUALITY (.*)")
             qualityValue = p.search(input[firstLines]).group(1)
@@ -196,19 +139,25 @@ def copyAndComplete(input):
         if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
             p = re.compile("@TEMPLATE (.*)")
             templateName = p.search(input[firstLines]).group(1)
-            if not templateName in dictTemplateTagToPath:
+            if not templateName in os.listdir(templatesDir):
                 error("Unknown template name : "+templateName, 3)
         firstLines += 1
+    if firstLines >= len(input):
+        if templateName == None:
+            error("Missing template declaration in input file.", 1)
+        if qualityValue == None:
+            error("Missing quality declaration in input file.", 1)
     print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
     print("Template : "+templateName)
 
-    templateDirPath=libRootPath + dictTemplateTagToPath[templateName]
+    templateDirPath=os.path.join(templatesDir, templateName)
+
     template = TemplateInfo(templateDirPath)
     # getting template content
     emptyShaderContent = template.getContent()
     shutil.copytree(templateDirPath, outputPath)
 
-    outputFilePath=outputPath+(template.getPathToFileToFill().replace(template.getPath(), ""))+template.getFileTofillName()
+    outputFilePath=os.path.join(outputPath,(template.getPathToFileToFill().replace(template.getPath(), "")),template.getFileTofillName())
 
     # if output file exists, remove it, then open it
     if os.path.exists(outputFilePath):
@@ -230,10 +179,10 @@ def copyAndComplete(input):
     outputFile.close()
 
 def main():
+    global outputPath # path to the output dir
+    global outputFile # output file (the one where @TERRAIN_MAP is)
+    global inputPath # path to the input file
     # user can enter a personnal input file or use the default one
-    global outputPath
-    global outputFile
-    global inputPath
     # no parameters -> default input and output
     if len(sys.argv)==1:
         inputPath = inputDir+"input.frag"

@@ -15,7 +15,7 @@
 // -------------END------------------
 
 // @FBM_GRADIENT
-// @INCLUDE NOISE_GRADIENT_2D
+// @INCLUDE GRADIENT_2D
 float fbm_gradient(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
         float a = amplitude;
         vec2 x = p*vec2(frequency,frequency);

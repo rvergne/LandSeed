@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @TAG NOISE_GRADIENT_2D
+// @TAG GRADIENT_2D
 // @FUNCTION_NAME gradient
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
@@ -10,7 +10,7 @@
 // }
 // -------------END------------------
 
-// @NOISE_GRADIENT_2D
+// @GRADIENT_2D
 // @INCLUDE RANDOM_2D
 float gradient(vec2 st) {
     vec2 i = floor(st);

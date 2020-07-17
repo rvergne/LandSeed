@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @TAG NOISE_VORONOI_2D
+// @TAG VORONOI_2D
 // @FUNCTION_NAME voronoi
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
@@ -10,7 +10,7 @@
 // }
 // -------------END------------------
 
-// @NOISE_VORONOI_2D
+// @VORONOI_2D
 // @INCLUDE RANDOM_2D
 float voronoi(in vec2 x) {
 

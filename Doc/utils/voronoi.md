@@ -1,6 +1,6 @@
 # Voronoi noise
 
-**Tag**: NOISE_VORONOI_2D
+**Tag**: VORONOI_2D
 
 **Category**: util
 
@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/voronoi.frag
+**Path**: src/shader_code/utils/voronoi_2D.frag
 

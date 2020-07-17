@@ -10,8 +10,8 @@ except Exception as e:
 
 # class used to get all inforamtions about a feaeture or a util
 class ShaderFragmentInfo:
-    # initialize the object by reading the file path, from the line beginLine (for the case where there is more than one fragment in the same file)
-    def __init__(self, featOrUtil, path, beginLine):
+    # initialize the object by reading the file path
+    def __init__(self, featOrUtil, path):
         self.cat = featOrUtil # 2 values : "feature" or "util"
         self.path = path
         self.tag = ""
@@ -20,8 +20,9 @@ class ShaderFragmentInfo:
         self.name = ""
         self.spec = ""
         self.tagPresence = False
-        self.beginLine = beginLine
-        self.lastLine = 0
+        self.dependencies = []
+        self.functionCode = ""
+        self.beginLine = 0
         self.extractInfo(path)
     # extract all info from the file define by path
     def extractInfo(self, path):
@@ -29,7 +30,7 @@ class ShaderFragmentInfo:
             fragmentFile = open(path, "r")
             fragmentContent = fragmentFile.readlines()
             fragmentFile.close()
-            for line in range(self.beginLine, len(fragmentContent)):
+            for line in range(len(fragmentContent)):
                 if "@TAG" in fragmentContent[line] and fragmentContent[line][fragmentContent[line].find("@TAG")+4] != "\n":
                     p = re.compile("@TAG (.*)")
                     tag = p.search(fragmentContent[line]).group(1)
@@ -64,20 +65,30 @@ class ShaderFragmentInfo:
                         print("Header badly formated in "+path.replace(libRootPath, ""))
                         del self
                         sys.exit(1)
-            while (line < len(fragmentContent)) and (not "@END" in fragmentContent[line]) and not "@TAG" in fragmentContent[line]: # TODO add check next feature
+            while (line < len(fragmentContent)) and (not self.tagPresence):
                 if "@"+self.getTag() in fragmentContent[line]:
                     self.tagPresence = True
                 line += 1
-            if line >= len(fragmentContent) or "@TAG" in fragmentContent[line]:
-                print("Missing @END tag in "+path.replace(libRootPath, ""))
-                del self
-                sys.exit(1)
             if not self.tagPresence:
                 print("Missing starting tag : @"+self.tag+" before function implementation start in "+path.replace(libRootPath, ""))
                 del self
                 sys.exit(1)
+
+            while "@INCLUDE" in fragmentContent[line]:
+                p = re.compile("@INCLUDE (.*)") # TODO check case where #INCLUDE
+                result = p.search(fragmentContent[line]).group(1)
+                self.dependencies.append(result)
+                line += 1
+            self.beginLine = line
+            while line < len(fragmentContent) and not "@END" in fragmentContent[line]:
+                self.functionCode += fragmentContent[line]
+                line += 1
+
+            if line >= len(fragmentContent):
+                print("Missing @END tag in "+path.replace(libRootPath, ""))
+                del self
+                sys.exit(1)
             line +=1
-            self.lastLine = line
         else:
             print("Wrong path to file given : "+path.replace(libRootPath, ""))
             del self
@@ -108,8 +119,12 @@ class ShaderFragmentInfo:
         return self.path.replace(libRootPath, "")
     def getAbsolutePath(self):
         return self.path
-    def getLastLine(self):
-        return self.lastLine
+    def getDependencies(self):
+        return self.dependencies
+    def getBeginLine(self):
+        return self.beginLine
+    def getFunctionCode(self):
+        return self.functionCode
     # check if the object contains all the informations it should
     def isHeaderComplete(self):
         if not (self.tag == "" or self.funcName == "" or self.signature == "" or self.name == "" or self.spec == ""):
@@ -137,14 +152,3 @@ class ShaderFragmentInfo:
         str += "**Spec**: "+self.spec+"\n\n"
         str += "**Path**: "+self.path.replace(libRootPath, "")+"\n\n"
         return str
-    # return how much feature or utils there is in the file by counting the number of "@TAG" in the file
-    @staticmethod
-    def getFragmentCounter(path):
-        c=0
-        file = open(path, "r")
-        content = file.readlines()
-        file.close()
-        for line in content:
-            if "@TAG" in line:
-                c += 1
-        return c
