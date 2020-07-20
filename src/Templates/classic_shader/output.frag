@@ -74,7 +74,7 @@ Ray generateRay(vec2 p){
 
   // camera position
   float d = DP/2.;
-  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+1000,d*sin(6.0*m.x) )+moveFact*time;
+  vec3 ro = vec3(d*cos(6.0*m.x),(DP/2.0)*(m.y*4.)+300,d*sin(6.0*m.x) )+moveFact*time;
 
   // target point
   vec3 ta = vec3(0.0,(DP/20.)+(AMP/3)+100,0.0)+moveFact*time;

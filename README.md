@@ -2,7 +2,7 @@
 
 LandSeed is a python library used to generate fragments shaders computing procedural terrains.
 
-The idea is to use, combine or create features to generate various terrains with a single height function. The height mapping function will be used inside a terrain marcher to give the final result.
+The idea is to use, combine or create features to generate various terrains with a single height function. The height mapping function will be used inside a templates to give the final result.
 
 ## Table of content
 
@@ -38,9 +38,9 @@ To generate the shader, use the Generate.py python script.
 
 There is two ways to use the generation script :
 ```
-./Generation.py or python Generation.py
+./Generation.py
 or
-./Generation.py [input path] [output path] or python Generation.py [input path] [output path]
+./Generation.py [input path] [output path]
 ```
 Please give relative paths.
 
@@ -59,7 +59,8 @@ To use a feature, you just have to call the function in the input without doing 
 
 ### Declare a new feature<a name="newfeature"></a>
 
-Create a new file in shaders/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.
+Create a new file in src/shader_code/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.  
+PLEASE USE THE MAIN FUNCTION NAME OF YOUR FEATURE AS TAG AND FILE NAME !! (your_function.frag as file name)
 
 Put your feature code between your tag and @END tag. You can use any existing util or feature adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
 ```
@@ -85,7 +86,7 @@ To know the tag of the feature you want to use, please refer to the [documentati
 
 ### Declare a new utils function
 
-Same operating mode as feature but are stored in the shaders/utils/ folder.
+Same operating mode as feature but are stored in the src/shader_code/utils/ folder.
 
 ## Common Header
 See examples in any files using this header.
@@ -107,7 +108,7 @@ See examples in any files using this header.
 
 ## <a name="template"></a>Templates
 
-Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the prupose of every templates.
+Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the purpose of every templates.
 
 A template should always start with the following header :
 ```

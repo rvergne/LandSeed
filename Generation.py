@@ -83,7 +83,7 @@ def includeDependency(dependencyName):
             includeDependency(dep)
 
         print("Including "+dependency.getCat()+" "+dependencyName+"...")
-        writeLineDirective(dependency.getBeginLine(), dependencyPath.replace("libRootPath", ""))
+        writeLineDirective(dependency.getBeginLine()+1, dependencyPath.replace(libRootPath, ""))
         outputFile.write(dependency.getFunctionCode())
 
 
@@ -117,7 +117,7 @@ def includeTerrainMap(input, outputFile):
     for line in input :
         outputFile.write(line)
     outputFile.seek(0) # used in order to readlines again to count the number of lines
-    writeLineDirective(len(outputFile.readlines())+2, outputPath.replace(libRootPath, ""))
+    writeLineDirective(len(outputFile.readlines())+2, outputFilePath.replace(libRootPath, ""))
     outputFile.write("\n")
 
 
@@ -125,6 +125,7 @@ def includeTerrainMap(input, outputFile):
 # first analyze input file to get template and quality
 def copyAndComplete(input):
     global template
+    global outputFilePath
     templateName = None
     qualityValue = None
     firstLines = 0
