@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @TAG GRADIENT_2D
+// @TAG GRADIENT
 // @FUNCTION_NAME gradient
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
@@ -10,8 +10,8 @@
 // }
 // -------------END------------------
 
-// @GRADIENT_2D
-// @INCLUDE RANDOM_2D
+// @GRADIENT
+// @INCLUDE RAND2
 float gradient(vec2 st) {
     vec2 i = floor(st);
     vec2 f = fract(st);

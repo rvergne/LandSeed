@@ -27,17 +27,17 @@ class TemplateInfo:
         # self.displayInfo()
     def findFileToFill(self, path):
         for fname in os.listdir(path):
-            if os.path.isfile(path+fname):
-                with open(path+fname, "r") as f:
+            if os.path.isfile(os.path.join(path,fname)):
+                with open(os.path.join(path,fname), "r") as f:
                     for line in f:
                         if '@TERRAIN_MAP' in line:
                             self.setFileToFillName(fname)
                             self.setPathToFileToFill(path)
                             return
-            elif os.path.isdir(path+fname):
+            elif os.path.isdir(os.path.join(path,fname)):
                 if not fname[-1:]=="/":
                     fname += "/"
-                self.findFileToFill(path+fname)
+                self.findFileToFill(os.path.join(path,fname))
                 if self.getFileTofillName() != "":
                     break
         return

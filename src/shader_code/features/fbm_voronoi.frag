@@ -15,7 +15,7 @@
 // -------------END------------------
 
 // @FBM_VORONOI
-// @INCLUDE VORONOI_2D
+// @INCLUDE VORONOI
 float fbm_voronoi(in vec2 p,in float amplitude,in float frequency,in float persistence, in int nboctaves) {
         float a = amplitude;
         vec2 x = p*vec2(frequency,frequency);

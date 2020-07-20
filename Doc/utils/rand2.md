@@ -1,6 +1,6 @@
 # 2D hash function
 
-**Tag**: RANDOM_2D
+**Tag**: RAND2
 
 **Category**: util
 
@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/random_2D.frag
+**Path**: src/shader_code/utils/rand2.frag
 

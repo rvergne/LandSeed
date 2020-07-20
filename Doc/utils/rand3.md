@@ -1,6 +1,6 @@
 # 3D hash function
 
-**Tag**: RANDOM_3D
+**Tag**: RAND3
 
 **Category**: util
 
@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/random_3D.frag
+**Path**: src/shader_code/utils/rand3.frag
 

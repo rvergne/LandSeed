@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @TAG RANDOM_2D
+// @TAG RAND2
 // @FUNCTION_NAME rand2
 // @SIGNATURE (vec2 st) -> vec2
 // -------------USER-----------------
@@ -10,7 +10,7 @@
 // }
 // -------------END------------------
 
-// @RANDOM_2D
+// @RAND2
 // Random function (vec2) -> [0,1]
 vec2 rand2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),

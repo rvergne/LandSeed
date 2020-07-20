@@ -92,19 +92,19 @@ def getInfo():
 
     featuresDirContent = os.listdir(featuresDir)
     for feature in featuresDirContent:
-        currentFilePath = featuresDir+feature
+        currentFilePath = os.path.join(featuresDir,feature)
         currentFragment = ShaderFragmentInfo("feature", currentFilePath)
         features.append(currentFragment)
 
     utilsDirContent = os.listdir(utilsDir)
     for util in utilsDirContent:
-        currentFilePath = utilsDir+util
+        currentFilePath = os.path.join(utilsDir,util)
         currentFragment = ShaderFragmentInfo("util", currentFilePath)
         utils.append(currentFragment)
 
     templatesDirContent = os.listdir(templatesDir)
     for template in templatesDirContent:
-        currentFilePath = templatesDir+template
+        currentFilePath = os.path.join(templatesDir,template)
         currentTemplate = TemplateInfo(currentFilePath)
         templates.append(currentTemplate)
 

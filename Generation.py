@@ -11,7 +11,7 @@ if sys.version_info.minor >= 4:
     import importlib
 else:
     import imp
-from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, emptyShader, generatorIndex, templatesDir
+from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
 from src.LibUtils.TemplateInfoClass import TemplateInfo
 from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 
@@ -185,15 +185,15 @@ def main():
     # user can enter a personnal input file or use the default one
     # no parameters -> default input and output
     if len(sys.argv)==1:
-        inputPath = inputDir+"input.frag"
+        inputPath = os.path.join(inputDir,"input.frag")
         outputPath = outputDir
         print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
         print("Default output directory is taken : "+outputPath.replace(libRootPath, ""))
     # parameters given
     elif len(sys.argv)==3:
-        inputPath = libRootPath+sys.argv[1]
+        inputPath = os.path.join(libRootPath,sys.argv[1])
         print("Input file : "+inputPath)
-        outputPath = libRootPath+sys.argv[2]
+        outputPath = os.path.join(libRootPath,sys.argv[2])
         print("Output file : "+outputPath)
     # wrong number of parameters
     else:

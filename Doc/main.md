@@ -18,10 +18,10 @@ Utils are the functions used to develop features.
 
 | Function Name | Full Name | Tag |
 |-|-|-|
-| [gradient](utils/gradient.md) | Gradient noise | GRADIENT_2D |
-| [rand2](utils/rand2.md) | 2D hash function | RANDOM_2D |
-| [rand3](utils/rand3.md) | 3D hash function | RANDOM_3D |
-| [voronoi](utils/voronoi.md) | Voronoi noise | VORONOI_2D |
+| [gradient](utils/gradient.md) | Gradient noise | GRADIENT |
+| [rand2](utils/rand2.md) | 2D hash function | RAND2 |
+| [rand3](utils/rand3.md) | 3D hash function | RAND3 |
+| [voronoi](utils/voronoi.md) | Voronoi noise | VORONOI |
 
 
 ## Templates

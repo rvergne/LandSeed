@@ -1,5 +1,5 @@
 // --------------DEV-----------------
-// @TAG VORONOI_2D
+// @TAG VORONOI
 // @FUNCTION_NAME voronoi
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
@@ -10,8 +10,8 @@
 // }
 // -------------END------------------
 
-// @VORONOI_2D
-// @INCLUDE RANDOM_2D
+// @VORONOI
+// @INCLUDE RAND2
 float voronoi(in vec2 x) {
 
   vec2 p = floor(x);
