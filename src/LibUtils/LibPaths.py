@@ -2,7 +2,7 @@
 import os
 import pathlib
 
-libRootPath = os.path.dirname(os.path.realpath(__file__+"/../../"))+"/"
+libRootPath = os.path.dirname(os.path.realpath(__file__+"/../../"))
 libSrc = os.path.join(libRootPath,"src/")
 inputDir = os.path.join(libRootPath, "input/")
 outputDir = os.path.join(libRootPath,"output/")

@@ -8,9 +8,10 @@ import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
 
+libRootPath = os.path.dirname(os.path.realpath(__file__+"../../"))
 path = os.path.dirname(os.path.realpath(__file__))+"/"
-vs_file = path+"vertex_shader.vert"
-fs_file = path+"output.frag"
+vs_file = os.path.join(path,"vertex_shader.vert")
+fs_file = os.path.join(path,"output.frag")
 
 # ------------ low level OpenGL object wrappers ----------------------------
 class Shader:
@@ -124,6 +125,7 @@ class Viewer:
         print('OpenGL', GL.glGetString(GL.GL_VERSION).decode() + ', GLSL',
               GL.glGetString(GL.GL_SHADING_LANGUAGE_VERSION).decode() +
               ', Renderer', GL.glGetString(GL.GL_RENDERER).decode())
+        print("To see your changes in this file, press R key to reload "+fs_file.replace(libRootPath, ""))
 
         # initialize GL by setting viewport and default render characteristics
         GL.glDisable(GL.GL_DEPTH_TEST) # no need for depth test (just a fragment shader on the entire screen here)
