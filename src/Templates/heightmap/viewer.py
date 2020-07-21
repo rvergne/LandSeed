@@ -109,6 +109,9 @@ class Viewer:
 
     def __init__(self, width=640, height=480):
         self.size = np.array([width,height])
+        self.pause = False
+        self.reload = False
+        self.begin = None
 
         # version hints: create GL window with >= OpenGL 3.3 and core profile
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
@@ -125,6 +128,7 @@ class Viewer:
         print('OpenGL', GL.glGetString(GL.GL_VERSION).decode() + ', GLSL',
               GL.glGetString(GL.GL_SHADING_LANGUAGE_VERSION).decode() +
               ', Renderer', GL.glGetString(GL.GL_RENDERER).decode())
+        print("To pause or resume the renderer, press P")
         print("To see your changes in this file, press R key to reload "+fs_file.replace(libRootPath, ""))
 
         # initialize GL by setting viewport and default render characteristics
@@ -147,23 +151,38 @@ class Viewer:
         """ window size update => update viewport to new framebuffer size """
         self.size = np.array([width,height])
         GL.glViewport(0, 0, *self.size)
-
-    def run(self):
-        """ main render loop for this OpenGL window """
-        begin = time.time()
-        while not glfw.window_should_close(self.win):
+        if self.pause:
             # clear draw buffer and depth buffer
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             # draw our square, mapped on the entire screen
             self.square.draw(self.ray_tracer,self.mouse_pos+self.mouse_offset,
-                             time.time()-begin,float(self.size[1])/float(self.size[0]))
+                             time.time()-self.begin,float(self.size[1])/float(self.size[0]))
+
+            # flush render commands, and swap draw buffers
+            glfw.swap_buffers(self.win)
+
+
+    def run(self):
+        """ main render loop for this OpenGL window """
+        self.begin = time.time()
+        while not glfw.window_should_close(self.win):# or self.pause:
+            # clear draw buffer and depth buffer
+            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+
+            # draw our square, mapped on the entire screen
+            self.square.draw(self.ray_tracer,self.mouse_pos+self.mouse_offset,
+                             time.time()-self.begin,float(self.size[1])/float(self.size[0]))
 
             # flush render commands, and swap draw buffers
             glfw.swap_buffers(self.win)
 
             # Poll for and process events
             glfw.poll_events()
+            self.reload = False
+            while self.pause and not glfw.window_should_close(self.win) and not self.reload:
+                glfw.poll_events()
+
 
     def on_key(self, _win, key, _scancode, action, _mods):
         if action == glfw.PRESS:
@@ -174,19 +193,30 @@ class Viewer:
             """ 'R' reloads shader files """
             if key == key == glfw.KEY_R:
                 self.ray_tracer = Shader(vs_file, fs_file)
+                self.reload = True
                 if self.ray_tracer.glid:
                     print('Shader successfully reloaded.')
 
+            # TEST
+            if key == key == glfw.KEY_P:
+                self.pause = not self.pause
+                if self.pause:
+                    print("Pause on")
+                else:
+                    print("Pause off")
+
     def on_mouse_button(self, _win, _button, action, _mods):
-        if action == glfw.PRESS:
-            self.mouse_pos_click = np.array(glfw.get_cursor_pos(self.win))/self.size
-        elif action == glfw.RELEASE:
-            self.mouse_pos += self.mouse_offset
-            self.mouse_offset = np.array([0,0])
+        if not self.pause:
+            if action == glfw.PRESS:
+                self.mouse_pos_click = np.array(glfw.get_cursor_pos(self.win))/self.size
+            elif action == glfw.RELEASE:
+                self.mouse_pos += self.mouse_offset
+                self.mouse_offset = np.array([0,0])
 
     def on_mouse_pos(self, _win, x, y):
-        if glfw.get_mouse_button(self.win,glfw.MOUSE_BUTTON_LEFT)==glfw.PRESS:
-            self.mouse_offset = (([x,y]/self.size)-self.mouse_pos_click)*[2,-2]
+        if not self.pause:
+            if glfw.get_mouse_button(self.win,glfw.MOUSE_BUTTON_LEFT)==glfw.PRESS:
+                self.mouse_offset = (([x,y]/self.size)-self.mouse_pos_click)*[2,-2]
 
 # -------------- main program and scene setup --------------------------------
 def main():
