@@ -58,7 +58,7 @@ float rayMarchTerrain(Ray r){
 
   }
 
-  return -1;
+  return -1.;
 
 }
 
