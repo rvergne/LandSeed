@@ -97,6 +97,7 @@ See examples in any files using this header.
 // @SIGNATURE (param1_type param1_name,...) -> function_result_type
 // -------------USER-----------------
 // @NAME name used for user doc
+// @SHORT short description
 // @SPEC {
 // definition of the function functionnement, effect...everything needed to use it
 // param1_name : description of parameter 1
