@@ -3,7 +3,8 @@
 // @FUNCTION_NAME rand2
 // @SIGNATURE (vec2 st) -> vec2
 // -------------USER-----------------
-// @NAME 2D hash function
+// @NAME Hash 2D
+// @SHORT A 2D hash function
 // @SPEC {
 // compute a "random" vec2. Values will be in [0,1]
 // st : vec2 used as seed. Usually correspond to the terrain position

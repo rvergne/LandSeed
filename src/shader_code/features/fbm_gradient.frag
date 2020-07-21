@@ -4,6 +4,7 @@
 // @SIGNATURE (vec2 pos, float amplitude, float frequency, float persistence, int nb_octave) -> float
 // -------------USER-----------------
 // @NAME Fractal gradient
+// @SHORT Compute fractalized gradient
 // @SPEC {
 // Compute the gradient fractal brownian motion that will compute different level of a gradient noise and add them to create a final noise.
 // pos : position of the terrain where you want to compute the height

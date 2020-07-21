@@ -3,7 +3,8 @@
 // @FUNCTION_NAME rand3
 // @SIGNATURE (vec3 st) -> vec3
 // -------------USER-----------------
-// @NAME 3D hash function
+// @NAME Hash 3D
+// @SHORT A 3D hash function
 // @SPEC {
 // compute a "random" vec3. Values will be in [0,1]
 // st : vec3 used as seed. Usually correspond to the terrain position

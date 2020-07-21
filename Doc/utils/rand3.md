@@ -1,4 +1,4 @@
-# 3D hash function
+# Hash 3D
 
 **Tag**: RAND3
 

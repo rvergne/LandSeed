@@ -1,4 +1,4 @@
-# 2D hash function
+# Hash 2D
 
 **Tag**: RAND2
 

@@ -18,6 +18,7 @@ class ShaderFragmentInfo:
         self.funcName = ""
         self.signature = ""
         self.name = ""
+        self.short = ""
         self.spec = ""
         self.tagPresence = False
         self.dependencies = []
@@ -58,6 +59,9 @@ class ShaderFragmentInfo:
                         spec += "- "+fragmentContent[line].replace("// ", "")+"\n"
                         line += 1
                     self.setSpec(spec)
+                elif "@SHORT" in fragmentContent[line] and fragmentContent[line][fragmentContent[line].find("@SHORT")+6] != "\n":
+                    p = re.compile("@SHORT (.*)")
+                    self.setShortDesc(p.search(fragmentContent[line]).group(1))
                 if "//END" in fragmentContent[line].replace(" ","").replace("-", ""):
                     if self.isHeaderComplete():
                         break
@@ -125,9 +129,13 @@ class ShaderFragmentInfo:
         return self.beginLine
     def getFunctionCode(self):
         return self.functionCode
+    def getShortDesc(self):
+        return self.short
+    def setShortDesc(self, str):
+        self.short = str
     # check if the object contains all the informations it should
     def isHeaderComplete(self):
-        if not (self.tag == "" or self.funcName == "" or self.signature == "" or self.name == "" or self.spec == ""):
+        if not (self.tag == "" or self.funcName == "" or self.signature == "" or self.name == "" or self.spec == "" or self.short == ""):
             return True
         return False
     # display informations about the fragment. Used to debug
@@ -141,7 +149,8 @@ class ShaderFragmentInfo:
         print("Spec: "+self.spec)
         print("Tag presence: "+str(self.tagPresence))
         print("-----------------------------------------")
-    # convert the object to markdown format for the documentation
+    
+    # convert the object to markdown format for the documentation page
     def toMD(self):
         str = ""
         str += "# "+self.name+"\n\n"

@@ -4,6 +4,7 @@
 // @SIGNATURE (vec2 pos, float amplitude, float angle, float frequency, float bandwidth, bool normalized) -> float
 // -------------USER-----------------
 // @NAME Phasor noise height map
+// @SHORT Compute phasor noise hight map
 // @SPEC {
 // Compute a height map using procedural phasor noise with a sine profile.
 // pos : current terrain position

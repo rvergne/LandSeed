@@ -4,6 +4,7 @@
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
 // @NAME Gradient noise
+// @SHORT Compute gradient noise
 // @SPEC {
 // Compute the gradient noise with a given vec2 seed.
 // st : vec2 used as seed for the noise. Usually correspond to the terrain position

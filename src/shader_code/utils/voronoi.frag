@@ -4,6 +4,7 @@
 // @SIGNATURE (vec2 st) -> float
 // -------------USER-----------------
 // @NAME Voronoi noise
+// @SHORT Compute voronoi noise
 // @SPEC {
 // Compute the voronoi noise with a given vec2 seed.
 // st : vec2 used as seed for the noise. Usually correspond to the terrain position

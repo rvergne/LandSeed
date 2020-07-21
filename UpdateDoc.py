@@ -53,24 +53,24 @@ def createMainDocPage():
     mainFile.write("\n\n")
     mainFile.write("Features are the main functions you can use in your terrainMap fonction (inside your input file) without any import.")
     mainFile.write("\n\n")
-    mainFile.write("| Function Name | Full Name | Tag |\n")
+    mainFile.write("| Function Name | Full Name | Short description |\n")
     mainFile.write("|-|-|-|\n")
 
     for feature in features:
         completeDocPath="(features/"+feature.getFunctionName()+".md)"
-        mainFile.write("| ["+feature.getFunctionName()+"]"+completeDocPath+" | "+feature.getName()+" | "+feature.getTag()+" |\n")
+        mainFile.write("| ["+feature.getFunctionName()+"]"+completeDocPath+" | "+feature.getName()+" | "+feature.getShortDesc()+" |\n")
 
     mainFile.write("\n\n")
     mainFile.write("## Utils")
     mainFile.write("\n\n")
     mainFile.write("Utils are the functions used to develop features.")
     mainFile.write("\n\n")
-    mainFile.write("| Function Name | Full Name | Tag |\n")
+    mainFile.write("| Function Name | Full Name | Short description |\n")
     mainFile.write("|-|-|-|\n")
 
     for util in utils:
         completeDocPath="(utils/"+util.getFunctionName()+".md)"
-        mainFile.write("| ["+util.getFunctionName()+"]"+completeDocPath+" | "+util.getName()+" | "+util.getTag()+" |\n")
+        mainFile.write("| ["+util.getFunctionName()+"]"+completeDocPath+" | "+util.getName()+" | "+util.getShortDesc()+" |\n")
 
     mainFile.write("\n\n")
     mainFile.write("## Templates")
