@@ -3,12 +3,15 @@ import sys
 
 # External, non-python built-in modules
 import os                          # exit, system arguments
+import re
 import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
-
 libRootPath = os.path.dirname(os.path.realpath(__file__+"../../"))
+sys.path.append(libRootPath)
+from Generation import generate
+
 path = os.path.dirname(os.path.realpath(__file__))+"/"
 vs_file = os.path.join(path,"vertex_shader.vert")
 fs_file = os.path.join(path,"output.frag")
@@ -130,6 +133,7 @@ class Viewer:
               ', Renderer', GL.glGetString(GL.GL_RENDERER).decode())
         print("To pause or resume the renderer, press P")
         print("To see your changes in this file, press R key to reload "+fs_file.replace(libRootPath, ""))
+        print("To generate again with the same input file and reload, press G")
 
         # initialize GL by setting viewport and default render characteristics
         GL.glDisable(GL.GL_DEPTH_TEST) # no need for depth test (just a fragment shader on the entire screen here)
@@ -147,36 +151,29 @@ class Viewer:
         self.mouse_pos_click = np.array([0.0,0.0])
         self.mouse_offset = np.array([0.0,0.0])
 
+    def reload_image(self):
+        # clear draw buffer and depth buffer
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+
+        # draw our square, mapped on the entire screen
+        self.square.draw(self.ray_tracer,self.mouse_pos+self.mouse_offset,
+                         time.time()-self.begin,float(self.size[1])/float(self.size[0]))
+
+        # flush render commands, and swap draw buffers
+        glfw.swap_buffers(self.win)
+
     def on_size(self, win, width, height):
         """ window size update => update viewport to new framebuffer size """
         self.size = np.array([width,height])
         GL.glViewport(0, 0, *self.size)
-        if self.pause:
-            # clear draw buffer and depth buffer
-            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-
-            # draw our square, mapped on the entire screen
-            self.square.draw(self.ray_tracer,self.mouse_pos+self.mouse_offset,
-                             time.time()-self.begin,float(self.size[1])/float(self.size[0]))
-
-            # flush render commands, and swap draw buffers
-            glfw.swap_buffers(self.win)
+        self.reload = True
 
 
     def run(self):
         """ main render loop for this OpenGL window """
         self.begin = time.time()
         while not glfw.window_should_close(self.win):# or self.pause:
-            # clear draw buffer and depth buffer
-            GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-
-            # draw our square, mapped on the entire screen
-            self.square.draw(self.ray_tracer,self.mouse_pos+self.mouse_offset,
-                             time.time()-self.begin,float(self.size[1])/float(self.size[0]))
-
-            # flush render commands, and swap draw buffers
-            glfw.swap_buffers(self.win)
-
+            self.reload_image()
             # Poll for and process events
             glfw.poll_events()
             self.reload = False
@@ -197,13 +194,30 @@ class Viewer:
                 if self.ray_tracer.glid:
                     print('Shader successfully reloaded.')
 
-            # TEST
             if key == key == glfw.KEY_P:
                 self.pause = not self.pause
                 if self.pause:
                     print("Pause on")
                 else:
                     print("Pause off")
+
+            if key == glfw.KEY_G:
+                f = open(fs_file, "r")
+                l = f.readline()
+                f.close()
+                p = re.compile("@FROM (.*)")
+                input_path = p.search(l).group(1)
+                output_dir = path.replace(libRootPath, "")
+                if input_path[0] == "/":
+                    input_path = input_path[1:]
+                if output_dir[0] == "/":
+                    output_dir = output_dir[1:]
+                generate(input_path, output_dir)
+                self.ray_tracer = Shader(vs_file, fs_file)
+                self.reload = True
+                if self.ray_tracer.glid:
+                    print('Shader successfully reloaded.')
+
 
     def on_mouse_button(self, _win, _button, action, _mods):
         if not self.pause:

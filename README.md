@@ -42,7 +42,7 @@ There is two ways to use the generation script :
 or
 ./Generation.py [input path] [output path]
 ```
-Please give relative paths.
+Please give paths relative to lib root.
 
 By default, your generated shader is in the output folder.
 

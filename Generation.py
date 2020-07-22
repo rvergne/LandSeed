@@ -107,6 +107,11 @@ def includeTerrainMap(input, outputFile):
                 # if the feature is in the line, include it
                 if feature in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(feature)+len(feature)]=="("):
                     includeDependency(feature)
+            for utilFile in os.listdir(utilsDir) : # check util after feature
+                util = utilFile.replace(".frag","")
+                # if the util is in the line, include it
+                if util in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(util)+len(util)]=="("):
+                    includeDependency(util)
         line +=1
 
     # if we have reached the end of the file without finding any @END tag
@@ -166,6 +171,7 @@ def copyAndComplete(input):
     global outputFile
     outputFile = open(outputFilePath, "w+")
 
+    outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")
     # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
@@ -178,6 +184,42 @@ def copyAndComplete(input):
         else :
             includeTerrainMap(input, outputFile)
     outputFile.close()
+
+# in order to make the genreation from another file
+def generate(input, output):
+    global outputPath # path to the output dir
+    global outputFile # output file (the one where @TERRAIN_MAP is)
+    global inputPath # path to the input file
+    global includedFeatures
+    global includedDependencies
+
+    includedFeatures = [] # to register which feature we already added
+    includedDependencies = [] # to register which dependencies we already added
+
+    inputPath = os.path.join(libRootPath,input)
+    print("Input file : "+inputPath)
+    outputPath = os.path.join(libRootPath,output)
+    print("Output file : "+outputPath)
+
+    # checking that input exist and that it's a file
+    if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
+        print("Please enter a valid or existing input file.")
+        sys.exit(4)
+
+    # opening and getting input file content
+    inputFile = open(inputPath, "r")
+    inputFileContent = inputFile.readlines()
+    inputFile.close()
+
+    outputFile = None
+
+    if os.path.exists(outputPath):
+        shutil.rmtree(outputPath)
+
+    # fulfill template with input file and dependencies
+    copyAndComplete(inputFileContent)
+
+    return 0
 
 def main():
     global outputPath # path to the output dir
@@ -226,4 +268,5 @@ def main():
     # exit
     sys.exit(0)
 
-main()
+if __name__=="__main__":
+    main()
