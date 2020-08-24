@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/rand3.frag
+**Path**: /src/shader_code/utils/rand3.frag
 

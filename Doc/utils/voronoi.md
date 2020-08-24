@@ -14,5 +14,5 @@
 
 
 
-**Path**: src/shader_code/utils/voronoi.frag
+**Path**: /src/shader_code/utils/voronoi.frag
 

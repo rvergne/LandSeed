@@ -22,5 +22,5 @@
 
 
 
-**Path**: src/shader_code/features/fbm_voronoi.frag
+**Path**: /src/shader_code/features/fbm_voronoi.frag
 
