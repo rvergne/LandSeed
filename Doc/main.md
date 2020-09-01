@@ -10,6 +10,7 @@ Features are the main functions you can use in your terrainMap fonction (inside 
 | [fbm_voronoi](features/fbm_voronoi.md) | Fractal voronoi | Compute fractalized voronoi |
 | [phasor](features/phasor.md) | Phasor noise height map | Compute phasor noise hight map |
 | [plateau](features/plateau.md) | Plateau | Flatten the terrain with smooth transition |
+| [valley](features/valley.md) | Valley | Flatten the terrain with smooth transition on the bottom |
 
 
 ## Utils
