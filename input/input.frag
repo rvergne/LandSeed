@@ -1,6 +1,4 @@
-// Define quality on a [0.0,100.0] range, 0.0 being the faster and 100.0 being the more qualitative (use the template file name)
-// @QUALITY 50.6
-// Define the template (use the template file name)
+// Define the template (use the template file name) and it's parameters (if there is no parameters, default value will be taken)
 // @TEMPLATE classic_shader
 // terrainMap compute the height value for the terrain on pos
 float terrainMap(vec2 pos){

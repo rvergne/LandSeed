@@ -7,103 +7,110 @@ try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis d
 except Exception as e:
     from LibPaths import libRootPath
 
+# param spec in the params array for each indices:
+# 0 : TAG
+# 1 : type
+# 2 : file where it needs to be replaced
+# 3 : Default value
+# 4 : Description for the documentation
+
 class TemplateInfo:
     # initialize the object by reading the file path, from the line beginLine (for the case where there is more than one fragment in the same file)
     def __init__(self, path):
         if not path[-1:]=="/":
             path += "/"
-        self.path = path
-        self.lineDirective = None
-        self.pathToFileToFill = ""
-        self.fileToFill = ""
-        self.tag = ""
         self.name = ""
+        self.tag = ""
+        self.fileToFill = ""
+        self.pathToFileToFill = ""
+        self.lineDirective = None
         self.desc = ""
+        self.params = []
+        self.path = path
         self.content = []
-        if not os.path.isdir(path):
+        if not os.path.isdir(path): # Check if the template dir exist
             print("The template path given should be a directory containing all template files.\nWrong file path given : "+path)
             sys.exit(2)
         self.extractInfo()
-        # self.displayInfo()
-    def findFileToFill(self, path):
-        for fname in os.listdir(path):
-            if os.path.isfile(os.path.join(path,fname)):
-                with open(os.path.join(path,fname), "r") as f:
-                    for line in f:
-                        if '@TERRAIN_MAP' in line:
-                            self.setFileToFillName(fname)
-                            self.setPathToFileToFill(path)
-                            return
-            elif os.path.isdir(os.path.join(path,fname)):
-                if not fname[-1:]=="/":
-                    fname += "/"
-                self.findFileToFill(os.path.join(path,fname))
-                if self.getFileTofillName() != "":
-                    break
-        return
+        self.extractContent()
+        if not self.isComplete():
+            print("Please, fulfill the template.config file following the template described in README")
+            sys.exit(1)
+
+    def extractContent(self):
+        if not os.path.exists(self.getPathToFileToFill()):
+            print("Wrong path given to the file to fulfill in the template.\nTemplate : "+self.path)
+            sys.exit(2)
+        shaderFile = open(self.getPathToFileToFill(), "r")
+        self.content = shaderFile.readlines()
+        shaderFile.close()
     def extractInfo(self):
-        self.findFileToFill(self.getPath())
-        if self.getFileTofillName() == "":
-            print("Template at "+self.getPath().replace(libRootPath, "")+" don't contains any file with correct header.")
+        if not os.path.exists(os.path.join(self.path,"template.config")):
+            print("template.config missing in the template at : "+self.path)
             sys.exit(2)
-        fileToFillPath=self.getPathToFileToFill()+self.getFileTofillName()
-        if os.path.isfile(fileToFillPath):
-            templateFile = open(fileToFillPath, "r")
-            templateContent = templateFile.readlines()
-            templateFile.close()
-            line = 0
-            while line < len(templateContent) and not "END" in templateContent[line] :
-                if "@LINE_DIRECTIVE_ON" in templateContent[line] and templateContent[line][templateContent[line].find("@LINE_DIRECTIVE_ON")+18] != "\n":
-                    p = re.compile("@LINE_DIRECTIVE_ON (.*)")
-                    line_directive = p.search(templateContent[line]).group(1)
-                    if "true" in line_directive.lower():
-                        line_directive = True
-                    elif "false" in line_directive.lower():
-                        line_directive = False
-                    else:
-                        print("@LINE_DIRECTIVE_ON should be a boolean in "+fileToFillPath.replace(libRootPath, ""))
-                        sys.exit(1)
-                    self.setLineDirective(line_directive)
-                elif "@TAG" in templateContent[line] and templateContent[line][templateContent[line].find("@TAG")+4] != "\n":
-                    p = re.compile("@TAG (.*)")
-                    res_tag = p.search(templateContent[line]).group(1)
-                    self.setTag(res_tag)
-                elif "@NAME" in templateContent[line] and templateContent[line][templateContent[line].find("@NAME")+5] != "\n":
-                    p = re.compile("@NAME (.*)")
-                    res_name = p.search(templateContent[line]).group(1)
-                    self.setName(res_name)
-                elif "@DESC" in templateContent[line] and templateContent[line][templateContent[line].find("@DESC")+5] != "\n":
-                    p = re.compile("@DESC (.*)")
-                    res_desc = p.search(templateContent[line]).group(1)
-                    if res_desc != "{":
-                        print("Template badly written, please check description format")
-                        sys.exit(1)
-                    line += 1
-                    while line < len(templateContent) and not "//}" in templateContent[line].replace(" ", ""):
-                        res_desc = templateContent[line].replace("//", "")
-                        line += 1
-                    if line >= len(templateContent):
-                        print("Template badly written, missing description end \"}\"")
-                    if res_desc[len(res_desc)-1] == "\n":
-                        res_desc = res_desc[:-1]
-                    self.setDesc(res_desc)
-                line += 1
-            if line >= len(templateContent):
-                print("Template header badly written, missing END keyword")
-                sys.exit(1)
-            if not self.isComplete():
-                print("Template badly written, header element missing")
-                sys.exit(1)
-            line += 1
-            while line < len(templateContent):
-                self.content.append(templateContent[line])
-                line += 1
-        else:
-            print("Wrong path to file given : "+fileToFillPath.replace(libRootPath, ""))
-            del self
-            sys.exit(2)
-    def isComplete(self):
-        return self.lineDirective != None and self.name != "" and self.desc != "" and self.tag != ""
+        configFile = open(os.path.join(self.path,"template.config"), "r")
+        configFileContent = configFile.readlines()
+        configFile.close()
+        for line in configFileContent:
+            if "@NAME" in line and len(line.split(" ")) > 1:
+                p = re.compile("@NAME (.*)")
+                res = p.search(line).group(1)
+                self.setName(res)
+            elif "@TAG" in line and len(line.split(" ")) == 2:
+                self.setTag((line.replace("\n", "")).split(" ")[1])
+            elif "@GEN_FILE" in line and len(line.split(" ")) == 2:
+                self.setFileToFillName((line.replace("\n","")).split(" ")[1])
+                self.setPathToFileToFill(os.path.join(self.path, self.getFileTofillName()))
+            elif "@LINE_DIRECTIVE_ON" in line and len(line.split(" ")) == 2:
+                res = line.split(" ")[1]
+                if "true" in res.lower():
+                    self.setLineDirective(True)
+                elif "false" in res.lower():
+                    self.setLineDirective(False)
+                else:
+                    print("@LINE_DIRECTIVE_ON should be a boolean in config file at "+ self.path)
+                    sys.exit(1)
+            elif "@DESC" in line and len(line.split(" ")) > 2:
+                p = re.compile("@DESC { (.*) }")
+                if p.search(line) != None:
+                    res = p.search(line).group(1)
+                    self.setDesc(res)
+                else:
+                    print("@DESC tag badly formatted : Description should be between brackets like that { ... }\nIn template : "+self.path)
+                    sys.exit(1)
+            elif "@PARAM" in line and not "@PARAM_DESC" in line:
+                if not len((line.replace("\n", "")).split(" ")) == 5:
+                    print("Param line in template.config file badly written.\nPlease follow the way to write it in the README.\nIn template : "+self.path)
+                    sys.exit(2)
+                line_split = (line.replace("\n", "")).split(" ")
+                del line_split[0]
+                if line_split[0] == "" or line_split[1] == "" or line_split[2] == "" or line_split[3] == "":
+                    print("Param line in template.config file badly written.\nPlease follow the way to write it in the README.\nIn template : "+self.path)
+                    sys.exit(2)
+                line_split[1] = line_split[1].lower()
+                if line_split[2] == "GEN_FILE":
+                    line_split[2] = self.getPathToFileToFill()
+                else:
+                    line_split[2] = os.path.join(self.getPath(), line_split[2])
+                p = re.compile("DEFAULT=(.*)")
+                line_split[3] = float(p.search(line_split[3]).group(1))
+                self.params.append(line_split)
+            elif "@PARAM_DESC" in line:
+                try:
+                    p = re.compile("@PARAM_DESC (.*) {")
+                    param_name = p.search(line).group(1)
+                    p = re.compile("@PARAM_DESC "+param_name+" { (.*) }")
+                    param_desc = p.search(line).group(1)
+                except Exception as e:
+                    print("PARAM_DESC badly written in template.config in "+self.path)
+                    sys.exit(1)
+                for param in self.params:
+                    if param[0] == param_name:
+                        param.append(param_desc)
+
+    def isComplete(self): # TODO fulfill
+        return self.lineDirective != None and self.name != "" and self.desc != "" and self.tag != "" and self.fileToFill != ""
+
     # use the display function to debug
     def displayInfo(self):
         print("-------------------------------------------")
@@ -114,15 +121,22 @@ class TemplateInfo:
         print("FileToFill : "+self.getFileTofillName())
         print("Path : "+self.getPath())
         print("pathToFileToFill : "+self.getPathToFileToFill())
-        print("pathToFileToFill+fileToFill : "+self.getPathToFileToFill()+self.getFileTofillName())
+        print("PARAMS")
+        for p in self.params:
+            print(repr(p))
         print("-------------------------------------------")
         print("Content : ")
         print(repr(self.getContent()))
+
     def toMD(self):
         str = ""
         str += "# "+self.getName()+"\n\n"
         str += "**Description : \n\n"+self.getDesc()
         return str
+
+    def getParams(self):
+        return self.params
+
     def setLineDirective(self, on):
         self.lineDirective = on
     def getLineDirective(self):
