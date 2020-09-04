@@ -26,7 +26,7 @@ apt install libglfw3
 ```
 pip install -r requirements.txt
 ```
-BE SURE THAT YOU USE PYTHON3 AND PIP3
+BE SURE THAT YOU USE PYTHON3 AND PIP3  
 pipreqs have been used to generate those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
 
 ## <a name="generation"></a>Generate terrain

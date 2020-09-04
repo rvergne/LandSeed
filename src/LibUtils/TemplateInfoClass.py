@@ -129,10 +129,15 @@ class TemplateInfo:
         print(repr(self.getContent()))
 
     def toMD(self):
-        str = ""
-        str += "# "+self.getName()+"\n\n"
-        str += "**Description : \n\n"+self.getDesc()
-        return str
+        res = ""
+        res += "# "+self.getName()+"\n\n"
+        res += "**Tag**: "+self.getTag()+"\n\n"
+        res += "**Description**: "+self.getDesc()+"\n\n"
+        res += "**Path**: "+self.getPath().replace(libRootPath, "")+"\n\n"
+        res += "**Parameters (use them in that order in the input file)**:\n\n"
+        for p in self.getParams():
+            res += "- "+self.getParamTag(p)+": "+self.getParamType(p)+", default value : "+str(self.getParamDefaultValue(p))+" Is used in "+self.getParamFile(p)+". Description : "+self.getParamDescription(p)+"\n"
+        return res
 
     def getParams(self):
         return self.params

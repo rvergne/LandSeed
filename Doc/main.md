@@ -27,12 +27,12 @@ Utils are the functions used to develop features.
 
 ## Templates
 
-Templates are a way to gett different kind of output.  
+Templates are a way to get different kind of output.  
 The name is what you have to write in the input to choose which template to use for the output
 
 | Name | Tag | Description |
 |-|-|-|
-| Classic shader | classic_shader | Default fragment shader. Can be used with the python viewer script (in the output dir) to display it. |
-| Fancy shader | fancy_shader | Fancy fragment shader used to render. Can be used with the python viewer script (in the output dir) to display it. |
-| Heightmap | heightmap | Template used to display the noise computed as an grey shades image. Can be used with the python viewer script (in the output dir) to display it. |
-| Shadertoy | shadertoy | Same shader as classic_shader, but can be copy and past in shadertoy. |
+| [Classic shader](templates/classic_shader.md) | classic_shader | Default fragment shader. Can be used with the python viewer script (in the output dir) to display it. |
+| [Fancy shader](templates/fancy_shader.md) | fancy_shader | Fancy fragment shader used to render. Can be used with the python viewer script (in the output dir) to display it. |
+| [Heightmap](templates/heightmap.md) | heightmap | Template used to display the noise computed as an heightmap. Can be used with the python viewer script (in the output dir) to display it. |
+| [Shadertoy](templates/shadertoy.md) | shadertoy | Same shader as classic_shader, but can be copy and past in shadertoy. |
