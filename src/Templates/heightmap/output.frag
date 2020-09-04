@@ -1,12 +1,3 @@
-// --------------DEV-----------------
-// @LINE_DIRECTIVE_ON TRUE
-// @TAG heightmap
-// --------------USER----------------
-// @NAME Heightmap
-// @DESC {
-// Heightmap fragment shader. Can be used with the python viewer script (in the output dir) to display it.
-// }
-// --------------END-----------------
 #version 330 core
 
 uniform vec2 mousePos;

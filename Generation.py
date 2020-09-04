@@ -127,33 +127,21 @@ def includeTerrainMap(input, outputFile):
 
 
 # copy the template into the output shader and detect where includes have to be done
-# first analyze input file to get template and quality
 def copyAndComplete(input):
     global template
     global outputFilePath
     templateName = None
-    qualityValue = None
     firstLines = 0
-    while firstLines < len(input) and (qualityValue == None or templateName == None):
-        if "@QUALITY" in input[firstLines] and input[firstLines][input[firstLines].find("@QUALITY")+8] == " ":
-            p = re.compile("@QUALITY (.*)")
-            qualityValue = p.search(input[firstLines]).group(1)
-            try:
-                qualityValue = float(qualityValue)
-            except Exception as e:
-                error("@QUALITY param should be float in "+inputPath.replace(libRootPath, ""), 2)
+    while firstLines < len(input) and (templateName == None):
         if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
-            p = re.compile("@TEMPLATE (.*)")
-            templateName = p.search(input[firstLines]).group(1)
+            inputFileTemplateLine = input[firstLines].replace("// ", "").replace("//", "").replace("\n", "").split(" ")
+            templateName = inputFileTemplateLine[1]
             if not templateName in os.listdir(templatesDir):
                 error("Unknown template name : "+templateName, 3)
         firstLines += 1
     if firstLines >= len(input):
         if templateName == None:
             error("Missing template declaration in input file.", 1)
-        if qualityValue == None:
-            error("Missing quality declaration in input file.", 1)
-    print("Quality : "+str(qualityValue)+"/ 100 (Work in progress)")
     print("Template : "+templateName)
 
     templateDirPath=os.path.join(templatesDir, templateName)
@@ -161,16 +149,52 @@ def copyAndComplete(input):
     template = TemplateInfo(templateDirPath)
     # getting template content
     emptyShaderContent = template.getContent()
-    shutil.copytree(templateDirPath, outputPath)
+    shutil.copytree(templateDirPath, outputPath,ignore=shutil.ignore_patterns('template.config'))
 
-    outputFilePath=os.path.join(outputPath,(template.getPathToFileToFill().replace(template.getPath(), "")),template.getFileTofillName())
+    outputFilePath=os.path.join(outputPath, template.getFileTofillName())
 
     # if output file exists, remove it, then open it
     if os.path.exists(outputFilePath):
         os.remove(outputFilePath)
     global outputFile
-    outputFile = open(outputFilePath, "w+")
 
+    if not (len(inputFileTemplateLine) == 2 or len(inputFileTemplateLine) == 2 + template.getNbOfParam()): # check if the input file got enough param (this means no param or all params)
+        print("Please declare correctly template in input file.\nYou can declare it alone or with all the parameters in the following order.")
+        for param in template.getParams():
+            template.paramToString(param)
+        sys.exit(1)
+    if len(inputFileTemplateLine) == 2:# case where there is no param
+        for p in template.getParams(): # if it's in the output file, search and replace in empty shader content, otherwise, just replace the concerned file content
+            if template.getParamFile(p) == template.getFileTofillName():
+                for line in range(len(emptyShaderContent)):
+                    if "@"+template.getParamTag(p) in emptyShaderContent[line]:
+                        emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(p), str(template.getParamDefaultValue(p)))
+            else:
+                fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
+                fin = open(fileToFulfillPath, "rt")
+                data = fin.read()
+                data = data.replace("@"+template.getParamTag(p), str(template.getParamDefaultValue(p)))
+                fin.close()
+                fin = open(fileToFulfillPath, "wt")
+                fin.write(data)
+                fin.close()
+    else: # case where there is some parameters.
+        for p in range(len(template.getParams())):
+            if template.getParamFile(template.getParams()[p]) == template.getFileTofillName():
+                for line in range(len(emptyShaderContent)):
+                    if "@"+template.getParamTag(template.getParams()[p]) in emptyShaderContent[line]:
+                        emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(template.getParams()[p]), inputFileTemplateLine[2+p])
+            else:
+                fileToFulfillPath = os.path.join(outputPath, template.getParamFile(template.getParams()[p]))
+                fin = open(fileToFulfillPath, "rt")
+                data = fin.read()
+                data = data.replace("@"+template.getParamTag(template.getParams()[p]), inputFileTemplateLine[2+p])
+                fin.close()
+                fin = open(fileToFulfillPath, "wt")
+                fin.write(data)
+                fin.close()
+
+    outputFile = open(outputFilePath, "w+")
     outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")
     # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one

@@ -1,12 +1,3 @@
-// --------------DEV-----------------
-// @LINE_DIRECTIVE_ON False
-// @TAG shadertoy
-// --------------USER----------------
-// @NAME Shadertoy
-// @DESC {
-// Fragment shader you can copy and paste in Shadertoy
-// }
-// --------------END-----------------
 // Ray struct
 struct Ray{
     vec3 ro;    // ray origin

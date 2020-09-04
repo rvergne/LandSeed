@@ -136,6 +136,22 @@ class TemplateInfo:
 
     def getParams(self):
         return self.params
+    def getNbOfParam(self):
+        return len(self.params)
+    def paramToString(self, param):
+        print(param[0]+" : "+param[1]+", default value : "+str(param[3])+"; "+param[4])
+    def getParamTag(self, param):
+        return param[0]
+    def getParamType(self, param):
+        return param[1]
+    def getParamFileFullPath(self, param):
+        return param[2]
+    def getParamFile(self, param):
+        return param[2].replace(self.path, "")
+    def getParamDefaultValue(self, param):
+        return param[3]
+    def getParamDescription(self, param):
+        return param[4]
 
     def setLineDirective(self, on):
         self.lineDirective = on
