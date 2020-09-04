@@ -32,8 +32,8 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 ## <a name="generation"></a>Generate terrain
 
 Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.  
-It has two parameters at the begining of the file, the first is the quality indice, a percentage defining if the output should give priority to speed or render quality (Work in progress).  The second one is used to choose a template, in order to get different kind of output.
-Use the features functions inside it. You can also add functions in input file.
+Use the features functions inside the terrain map function. You can also add functions in input file.  
+It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). If there is no parameters, some defaults values will be taken.
 
 To generate the shader, use the Generate.py python script.
 
@@ -112,24 +112,25 @@ See examples in any files using this header.
 
 Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the purpose of every templates.
 
-A template should always start with the following header :
+A template directory should always contains the following configuration file (at root of the template dir) named template.config :
 ```
-// --------------DEV-----------------
-// @LINE_DIRECTIVE_ON BOOLEAN
-// @TAG [your template tag used in the input file]
-// --------------USER----------------
-// @NAME [name of the template]
-// @DESC {
-// Description of the template for the documentation
-// }
-// --------------END-----------------
-```
+@NAME Name of the template
+@TAG tag of the template (used in input file to define which on should be used)
+@GEN_FILE The path of the file containing the @TERRAIN_MAP. (path should be relative to the root of the template, so if the file is at the root of the template, just put the file name)
+@LINE_DIRECTIVE_ON (TRUE or FALSE) to choose if you want to enable the #line directive in the generation
+@DESC { Description for the documentation }
+@PARAM TAG_OF_THE_PARAM TYPE FILE_WHERE_TO_REPLACE DEFAULT=VALUE
+@PARAM_DESC TAG_OF_THE_PARAM { Description for the doc }
+....
+
+```  
+You can add some param lines as much as you want. They have to be by two, so every parameters is documented. The param will need to be put in the input file in the order you've put them in the configuration file.
 
 The LINE_DIRECTIVE_ON enable the #line directive usage in the output shader.
 
 Once you finished writting your template, please call the UpdateDoc.py script to update the documentation.
 
-When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial here).
+When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.)).
 
 ## <a name="doc"></a>Documentation
 
@@ -139,6 +140,4 @@ To update the documentation with your modifications or new files, just call the 
 
 ## Future improvement
 
-- Define in the input file if the output should give priority to quality or computation speed.
-    - put tag before quality param : with a RANGE definition
 - Packaging

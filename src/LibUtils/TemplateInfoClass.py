@@ -93,7 +93,7 @@ class TemplateInfo:
                 else:
                     line_split[2] = os.path.join(self.getPath(), line_split[2])
                 p = re.compile("DEFAULT=(.*)")
-                line_split[3] = float(p.search(line_split[3]).group(1))
+                line_split[3] = p.search(line_split[3]).group(1)
                 self.params.append(line_split)
             elif "@PARAM_DESC" in line:
                 try:
