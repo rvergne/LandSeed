@@ -10,8 +10,8 @@ struct Ray{
 // RayMarch param
 #define MOVEMENT true
 #define DIST_MIN 0.1 // minimum distance to objects
-#define DIST_MAX 2000.0 // maximum distance to render objects
-#define RAY_MARCH_PRECI 10. // Ray march step (smaller = slower but more more accurate)
+#define DIST_MAX @RENDER_DISTANCE // maximum distance to render objects
+#define RAY_MARCH_PRECI @RAYMARCH_STEP_SIZE // Ray march step (smaller = slower but more more accurate)
 
 #define AMP 400.0 // Amplitude
 float randcount = 0.0;
