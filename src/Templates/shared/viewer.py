@@ -10,7 +10,7 @@ import numpy as np                  # all matrix manipulations & OpenGL args
 import time
 libRootPath = os.path.dirname(os.path.realpath(__file__+"../../"))
 sys.path.append(libRootPath)
-from Generation import generate
+from LandSeed import generate
 
 path = os.path.dirname(os.path.realpath(__file__))+"/"
 vs_file = os.path.join(path,"vertex_shader.vert")

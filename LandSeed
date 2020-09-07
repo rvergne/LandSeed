@@ -158,41 +158,64 @@ def copyAndComplete(input):
         os.remove(outputFilePath)
     global outputFile
 
-    if not (len(inputFileTemplateLine) == 2 or len(inputFileTemplateLine) == 2 + template.getNbOfParam()): # check if the input file got enough param (this means no param or all params)
-        print("Please declare correctly template in input file.\nYou can declare it alone or with all the parameters in the following order.")
+    if len(inputFileTemplateLine) < 2 or len(inputFileTemplateLine) > 2 + template.getNbOfParam(): # check if the input file got enough param (this means no param or all params)
+        print("Please declare correctly template in input file.\nYou can declare it alone or with some of the parameters.")
         for param in template.getParams():
             template.paramToString(param)
         sys.exit(1)
-    if len(inputFileTemplateLine) == 2:# case where there is no param
-        for p in template.getParams(): # if it's in the output file, search and replace in empty shader content, otherwise, just replace the concerned file content
-            if template.getParamFile(p) == template.getFileTofillName():
+
+    # init tag list in order to mark those who are defined by the user
+    paramUsed = {}
+    for p in template.getParams():
+        paramUsed[template.getParamTag(p)]= False
+
+    for paramDeclared in range(2,len(inputFileTemplateLine)): # run through each parameters declared by the user in the input file
+        currentParamTagRE = re.compile("(.*)=")
+        currentParamTag = currentParamTagRE.search(inputFileTemplateLine[paramDeclared]).group(1)
+        currentParamGivenValueRE = re.compile("=(.*)")
+        currentParamGivenValue = currentParamGivenValueRE.search(inputFileTemplateLine[paramDeclared]).group(1)
+        if currentParamTag in paramUsed.keys():
+            paramUsed[currentParamTag] = True
+        else:
+            print("Template param "+currentParamTag+" used in the input is not recognize.\nPlease use the following parameters correctly."+template)
+            for param in template.getParams():
+                template.paramToString(param)
+            sys.exit(1)
+        for templateParam in template.getParams():
+            if template.getParamTag(templateParam) == currentParamTag:
+                if template.getParamFile(templateParam) == template.getFileTofillName():
+                    for line in range(len(emptyShaderContent)):
+                        if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
+                            emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
+                else:
+                    fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
+                    fin = open(fileToFulfillPath, "rt")
+                    data = fin.read()
+                    data = data.replace("@"+currentParamTag, currentParamGivenValue)
+                    fin.close()
+                    fin = open(fileToFulfillPath, "wt")
+                    fin.write(data)
+                    fin.close()
+
+    # TO FULFILL PARAMS THAT ARE NOT DEFINED
+    for templateParam in template.getParams():
+        if paramUsed[template.getParamTag(templateParam)] == False:
+            if template.getParamFile(templateParam) == template.getFileTofillName():
                 for line in range(len(emptyShaderContent)):
-                    if "@"+template.getParamTag(p) in emptyShaderContent[line]:
-                        emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(p), str(template.getParamDefaultValue(p)))
+                    if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
+                        print(template.getParamTag(templateParam)+" default value is taken")
+                        emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(templateParam), template.getParamDefaultValue(templateParam))
             else:
                 fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                 fin = open(fileToFulfillPath, "rt")
                 data = fin.read()
-                data = data.replace("@"+template.getParamTag(p), str(template.getParamDefaultValue(p)))
+                data = data.replace("@"+currentParamTag, currentParamGivenValue)
                 fin.close()
                 fin = open(fileToFulfillPath, "wt")
                 fin.write(data)
                 fin.close()
-    else: # case where there is some parameters.
-        for p in range(len(template.getParams())):
-            if template.getParamFile(template.getParams()[p]) == template.getFileTofillName():
-                for line in range(len(emptyShaderContent)):
-                    if "@"+template.getParamTag(template.getParams()[p]) in emptyShaderContent[line]:
-                        emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(template.getParams()[p]), inputFileTemplateLine[2+p])
-            else:
-                fileToFulfillPath = os.path.join(outputPath, template.getParamFile(template.getParams()[p]))
-                fin = open(fileToFulfillPath, "rt")
-                data = fin.read()
-                data = data.replace("@"+template.getParamTag(template.getParams()[p]), inputFileTemplateLine[2+p])
-                fin.close()
-                fin = open(fileToFulfillPath, "wt")
-                fin.write(data)
-                fin.close()
+
+    # TODO : Debug si le tag est dans un autre fichier et faire des tests. Debug le viewer qui a un problème d'import
 
     outputFile = open(outputFilePath, "w+")
     outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")

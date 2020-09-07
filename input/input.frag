@@ -1,5 +1,5 @@
 // Define the template (use the template tag) and it's parameters (if there is no parameters, default value will be taken)
-// @TEMPLATE fancy_shader 2000.0 10.0
+// @TEMPLATE fancy_shader
 // terrainMap compute the height value for the terrain on pos
 float terrainMap(vec2 pos){
   float terrain = 0.0;
