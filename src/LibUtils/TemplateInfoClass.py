@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
+from pydoc import locate
 import sys
 try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
     from src.LibUtils.LibPaths import libRootPath
@@ -36,6 +37,7 @@ class TemplateInfo:
         if not self.isComplete():
             print("Please, fulfill the template.config file following the template described in README")
             sys.exit(1)
+        self.checkParamType()
 
     def extractContent(self):
         if not os.path.exists(self.getPathToFileToFill()):
@@ -107,6 +109,14 @@ class TemplateInfo:
                 for param in self.params:
                     if param[0] == param_name:
                         param.append(param_desc)
+
+    def checkParamType(self):
+        for p in self.getParams():
+            try: # try a convertion to detecte some type error (not efficient for all possibilities : 123 to bool will be convert as True and no error will be raised)
+                locate(self.getParamType(p).lower())(self.getParamDefaultValue(p))
+            except Exception as e:
+                print("Wrong type of paramter given in template.config for "+self.getParamTag(p)+".\nThe type should be "+self.getParamType(p))
+                sys.exit(1)
 
     def isComplete(self): # TODO fulfill
         return self.lineDirective != None and self.name != "" and self.desc != "" and self.tag != "" and self.fileToFill != ""

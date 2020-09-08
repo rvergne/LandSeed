@@ -4,6 +4,7 @@ if sys.version_info.major < 3: # python version should be 3+
     print("Python version to old, please upgrade your python to 3 or more.")
     sys.exit(6)
 import os
+from pydoc import locate
 import re
 import queue
 import shutil
@@ -164,58 +165,69 @@ def copyAndComplete(input):
             template.paramToString(param)
         sys.exit(1)
 
-    # init tag list in order to mark those who are defined by the user
+    # init tag list in order to mark those who are defined by the user then use the non-marked defaults values
     paramUsed = {}
     for p in template.getParams():
         paramUsed[template.getParamTag(p)]= False
 
     for paramDeclared in range(2,len(inputFileTemplateLine)): # run through each parameters declared by the user in the input file
-        currentParamTagRE = re.compile("(.*)=")
-        currentParamTag = currentParamTagRE.search(inputFileTemplateLine[paramDeclared]).group(1)
-        currentParamGivenValueRE = re.compile("=(.*)")
-        currentParamGivenValue = currentParamGivenValueRE.search(inputFileTemplateLine[paramDeclared]).group(1)
-        if currentParamTag in paramUsed.keys():
-            paramUsed[currentParamTag] = True
-        else:
-            print("Template param "+currentParamTag+" used in the input is not recognize.\nPlease use the following parameters correctly."+template)
-            for param in template.getParams():
-                template.paramToString(param)
-            sys.exit(1)
-        for templateParam in template.getParams():
-            if template.getParamTag(templateParam) == currentParamTag:
-                if template.getParamFile(templateParam) == template.getFileTofillName():
-                    for line in range(len(emptyShaderContent)):
-                        if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
-                            emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
-                else:
-                    fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
-                    fin = open(fileToFulfillPath, "rt")
-                    data = fin.read()
-                    data = data.replace("@"+currentParamTag, currentParamGivenValue)
-                    fin.close()
-                    fin = open(fileToFulfillPath, "wt")
-                    fin.write(data)
-                    fin.close()
+        if inputFileTemplateLine[paramDeclared]: # if there is a parameter
+            try: # try to parse it getting to two parts of the "TAG=VALUE" declaration
+                currentParamTagRE = re.compile("(.*)=")
+                currentParamTag = currentParamTagRE.search(inputFileTemplateLine[paramDeclared]).group(1)
+                currentParamGivenValueRE = re.compile("=(.*)")
+                currentParamGivenValue = currentParamGivenValueRE.search(inputFileTemplateLine[paramDeclared]).group(1)
+            except Exception as e:
+                print("Error while parsing input file.")
+                sys.exit(1)
+            if currentParamTag == "" or currentParamGivenValue == "":
+                print("One of the parameter you entered has no value or no tag")
+                sys.exit(1)
+            if currentParamTag in paramUsed.keys():
+                paramUsed[currentParamTag] = True
+            else:
+                print("Template param "+currentParamTag+" used in the input is not recognize.\nPlease use the following parameters correctly.")
+                for param in template.getParams():
+                    template.paramToString(param)
+                sys.exit(1)
+            for templateParam in template.getParams(): # search for the parameter in all the parameters defined in the template
+                if template.getParamTag(templateParam) == currentParamTag :
+                    try: # try a convertion to detecte some type error (not efficient for all possibilities : 123 to bool will be convert as True and no error will be raised)
+                        locate(template.getParamType(templateParam).lower())(currentParamGivenValue)
+                    except Exception as e:
+                        print("Wrong type of paramter given for "+currentParamTag+".\nThe type should be "+template.getParamType(templateParam))
+                        sys.exit(1)
+                    if template.getParamFile(templateParam) == template.getFileTofillName(): # if the param should be put in GEN_FILE
+                        for line in range(len(emptyShaderContent)):
+                            if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
+                                emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
+                    else:
+                        fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
+                        fin = open(fileToFulfillPath, "rt")
+                        data = fin.read()
+                        data = data.replace("@"+currentParamTag, currentParamGivenValue)
+                        fin.close()
+                        fin = open(fileToFulfillPath, "wt")
+                        fin.write(data)
+                        fin.close()
 
-    # TO FULFILL PARAMS THAT ARE NOT DEFINED
+    # fill missing params with with defaults values
     for templateParam in template.getParams():
         if paramUsed[template.getParamTag(templateParam)] == False:
-            if template.getParamFile(templateParam) == template.getFileTofillName():
+            print(template.getParamTag(templateParam)+" default value is taken")
+            if template.getParamFile(templateParam) == template.getFileTofillName(): # if the param should be put in GEN_FILE
                 for line in range(len(emptyShaderContent)):
                     if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
-                        print(template.getParamTag(templateParam)+" default value is taken")
                         emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(templateParam), template.getParamDefaultValue(templateParam))
             else:
                 fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                 fin = open(fileToFulfillPath, "rt")
                 data = fin.read()
-                data = data.replace("@"+currentParamTag, currentParamGivenValue)
+                data = data.replace("@"+template.getParamTag(templateParam), template.getParamDefaultValue(templateParam))
                 fin.close()
                 fin = open(fileToFulfillPath, "wt")
                 fin.write(data)
                 fin.close()
-
-    # TODO : Debug si le tag est dans un autre fichier et faire des tests. Debug le viewer qui a un problème d'import
 
     outputFile = open(outputFilePath, "w+")
     outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")
@@ -289,9 +301,9 @@ def main():
     else:
         print("Parameter error.")
         print("Syntax : ")
-        print("python generation.py [inputPath] [outputPath]")
+        print("./LandSeed.py [inputPath] [outputPath]")
         print("or")
-        print("python generation.py")
+        print("./LandSeed.py")
         sys.exit(4)
 
     # checking that input exist and that it's a file
