@@ -32,7 +32,10 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 
 ## <a name="generation"></a>Generate terrain
 
-Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position. Some demo input files are implemented.  
+Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position. Some demo input files are implemented. You can call them by entering their path or do the following from the LandSeed root location :  
+```
+cp input/demo2.frag input/input.frag
+```
 Use the features functions inside the terrain map function (see [documentation](Doc/main.md) for the list of existing features). You can also add functions in input file.  
 It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). If there is no parameters, some defaults values will be taken.
 
@@ -46,7 +49,11 @@ or
 ```
 Please give paths relative to lib root.
 
-By default, your generated shader is in the output folder.
+By default, your generated files and shader is in the output folder so you can call
+```
+./output/viewer.py
+```
+(The previous command will work if you used one of the templates with the viewer such as classic_shader or fancy_shader)
 
 The first one will choose default input and output files. The second will take input and output according to the parameter you give.
 
