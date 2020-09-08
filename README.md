@@ -32,7 +32,7 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 
 ## <a name="generation"></a>Generate terrain
 
-Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.  
+Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position. Some demo input files are implemented.  
 Use the features functions inside the terrain map function (see [documentation](Doc/main.md) for the list of existing features). You can also add functions in input file.  
 It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). If there is no parameters, some defaults values will be taken.
 
