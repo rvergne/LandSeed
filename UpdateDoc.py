@@ -81,7 +81,7 @@ def createMainDocPage():
     mainFile.write("## Templates")
     mainFile.write("\n\n")
     mainFile.write("Templates are a way to get different kind of output.  \n")
-    mainFile.write("The name is what you have to write in the input to choose which template to use for the output")
+    mainFile.write("The tag is what you have to write in the input to choose which template to use for the output")
     mainFile.write("\n\n")
     mainFile.write("| Name | Tag | Description |\n")
     mainFile.write("|-|-|-|\n")

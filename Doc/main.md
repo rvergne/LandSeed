@@ -28,7 +28,7 @@ Utils are the functions used to develop features.
 ## Templates
 
 Templates are a way to get different kind of output.  
-The name is what you have to write in the input to choose which template to use for the output
+The tag is what you have to write in the input to choose which template to use for the output
 
 | Name | Tag | Description |
 |-|-|-|

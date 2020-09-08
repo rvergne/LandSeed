@@ -145,8 +145,10 @@ class TemplateInfo:
         res += "**Description**: "+self.getDesc()+"\n\n"
         res += "**Path**: "+self.getPath().replace(libRootPath, "")+"\n\n"
         res += "**Parameters (use them in that order in the input file)**:\n\n"
+        res += "| Tag | Type | Default Value | File | Description |\n"
+        res += "|-|-|-|-|-|\n"
         for p in self.getParams():
-            res += "- "+self.getParamTag(p)+": "+self.getParamType(p)+", default value : "+str(self.getParamDefaultValue(p))+" Is used in "+self.getParamFile(p)+". Description : "+self.getParamDescription(p)+"\n"
+            res += "| "+self.getParamTag(p)+" | "+self.getParamType(p)+" | "+str(self.getParamDefaultValue(p))+" | "+self.getParamFile(p)+" | "+self.getParamDescription(p)+" |\n"
         return res
 
     def getParams(self):

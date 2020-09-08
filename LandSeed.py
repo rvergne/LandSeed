@@ -201,7 +201,7 @@ def copyAndComplete(input):
                         for line in range(len(emptyShaderContent)):
                             if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
                                 emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
-                    else:
+                    else: # if it's a custom file
                         fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                         fin = open(fileToFulfillPath, "rt")
                         data = fin.read()
@@ -219,7 +219,7 @@ def copyAndComplete(input):
                 for line in range(len(emptyShaderContent)):
                     if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
                         emptyShaderContent[line] = emptyShaderContent[line].replace("@"+template.getParamTag(templateParam), template.getParamDefaultValue(templateParam))
-            else:
+            else: # if it's a custom file
                 fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                 fin = open(fileToFulfillPath, "rt")
                 data = fin.read()
