@@ -9,6 +9,7 @@ The idea is to use, combine or create features to generate various terrains with
  - [Installation](#install)
  - [Generation](#generation)
  - [Fragments (features and Utils)](#feature)
+ - [Common Header](#commonheader)
  - [Templates](#template)
  - [Documentation](#doc)
 
@@ -24,7 +25,7 @@ apt install libglfw3
 ```
 - To install dependencies :
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 BE SURE THAT YOU USE PYTHON3 AND PIP3  
 pipreqs have been used to generate those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
@@ -32,16 +33,16 @@ pipreqs have been used to generate those dependencies. See [here](https://pypi.o
 ## <a name="generation"></a>Generate terrain
 
 Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position.  
-Use the features functions inside the terrain map function. You can also add functions in input file.  
+Use the features functions inside the terrain map function (see [documentation](Doc/main.md) for the list of existing features). You can also add functions in input file.  
 It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). If there is no parameters, some defaults values will be taken.
 
-To generate the shader, use the Generate.py python script.
+To generate the shader, use the LandSeed.py python script.
 
 There is two ways to use the generation script :
 ```
-./Generation.py
+./LandSeed.py
 or
-./Generation.py [input path] [output path]
+./LandSeed.py [input path] [output path]
 ```
 Please give paths relative to lib root.
 
@@ -60,8 +61,8 @@ To use a feature, you just have to call the function in the input without doing 
 
 ### Declare a new feature<a name="newfeature"></a>
 
-Create a new file in src/shader_code/features/ folder. Inside, please use the common header as specified below so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.  
-PLEASE USE THE MAIN FUNCTION NAME OF YOUR FEATURE AS TAG AND FILE NAME !! (your_function.frag as file name)
+Create a new file in src/shader_code/features/ folder. PLEASE USE THE MAIN FUNCTION NAME OF YOUR FEATURE AS TAG AND FILE NAME !! (your_function.frag as file name)  
+Inside, please use the common header as specified [below](#commonheader) so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.  
 
 Put your feature code between your tag and @END tag. You can use any existing util or feature adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
 ```
@@ -83,13 +84,13 @@ When your feature is ready to be added to the librairy and be available for ever
 ### Use a utils
 
 As explained in the [Declare a new feature](#newfeature) section, to use a util in a feature (or Util) file, please use the @INCLUDE tag with the tag of the util.  
-To know the tag of the feature you want to use, please refer to the [documentation](Doc/main.md).
+To know the tags and specifications of the different features, please refer to the [documentation](Doc/main.md).
 
 ### Declare a new utils function
 
 Same operating mode as feature but are stored in the src/shader_code/utils/ folder.
 
-## Common Header
+## <a name="commonheader"></a>Common Header
 See examples in any files using this header.
 ```
 // --------------DEV-----------------
@@ -110,7 +111,8 @@ See examples in any files using this header.
 
 ## <a name="template"></a>Templates
 
-Templates allows you to get different kind of input. See in the [documentation](Doc/main.md) to have some informations about the purpose of every templates.
+Templates allows you to get different kind of input. A template is directory containing as much files and subfolder as you want. Its structure always have a GLSL file that will be fulfilled with the terrainMap function and all its dependencies.  
+See in the [documentation](Doc/main.md) to have some informations about the purpose of each templates.
 
 A template directory should always contains the following configuration file (at root of the template dir) named template.config :
 ```
@@ -138,6 +140,6 @@ To know more about implemented features, utils and templates, check the [documen
 
 To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
-## Future improvement
+## Known bug
 
-- Packaging
+- viewer crash if you re-generate the output by pressing 'G' while not being in output/ default directory
