@@ -6,7 +6,7 @@
 
 **Path**: /src/Templates/heightmap/
 
-**Parameters (use them in that order in the input file)**:
+**Parameters**:
 
 | Tag | Type | Default Value | File | Description |
 |-|-|-|-|-|

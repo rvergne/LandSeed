@@ -144,7 +144,7 @@ class TemplateInfo:
         res += "**Tag**: "+self.getTag()+"\n\n"
         res += "**Description**: "+self.getDesc()+"\n\n"
         res += "**Path**: "+self.getPath().replace(libRootPath, "")+"\n\n"
-        res += "**Parameters (use them in that order in the input file)**:\n\n"
+        res += "**Parameters**:\n\n"
         res += "| Tag | Type | Default Value | File | Description |\n"
         res += "|-|-|-|-|-|\n"
         for p in self.getParams():
