@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 import sys
+import os
+import shutil
 if sys.version_info.major < 3: # python version should be 3+
     print("Python version to old, please upgrade your python to 3 or more.")
     sys.exit(6)
-import os
-import re
-import shutil
-from src.LibUtils.LibPaths import libRootPath, featuresDir, utilsDir, docDir, templatesDir
+from src.LibUtils.LibPaths import featuresDir, utilsDir, docDir, templatesDir
 from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
 from src.LibUtils.TemplateInfoClass import TemplateInfo
 
@@ -32,9 +31,9 @@ def abort(returnCode):
 # write every single doc pages except main
 def createDocPages():
     print("Writing specific documentations pages..")
-    os.makedirs(docDir+"features/") # TODO check python version
-    os.makedirs(docDir+"utils/") # TODO check python version
-    os.makedirs(docDir+"templates/") # TODO check python version
+    os.makedirs(docDir+"features/")
+    os.makedirs(docDir+"utils/")
+    os.makedirs(docDir+"templates/")
     for feature in features:
         featureFile = open(docDir+"features/"+feature.getFunctionName()+".md","w")
         featureFile.write(feature.toMD())

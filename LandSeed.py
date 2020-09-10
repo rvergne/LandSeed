@@ -2,16 +2,16 @@
 import sys
 if sys.version_info.major < 3: # python version should be 3+
     print("Python version to old, please upgrade your python to 3 or more.")
-    sys.exit(6)
+    raise PythonVersionException("Python version too old")
+if sys.version_info.minor >= 4:
+    import importlib
+else:
+    import imp
 import os
 from pydoc import locate
 import re
 import queue
 import shutil
-if sys.version_info.minor >= 4:
-    import importlib
-else:
-    import imp
 from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
 from src.LibUtils.TemplateInfoClass import TemplateInfo
 from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
@@ -246,7 +246,7 @@ def copyAndComplete(input):
 
 # in order to make the genreation from another file
 def generate(input, output):
-    global outputPath # path to the output dir
+    global outputPath # path to the output dir
     global outputFile # output file (the one where @TERRAIN_MAP is)
     global inputPath # path to the input file
     global includedFeatures
@@ -280,52 +280,26 @@ def generate(input, output):
 
     return 0
 
-def main():
-    global outputPath # path to the output dir
-    global outputFile # output file (the one where @TERRAIN_MAP is)
-    global inputPath # path to the input file
-    # user can enter a personnal input file or use the default one
-    # no parameters -> default input and output
-    if len(sys.argv)==1:
-        inputPath = os.path.join(inputDir,"input.frag")
-        outputPath = outputDir
-        print("Default input file is taken : "+inputPath.replace(libRootPath, ""))
-        print("Default output directory is taken : "+outputPath.replace(libRootPath, ""))
-    # parameters given
-    elif len(sys.argv)==3:
-        inputPath = os.path.join(libRootPath,sys.argv[1])
-        print("Input file : "+inputPath)
-        outputPath = os.path.join(libRootPath,sys.argv[2])
-        print("Output file : "+outputPath)
-    # wrong number of parameters
-    else:
-        print("Parameter error.")
-        print("Syntax : ")
-        print("./LandSeed.py [inputPath] [outputPath]")
-        print("or")
-        print("./LandSeed.py")
-        sys.exit(4)
-
-    # checking that input exist and that it's a file
-    if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
-        print("Please enter a valid or existing input file.")
-        sys.exit(4)
-
-    # opening and getting input file content
-    inputFile = open(inputPath, "r")
-    inputFileContent = inputFile.readlines()
-    inputFile.close()
-
-    outputFile = None
-
-    if os.path.exists(outputPath):
-        shutil.rmtree(outputPath)
-
-    # fulfill template with input file and dependencies
-    copyAndComplete(inputFileContent)
-
-    # exit
-    sys.exit(0)
-
 if __name__=="__main__":
-    main()
+        # user can enter a personnal input file or use the default one
+        # no parameters -> default input and output
+        if len(sys.argv)==1:
+            print("Default input file is taken : "+os.path.join(inputDir, "input.frag"))
+            print("Default output directory is taken : "+outputDir)
+            generate(os.path.join(inputDir,"input.frag"), outputDir)
+        # parameters given
+        elif len(sys.argv)==3:
+            print("Input file : "+sys.argv[1])
+            print("Output file : "+sys.argv[2])
+            generate(sys.argv[1], sys.argv[2])
+        # wrong number of parameters
+        else:
+            print("Parameter error.")
+            print("Syntax : ")
+            print("./LandSeed.py [inputPath] [outputPath]")
+            print("or")
+            print("./LandSeed.py")
+            sys.exit(4)
+
+        # exit
+        sys.exit(0)
