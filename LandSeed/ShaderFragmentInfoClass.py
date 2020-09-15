@@ -2,11 +2,11 @@
 import os
 import re
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
-    from src.LibUtils.LibPaths import libRootPath
-except Exception as e:
-    from LibPaths import libRootPath
-
+# try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
+#     from src.LibUtils.LibPaths import libRootPath
+# except Exception as e:
+#     from LibPaths import libRootPath
+from LandSeed.LibPaths import libRootPath
 
 # class used to get all inforamtions about a feaeture or a util
 class ShaderFragmentInfo:
@@ -149,7 +149,7 @@ class ShaderFragmentInfo:
         print("Spec: "+self.spec)
         print("Tag presence: "+str(self.tagPresence))
         print("-----------------------------------------")
-    
+
     # convert the object to markdown format for the documentation page
     def toMD(self):
         str = ""

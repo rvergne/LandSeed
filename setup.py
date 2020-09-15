@@ -19,9 +19,20 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.0',
+    install_requires=[
+        'numpy>=1.18.1',
+        'glfw>=1.11.1',
+        'PyOpenGL>=3.1.5'
+    ],
     entry_points = {
         "console_scripts": [
-            "LandSeed=LandSeed.LandSeed.generate"
+            "LandSeed=LandSeed.LandSeed:generate",
+            "LandSeed_UpdateDoc=LandSeed.UpdateDoc:main" # laisser ça? Comment faire pour pouvoir executer en local pour les devs?
         ]
     }
 )
+
+# TODO :
+#  - data_files
+#  - pathes : find a way to have a theoric path
+#  - check classifier

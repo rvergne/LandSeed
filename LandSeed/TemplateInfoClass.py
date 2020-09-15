@@ -3,11 +3,11 @@ import os
 import re
 from pydoc import locate
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
-    from src.LibUtils.LibPaths import libRootPath
-except Exception as e:
-    from LibPaths import libRootPath
-
+# try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
+#     from src.LibUtils.LibPaths import libRootPath
+# except Exception as e:
+#     from LibPaths import libRootPath
+from LandSeed.LibPaths import libRootPath
 # param spec in the params array for each indices:
 # 0 : TAG
 # 1 : type

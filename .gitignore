@@ -7,3 +7,5 @@ test.py
 output/
 output/*
 input/input.frag
+LandSeed.egg-info
+LandSeed.egg-info/*

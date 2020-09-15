@@ -8,11 +8,10 @@ import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
-libRootPath = os.path.dirname(os.path.realpath(__file__+"../../"))
-sys.path.append(libRootPath)
-from LandSeed import generate
+from LandSeed.LibPaths import libRootPath
+from LandSeed.LandSeed import generate
 
-path = os.path.dirname(os.path.realpath(__file__))+"/"
+path = os.path.dirname(os.path.realpath(__file__))
 vs_file = os.path.join(path,"vertex_shader.vert")
 fs_file = os.path.join(path,"output.frag")
 
@@ -206,7 +205,7 @@ class Viewer:
                 l = f.readline()
                 f.close()
                 p = re.compile("@FROM (.*)")
-                input_path = p.search(l).group(1)
+                input_path = os.path.join(libRootPath,p.search(l).group(1))
                 output_dir = path.replace(libRootPath, "")
                 if input_path[0] == "/":
                     input_path = input_path[1:]

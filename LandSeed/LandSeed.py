@@ -12,9 +12,9 @@ from pydoc import locate
 import re
 import queue
 import shutil
-from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
-from src.LibUtils.TemplateInfoClass import TemplateInfo
-from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+from LandSeed.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
+from LandSeed.TemplateInfoClass import TemplateInfo
+from LandSeed.ShaderFragmentInfoClass import ShaderFragmentInfo
 
 # Return code meaning :
 #   0 : everything's ok
@@ -245,7 +245,7 @@ def copyAndComplete(input):
     outputFile.close()
 
 # in order to make the genreation from another file
-def generate(input, output):
+def generate(input=os.path.join(inputDir,"input.frag"), output=outputDir):
     global outputPath # path to the output dir
     global outputFile # output file (the one where @TERRAIN_MAP is)
     global inputPath # path to the input file
@@ -255,9 +255,23 @@ def generate(input, output):
     includedFeatures = [] # to register which feature we already added
     includedDependencies = [] # to register which dependencies we already added
 
-    inputPath = os.path.join(libRootPath,input)
+    if len(sys.argv) == 3:
+        inputPath, outputPath = os.path.join(libRootPath, sys.argv[1]),os.path.join(libRootPath, sys.argv[2])
+        # TODO ask if i should put relative or absolute path. If relative, relative to location or lib root?
+    elif len(sys.argv) == 1:
+        print("Default parameters are taken.")
+        inputPath = input
+        outputPath = output
+    else:
+        print("Parameter error.")
+        print("Syntax : ")
+        print("LandSeed.py [inputPath] [outputPath]")
+        print("or")
+        print("LandSeed.py")
+        sys.exit(4)
+    # inputPath = os.path.join(libRootPath,input)
     print("Input file : "+inputPath)
-    outputPath = os.path.join(libRootPath,output)
+    # outputPath = os.path.join(libRootPath,output)
     print("Output file : "+outputPath)
 
     # checking that input exist and that it's a file
@@ -296,9 +310,9 @@ if __name__=="__main__":
         else:
             print("Parameter error.")
             print("Syntax : ")
-            print("./LandSeed.py [inputPath] [outputPath]")
+            print("LandSeed.py [inputPath] [outputPath]")
             print("or")
-            print("./LandSeed.py")
+            print("LandSeed.py")
             sys.exit(4)
 
         # exit
