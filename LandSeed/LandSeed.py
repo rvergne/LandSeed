@@ -245,7 +245,7 @@ def copyAndComplete(input):
     outputFile.close()
 
 # in order to make the genreation from another file
-def generate(input=os.path.join(inputDir,"input.frag"), output=outputDir):
+def generate(input=os.path.join(inputDir,"demo.frag"), output=outputDir):
     global outputPath # path to the output dir
     global outputFile # output file (the one where @TERRAIN_MAP is)
     global inputPath # path to the input file

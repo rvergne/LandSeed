@@ -26,13 +26,13 @@ setuptools.setup(
     ],
     entry_points = {
         "console_scripts": [
-            "LandSeed=LandSeed.LandSeed:generate",
-            "LandSeed_UpdateDoc=LandSeed.UpdateDoc:main" # laisser ça? Comment faire pour pouvoir executer en local pour les devs?
+            "LandSeed=LandSeed.LandSeed:generate"
+            #"LandSeed_UpdateDoc=LandSeed.UpdateDoc:main" # laisser ça? Comment faire pour pouvoir executer en local pour les devs?
         ]
     }
 )
 
 # TODO :
 #  - data_files
-#  - pathes : find a way to have a theoric path
+#  - pathes : find a way to have a theoric path (pkg_ressources?)
 #  - check classifier
