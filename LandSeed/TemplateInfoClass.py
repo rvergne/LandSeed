@@ -28,9 +28,12 @@ class TemplateInfo:
         self.lineDirective = None
         self.desc = ""
         self.params = []
-        self.path = pkg_resources.resource_filename("LandSeed",path)
+        if pkg_resources.resource_exists("LandSeed", path):
+            self.path = pkg_resources.resource_filename("LandSeed",path)
+        else:
+            self.path = path
         self.content = []
-        if not pkg_resources.resource_isdir("LandSeed", path): # Check if the template dir exist
+        if not os.path.isdir(self.getPath()): # Check if the template dir exist
             print("The template path given should be a directory containing all template files.\nWrong file path given : "+path)
             sys.exit(2)
         self.extractInfo()

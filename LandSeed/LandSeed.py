@@ -204,6 +204,11 @@ def copyAndComplete(input):
                             if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
                                 emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
                     else: # if it's a custom file
+                        print("---------------DEBUG-------------")
+                        print("outputPath : "+outputPath)
+                        print("ParamFile : "+template.getParamFile(p))
+                        print(os.path.join(outputPath, template.getParamFile(p)))
+                        print("---------------DEBUG-------------")
                         fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                         fin = open(fileToFulfillPath, "rt")
                         data = fin.read()
@@ -304,6 +309,12 @@ def generate(inputP=os.path.join(inputDir,"demo.frag"), output=os.path.join(os.g
 
     return 0
 
+def newInputFile():
+    print("Generating new input file")
+    shutil.copyfile(pkg_resources.resource_filename("LandSeed", os.path.join(inputDir,"demo.frag")), "input.frag")
+    return 0
+
+# Todo : make this usable
 if __name__=="__main__":
         # user can enter a personnal input file or use the default one
         # no parameters -> default input and output

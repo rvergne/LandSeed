@@ -14,7 +14,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="LandSeed", # Replace with your own username
+    name="LandSeed",
     version="1.0.0",
     author="Bastien Zigmann",
     author_email="bastien@zigmann.org",
@@ -36,8 +36,8 @@ setuptools.setup(
     ],
     entry_points = {
         "console_scripts": [
-            "LandSeed=LandSeed.LandSeed:generate"
-            #"LandSeed_UpdateDoc=LandSeed.UpdateDoc:main" # laisser ça? Comment faire pour pouvoir executer en local pour les devs?
+            "LandSeed=LandSeed.LandSeed:generate",
+            "LandSeed_newinput=LandSeed.LandSeed:newInputFile"
         ]
     },
     include_package_data=True,

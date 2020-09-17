@@ -10,7 +10,10 @@ class ShaderFragmentInfo:
     # initialize the object by reading the file path
     def __init__(self, featOrUtil, path):
         self.cat = featOrUtil # 2 values : "feature" or "util"
-        self.path = pkg_resources.resource_filename("LandSeed",path)
+        if pkg_resources.resource_exists("LandSeed", path):
+            self.path = pkg_resources.resource_filename("LandSeed",path)
+        else:
+            self.path = path
         self.tag = ""
         self.funcName = ""
         self.signature = ""
