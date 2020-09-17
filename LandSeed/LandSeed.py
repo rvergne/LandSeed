@@ -12,6 +12,7 @@ from pydoc import locate
 import re
 import queue
 import shutil
+import pkg_resources
 from LandSeed.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
 from LandSeed.TemplateInfoClass import TemplateInfo
 from LandSeed.ShaderFragmentInfoClass import ShaderFragmentInfo
@@ -246,6 +247,10 @@ def copyAndComplete(input):
 
 # in order to make the genreation from another file
 def generate(input=os.path.join(inputDir,"demo.frag"), output=outputDir):
+
+    print(pkg_resources.resource_string("LandSeed", os.path.join(featuresDir, "plateau.frag")))
+    sys.exit(1)
+
     global outputPath # path to the output dir
     global outputFile # output file (the one where @TERRAIN_MAP is)
     global inputPath # path to the input file

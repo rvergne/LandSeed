@@ -1,4 +1,15 @@
 import setuptools
+import os
+import sys
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for dir in directories:
+            paths.append(os.path.join(path.replace('LandSeed/', ''),dir, "*"))
+    return paths
+
+extra_files = package_files('LandSeed/data')
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -29,7 +40,9 @@ setuptools.setup(
             "LandSeed=LandSeed.LandSeed:generate"
             #"LandSeed_UpdateDoc=LandSeed.UpdateDoc:main" # laisser ça? Comment faire pour pouvoir executer en local pour les devs?
         ]
-    }
+    },
+    include_package_data=True,
+    package_data={'':extra_files, },
 )
 
 # TODO :

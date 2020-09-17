@@ -4,7 +4,7 @@
 
 **Description**: Fancy fragment shader used to render. Can be used with the python viewer script (in the output dir) to display it.
 
-**Path**: /src/Templates/fancy_shader/
+**Path**: LandSeed/data/Templates/fancy_shader/
 
 **Parameters**:
 

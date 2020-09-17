@@ -95,22 +95,22 @@ def createMainDocPage():
 def getInfo():
     print("Getting features and utils informations..")
 
-    featuresDirContent = os.listdir(featuresDir)
+    featuresDirContent = os.listdir(os.path.join("LandSeed",featuresDir))
     for feature in featuresDirContent:
-        currentFilePath = os.path.join(featuresDir,feature)
+        currentFilePath = os.path.join("LandSeed", featuresDir,feature)
         currentFragment = ShaderFragmentInfo("feature", currentFilePath)
         features.append(currentFragment)
 
-    utilsDirContent = os.listdir(utilsDir)
+    utilsDirContent = os.listdir(os.path.join("LandSeed",utilsDir))
     for util in utilsDirContent:
-        currentFilePath = os.path.join(utilsDir,util)
+        currentFilePath = os.path.join("LandSeed", utilsDir,util)
         currentFragment = ShaderFragmentInfo("util", currentFilePath)
         utils.append(currentFragment)
 
-    templatesDirContent = os.listdir(templatesDir)
+    templatesDirContent = os.listdir(os.path.join("LandSeed",templatesDir))
     templatesDirContent.remove("shared")
     for template in templatesDirContent:
-        currentFilePath = os.path.join(templatesDir,template)
+        currentFilePath = os.path.join("LandSeed", templatesDir,template)
         currentTemplate = TemplateInfo(currentFilePath)
         templates.append(currentTemplate)
 

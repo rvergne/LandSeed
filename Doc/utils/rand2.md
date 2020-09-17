@@ -14,5 +14,5 @@
 
 
 
-**Path**: /src/shader_code/utils/rand2.frag
+**Path**: LandSeed/data/shader_code/utils/rand2.frag
 

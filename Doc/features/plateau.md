@@ -18,5 +18,5 @@
 
 
 
-**Path**: /src/shader_code/features/plateau.frag
+**Path**: LandSeed/data/shader_code/features/plateau.frag
 

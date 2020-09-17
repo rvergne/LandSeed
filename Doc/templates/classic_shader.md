@@ -4,7 +4,7 @@
 
 **Description**: Default fragment shader. Can be used with the python viewer script (in the output dir) to display it.
 
-**Path**: /src/Templates/classic_shader/
+**Path**: LandSeed/data/Templates/classic_shader/
 
 **Parameters**:
 
