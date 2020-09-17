@@ -147,6 +147,6 @@ To know more about implemented features, utils and templates, check the [documen
 
 To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
-## Known bug
+## Work in progress
 
-- viewer crash if you re-generate the output by pressing 'G' while not being in output/ default directory
+First packaged release 
