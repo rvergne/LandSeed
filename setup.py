@@ -9,7 +9,6 @@ def package_files(directory):
     return paths
 
 extra_files = package_files('LandSeed/data')
-print(extra_files)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
