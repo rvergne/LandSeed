@@ -1,6 +1,5 @@
 import setuptools
 import os
-import sys
 
 def package_files(directory):
     paths = []
@@ -10,6 +9,7 @@ def package_files(directory):
     return paths
 
 extra_files = package_files('LandSeed/data')
+print(extra_files)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -42,10 +42,8 @@ setuptools.setup(
         ]
     },
     include_package_data=True,
-    package_data={'':extra_files, },
+    package_data={'':extra_files+["input/demo*.frag"],},
 )
 
 # TODO :
-#  - data_files
-#  - pathes : find a way to have a theoric path (pkg_ressources?)
 #  - check classifier

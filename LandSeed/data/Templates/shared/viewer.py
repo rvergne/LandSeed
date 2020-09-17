@@ -8,6 +8,7 @@ import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
+import pkg_resources
 from LandSeed.LibPaths import libRootPath
 from LandSeed.LandSeed import generate
 
@@ -205,13 +206,13 @@ class Viewer:
                 l = f.readline()
                 f.close()
                 p = re.compile("@FROM (.*)")
-                input_path = os.path.join(libRootPath,p.search(l).group(1))
-                output_dir = path.replace(libRootPath, "")
+                input_path = p.search(l).group(1)
+                output_dir = "output"
                 if input_path[0] == "/":
                     input_path = input_path[1:]
                 if output_dir[0] == "/":
                     output_dir = output_dir[1:]
-                generate(input_path, output_dir)
+                generate(input_path, output_dir, True)
                 self.ray_tracer = Shader(vs_file, fs_file)
                 self.reload = True
                 if self.ray_tracer.glid:

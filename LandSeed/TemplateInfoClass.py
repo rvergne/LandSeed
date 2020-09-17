@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
+import pkg_resources
 from pydoc import locate
 import sys
 # try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
@@ -27,9 +28,9 @@ class TemplateInfo:
         self.lineDirective = None
         self.desc = ""
         self.params = []
-        self.path = path
+        self.path = pkg_resources.resource_filename("LandSeed",path)
         self.content = []
-        if not os.path.isdir(path): # Check if the template dir exist
+        if not pkg_resources.resource_isdir("LandSeed", path): # Check if the template dir exist
             print("The template path given should be a directory containing all template files.\nWrong file path given : "+path)
             sys.exit(2)
         self.extractInfo()
@@ -46,6 +47,7 @@ class TemplateInfo:
         shaderFile = open(self.getPathToFileToFill(), "r")
         self.content = shaderFile.readlines()
         shaderFile.close()
+
     def extractInfo(self):
         if not os.path.exists(os.path.join(self.path,"template.config")):
             print("template.config missing in the template at : "+self.path)
