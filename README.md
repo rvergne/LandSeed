@@ -4,14 +4,29 @@ LandSeed is a python library used to generate fragments shaders computing proced
 
 The idea is to use, combine or create features to generate various terrains with a single height function. The height mapping function will be used inside a templates to give the final result.
 
+---
+
 ## Table of content
+
+**[User part](#user)**
 
  - [Installation](#install)
  - [Generation](#generation)
+ - [Documentation](#doc)
+
+**[Developper part](#dev)**
+
+ - [Test your work locally](#testlocally)
  - [Fragments (features and Utils)](#feature)
  - [Common Header](#commonheader)
  - [Templates](#template)
- - [Documentation](#doc)
+
+
+<br />
+
+---
+# <a name="user"></a>User part
+---
 
 ## <a name="install"></a>Lib installation and requirements
 
@@ -25,46 +40,65 @@ apt install libglfw3
 ```
 - To install dependencies :
 ```
-pip3 install -r requirements.txt
+pip3 install LandSeed
 ```
 BE SURE THAT YOU USE PYTHON3 AND PIP3  
-pipreqs have been used to generate those dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
 
-## <a name="generation"></a>Generate terrain
+## <a name="generation"></a>How to generate a terrain
 
-Fulfill input file in the input folder. Its purpose is to compute terrain height on a specific position. Some demo input files are implemented. You can call them by entering their path or do the following from the LandSeed root location :  
+To generate a terrain, you need to fulfill a input file. Its purpose is to compute terrain height on a specific position. Some demo input files are implemented. You can try the generation with a demo file by calling   
 ```
-cp input/demo2.frag input/input.frag
+LandSeed
 ```
-Use the features functions inside the terrain map function (see [documentation](Doc/main.md) for the list of existing features). You can also add functions in input file.  
-It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). If there is no parameters, some defaults values will be taken.
+This call will use the first demo file and generate a output folder at the location where you called the script.  
+To see the generated result, please use the viewer in the output directory.
+```
+python3 output/viewer/py
+```
+Now, you may want to generate your own terrain. In order to generate a input file, use
+```
+LandSeed_newinput
+```
+The newly generated input file is located in the current folder.
 
-To generate the shader, use the LandSeed.py python script.
+The newly created input file contains a terrainMap function. Use the features functions inside it (see [documentation](Doc/main.md) for the list of existing features). 
+It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). The line should look like this :
+```
+// @TEMPLATE template_tag PARAM1=VALUE PARAM2=VALUE
+```
+If there is no parameters, some defaults values will be taken. You don't have to declare every parameters, if some of them are missing, the default value for this one will be taken too.
 
-There is two ways to use the generation script :
-```
-./LandSeed.py
-or
-./LandSeed.py [input path] [output path]
-```
-Please give paths relative to lib root.
+## <a name="doc"></a>Documentation
 
-By default, your generated files and shader is in the output folder so you can call
-```
-./output/viewer.py
-```
-(The previous command will work if you used one of the templates with the viewer such as classic_shader or fancy_shader)
+To know more about implemented features, utils and templates, check the [documentation](Doc/main.md).
 
-The first one will choose default input and output files. The second will take input and output according to the parameter you give.
+To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
+
+<br />
+
+---
+# <a name="dev"></a>Developper part
+---
+
+To extend the librairie of features or create a new template, please clone the project, get the last version by pulling master branch and create your own branch. Once your work is done you'll be able to create a pull request. More informations [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow-up%20commits%20if%20necessary.) (If your not familiar with git and pull requests please read the topic before starting your work).  
+Once your work is done and before you create the pull request, please call the UpdateDoc.py script to update the documentation.
+
+## <a name="testlocally"></a>How to test your work locally
+
+**TL;DR** :  
+A example testing script is in the root directory of the LandSeed repository. Calling it will create the virtualenv (in the parent folder), set it up, copy LandSeed/input/input.frag inside, run LandSeed on it and try to run the viewer in the ouput. Finally, the script will get out and remove properly the virtualenv. To resume : use the LandSeed/input/input.frag and call TestLandSeed.sh.
+
+**Complete version** :  
+To test your work before create the pull request, you can use some [virtualenv](https://pypi.org/project/virtualenv/).  
+Use ```virtualenv -p python3 NAME``` to create a virtual environnement using python3 and named NAME (see the virtualenv documentation for more informations).  
+To use virtualenv shell, call ```source path/to/your/virtualenv/bin/activate```.  
+Finally call ```pip install /path/to/the/cloned/landseed/repo/```. This will simulate a LandSeed installation in the virtualenv you just created.
+To get out of virtualenv, just call ```deactivate```.
 
 ## <a name="feature"></a>Features and Utils
 
 __Features__ are the functions used by the user in the terrainMap function to compute terrain height for a specific position on the terrain.  
 __Utils__ are the functions you want to use inside your features without writting it everytime you need them.
-
-### Use a feature
-
-To use a feature, you just have to call the function in the input without doing anything else.
 
 ### Declare a new feature<a name="newfeature"></a>
 
@@ -141,12 +175,7 @@ Once you finished writting your template, please call the UpdateDoc.py script to
 
 When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.)).
 
-## <a name="doc"></a>Documentation
 
-To know more about implemented features, utils and templates, check the [documentation](Doc/main.md).
+## Random informations
 
-To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
-
-## Known bug
-
-- viewer crash if you re-generate the output by pressing 'G' while not being in output/ default directory
+pipreqs have been used to generate the setup.py dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
