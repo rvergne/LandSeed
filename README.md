@@ -85,11 +85,12 @@ Once your work is done and before you create the pull request, please call the U
 
 ## <a name="testlocally"></a>How to test your work locally
 
+To test your work must have installed [virtualenv](https://pypi.org/project/virtualenv/).
+
 **TL;DR** :  
 A example testing script is in the root directory of the LandSeed repository. Calling it will create the virtualenv (in the parent folder), set it up, copy LandSeed/input/input.frag inside, run LandSeed on it and try to run the viewer in the ouput. Finally, the script will get out and remove properly the virtualenv. To resume : use the LandSeed/input/input.frag and call TestLandSeed.sh.
 
 **Complete version** :  
-To test your work before create the pull request, you can use some [virtualenv](https://pypi.org/project/virtualenv/).  
 Use ```virtualenv -p python3 NAME``` to create a virtual environnement using python3 and named NAME (see the virtualenv documentation for more informations).  
 To use virtualenv shell, call ```source path/to/your/virtualenv/bin/activate```.  
 Finally call ```pip install /path/to/the/cloned/landseed/repo/```. This will simulate a LandSeed installation in the virtualenv you just created.
