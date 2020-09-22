@@ -5,3 +5,5 @@ output/
 output/*
 LandSeed.egg-info
 LandSeed.egg-info/*
+LandSeed-venv
+LandSeed-venv/*

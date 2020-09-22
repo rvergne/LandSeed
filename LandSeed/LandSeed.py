@@ -238,6 +238,7 @@ def copyAndComplete(input):
 
     outputFile = open(outputFilePath, "w+")
     outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")
+    outputFile.write("// @TO "+os.path.dirname(outputFilePath.replace(libRootPath, ""))+"\n")
     # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies

@@ -204,10 +204,12 @@ class Viewer:
             if key == glfw.KEY_G:
                 f = open(fs_file, "r")
                 l = f.readline()
+                l2 = f.readline()
                 f.close()
                 p = re.compile("@FROM (.*)")
                 input_path = p.search(l).group(1)
-                output_dir = "output"
+                p = re.compile("@TO (.*)")
+                output_dir = p.search(l2).group(1)
                 if input_path[0] == "/":
                     input_path = input_path[1:]
                 if output_dir[0] == "/":
