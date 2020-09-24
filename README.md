@@ -170,7 +170,7 @@ A template directory should always contains the following configuration file (at
 ```  
 You can add some param lines as much as you want. They have to be by two, so every parameters is documented. The param will need to be put in the input file in the order you've put them in the configuration file.
 
-The LINE_DIRECTIVE_ON enable the #line directive usage in the output shader.
+The LINE_DIRECTIVE_ON enable the #line directive usage in the output shader (currently all disabled cause it doesn't work on intel GPU).
 
 Once you finished writting your template, please call the UpdateDoc.py script to update the documentation.
 
