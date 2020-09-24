@@ -4,7 +4,7 @@
 
 **Description**: Same shader as classic_shader, but can be copy and past in shadertoy.
 
-**Path**: /src/Templates/shadertoy/
+**Path**: LandSeed/data/Templates/shadertoy/
 
 **Parameters**:
 

@@ -2,18 +2,18 @@
 import os
 import re
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
-    from src.LibUtils.LibPaths import libRootPath
-except Exception as e:
-    from LibPaths import libRootPath
-
+import pkg_resources
+from LandSeed.LibPaths import libRootPath
 
 # class used to get all inforamtions about a feaeture or a util
 class ShaderFragmentInfo:
     # initialize the object by reading the file path
     def __init__(self, featOrUtil, path):
         self.cat = featOrUtil # 2 values : "feature" or "util"
-        self.path = path
+        if pkg_resources.resource_exists("LandSeed", path):
+            self.path = pkg_resources.resource_filename("LandSeed",path)
+        else:
+            self.path = path
         self.tag = ""
         self.funcName = ""
         self.signature = ""
@@ -24,11 +24,11 @@ class ShaderFragmentInfo:
         self.dependencies = []
         self.functionCode = ""
         self.beginLine = 0
-        self.extractInfo(path)
+        self.extractInfo()
     # extract all info from the file define by path
-    def extractInfo(self, path):
-        if os.path.isfile(path):
-            fragmentFile = open(path, "r")
+    def extractInfo(self):
+        if os.path.isfile(self.getPath()):
+            fragmentFile = open(self.getPath(), "r")
             fragmentContent = fragmentFile.readlines()
             fragmentFile.close()
             for line in range(len(fragmentContent)):
@@ -36,7 +36,7 @@ class ShaderFragmentInfo:
                     p = re.compile("@TAG (.*)")
                     tag = p.search(fragmentContent[line]).group(1)
                     if " " in tag:
-                        print("File badly formated : tag should be in one single word in "+path.replace(libRootPath, ""))
+                        print("File badly formated : tag should be in one single word in "+self.getPath().replace(libRootPath, ""))
                         sys.exit(1)
                     self.setTag(tag)
                 elif "@FUNCTION_NAME" in fragmentContent[line] and fragmentContent[line][fragmentContent[line].find("@FUNCTION_NAME")+14] != "\n":
@@ -66,7 +66,7 @@ class ShaderFragmentInfo:
                     if self.isHeaderComplete():
                         break
                     else:
-                        print("Header badly formated in "+path.replace(libRootPath, ""))
+                        print("Header badly formated in "+self.getPath().replace(libRootPath, ""))
                         del self
                         sys.exit(1)
             while (line < len(fragmentContent)) and (not self.tagPresence):
@@ -74,7 +74,7 @@ class ShaderFragmentInfo:
                     self.tagPresence = True
                 line += 1
             if not self.tagPresence:
-                print("Missing starting tag : @"+self.tag+" before function implementation start in "+path.replace(libRootPath, ""))
+                print("Missing starting tag : @"+self.tag+" before function implementation start in "+self.getPath().replace(libRootPath, ""))
                 del self
                 sys.exit(1)
 
@@ -89,14 +89,16 @@ class ShaderFragmentInfo:
                 line += 1
 
             if line >= len(fragmentContent):
-                print("Missing @END tag in "+path.replace(libRootPath, ""))
+                print("Missing @END tag in "+self.getPath().replace(libRootPath, ""))
                 del self
                 sys.exit(1)
             line +=1
         else:
-            print("Wrong path to file given : "+path.replace(libRootPath, ""))
+            print("Wrong path to file given : "+self.getPath().replace(libRootPath, ""))
             del self
             sys.exit(2)
+    def getPath(self):
+        return self.path
     def setTag(self, str):
         self.tag = str
     def setFunctionName(self, str):
@@ -149,7 +151,7 @@ class ShaderFragmentInfo:
         print("Spec: "+self.spec)
         print("Tag presence: "+str(self.tagPresence))
         print("-----------------------------------------")
-    
+
     # convert the object to markdown format for the documentation page
     def toMD(self):
         str = ""

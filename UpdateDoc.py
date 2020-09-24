@@ -5,9 +5,9 @@ import shutil
 if sys.version_info.major < 3: # python version should be 3+
     print("Python version to old, please upgrade your python to 3 or more.")
     sys.exit(6)
-from src.LibUtils.LibPaths import featuresDir, utilsDir, docDir, templatesDir
-from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
-from src.LibUtils.TemplateInfoClass import TemplateInfo
+from LandSeed.LibPaths import featuresDir, utilsDir, docDir, templatesDir
+from LandSeed.ShaderFragmentInfoClass import ShaderFragmentInfo
+from LandSeed.TemplateInfoClass import TemplateInfo
 
 # Return values
 #   0 : Everything's ok
@@ -31,26 +31,26 @@ def abort(returnCode):
 # write every single doc pages except main
 def createDocPages():
     print("Writing specific documentations pages..")
-    os.makedirs(docDir+"features/")
-    os.makedirs(docDir+"utils/")
-    os.makedirs(docDir+"templates/")
+    os.makedirs(os.path.join(docDir,"features/"))
+    os.makedirs(os.path.join(docDir,"utils/"))
+    os.makedirs(os.path.join(docDir,"templates/"))
     for feature in features:
-        featureFile = open(docDir+"features/"+feature.getFunctionName()+".md","w")
+        featureFile = open(os.path.join(docDir,"features",feature.getFunctionName()+".md"),"w")
         featureFile.write(feature.toMD())
         featureFile.close()
     for util in utils:
-        utilFile = open(docDir+"utils/"+util.getFunctionName()+".md","w")
+        utilFile = open(os.path.join(docDir,"utils",util.getFunctionName()+".md"),"w")
         utilFile.write(util.toMD())
         utilFile.close()
     for template in templates:
-        templateFile = open(os.path.join(os.path.join(docDir,"templates"), template.getTag().lower()+".md"), "w")
+        templateFile = open(os.path.join(docDir,"templates", template.getTag().lower()+".md"), "w")
         templateFile.write(template.toMD())
         templateFile.close()
 
 # Create a page that list features and utils linking them to their own page
 def createMainDocPage():
     print("Writing main doc page..")
-    mainFile = open(docDir+"main.md","w")
+    mainFile = open(os.path.join(docDir,"main.md"),"w")
     mainFile.write("# LandSeed - Documentation")
     mainFile.write("\n\n")
     mainFile.write("## Features")
@@ -95,22 +95,22 @@ def createMainDocPage():
 def getInfo():
     print("Getting features and utils informations..")
 
-    featuresDirContent = os.listdir(featuresDir)
+    featuresDirContent = os.listdir(os.path.join("LandSeed",featuresDir))
     for feature in featuresDirContent:
-        currentFilePath = os.path.join(featuresDir,feature)
+        currentFilePath = os.path.join("LandSeed", featuresDir,feature)
         currentFragment = ShaderFragmentInfo("feature", currentFilePath)
         features.append(currentFragment)
 
-    utilsDirContent = os.listdir(utilsDir)
+    utilsDirContent = os.listdir(os.path.join("LandSeed",utilsDir))
     for util in utilsDirContent:
-        currentFilePath = os.path.join(utilsDir,util)
+        currentFilePath = os.path.join("LandSeed", utilsDir,util)
         currentFragment = ShaderFragmentInfo("util", currentFilePath)
         utils.append(currentFragment)
 
-    templatesDirContent = os.listdir(templatesDir)
+    templatesDirContent = os.listdir(os.path.join("LandSeed",templatesDir))
     templatesDirContent.remove("shared")
     for template in templatesDirContent:
-        currentFilePath = os.path.join(templatesDir,template)
+        currentFilePath = os.path.join("LandSeed", templatesDir,template)
         currentTemplate = TemplateInfo(currentFilePath)
         templates.append(currentTemplate)
 

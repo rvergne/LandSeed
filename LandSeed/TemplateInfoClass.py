@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import os
 import re
+import pkg_resources
 from pydoc import locate
 import sys
-try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
-    from src.LibUtils.LibPaths import libRootPath
-except Exception as e:
-    from LibPaths import libRootPath
-
+# try: # Pas beau mais gère le fait qu'on puisse aussi appeler le script depuis de dossier src/LibUtils/
+#     from src.LibUtils.LibPaths import libRootPath
+# except Exception as e:
+#     from LibPaths import libRootPath
+from LandSeed.LibPaths import libRootPath
 # param spec in the params array for each indices:
 # 0 : TAG
 # 1 : type
@@ -27,9 +28,12 @@ class TemplateInfo:
         self.lineDirective = None
         self.desc = ""
         self.params = []
-        self.path = path
+        if pkg_resources.resource_exists("LandSeed", path):
+            self.path = pkg_resources.resource_filename("LandSeed",path)
+        else:
+            self.path = path
         self.content = []
-        if not os.path.isdir(path): # Check if the template dir exist
+        if not os.path.isdir(self.getPath()): # Check if the template dir exist
             print("The template path given should be a directory containing all template files.\nWrong file path given : "+path)
             sys.exit(2)
         self.extractInfo()
@@ -46,6 +50,7 @@ class TemplateInfo:
         shaderFile = open(self.getPathToFileToFill(), "r")
         self.content = shaderFile.readlines()
         shaderFile.close()
+
     def extractInfo(self):
         if not os.path.exists(os.path.join(self.path,"template.config")):
             print("template.config missing in the template at : "+self.path)

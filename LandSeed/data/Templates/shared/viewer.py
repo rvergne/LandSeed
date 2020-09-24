@@ -8,11 +8,11 @@ import OpenGL.GL as GL              # standard Python OpenGL wrapper
 import glfw                         # lean window system wrapper for OpenGL
 import numpy as np                  # all matrix manipulations & OpenGL args
 import time
-libRootPath = os.path.dirname(os.path.realpath(__file__+"../../"))
-sys.path.append(libRootPath)
-from LandSeed import generate
+import pkg_resources
+from LandSeed.LibPaths import libRootPath
+from LandSeed.LandSeed import generate
 
-path = os.path.dirname(os.path.realpath(__file__))+"/"
+path = os.path.dirname(os.path.realpath(__file__))
 vs_file = os.path.join(path,"vertex_shader.vert")
 fs_file = os.path.join(path,"output.frag")
 
@@ -204,15 +204,17 @@ class Viewer:
             if key == glfw.KEY_G:
                 f = open(fs_file, "r")
                 l = f.readline()
+                l2 = f.readline()
                 f.close()
                 p = re.compile("@FROM (.*)")
                 input_path = p.search(l).group(1)
-                output_dir = path.replace(libRootPath, "")
+                p = re.compile("@TO (.*)")
+                output_dir = p.search(l2).group(1)
                 if input_path[0] == "/":
                     input_path = input_path[1:]
                 if output_dir[0] == "/":
                     output_dir = output_dir[1:]
-                generate(input_path, output_dir)
+                generate(input_path, output_dir, True)
                 self.ray_tracer = Shader(vs_file, fs_file)
                 self.reload = True
                 if self.ray_tracer.glid:

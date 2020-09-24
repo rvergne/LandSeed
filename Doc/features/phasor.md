@@ -24,5 +24,5 @@
 
 
 
-**Path**: /src/shader_code/features/phasor.frag
+**Path**: LandSeed/data/shader_code/features/phasor.frag
 

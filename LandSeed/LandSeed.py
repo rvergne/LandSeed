@@ -12,9 +12,10 @@ from pydoc import locate
 import re
 import queue
 import shutil
-from src.LibUtils.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
-from src.LibUtils.TemplateInfoClass import TemplateInfo
-from src.LibUtils.ShaderFragmentInfoClass import ShaderFragmentInfo
+import pkg_resources
+from LandSeed.LibPaths import libRootPath, inputDir, outputDir, featuresDir, utilsDir, templatesDir
+from LandSeed.TemplateInfoClass import TemplateInfo
+from LandSeed.ShaderFragmentInfoClass import ShaderFragmentInfo
 
 # Return code meaning :
 #   0 : everything's ok
@@ -64,14 +65,14 @@ def includeDependency(dependencyName):
     # if this dependency hasn't been added yet
     if not dependencyName.lower() in includedDependencies and not dependencyName.lower() in includedFeatures:
 
-        for feat in os.listdir(featuresDir):
+        for feat in pkg_resources.resource_listdir("LandSeed", featuresDir):
             if feat.replace(".frag", "").upper() == dependencyName.upper():
                 dependencyPath = os.path.join(featuresDir, feat)
                 dependency = ShaderFragmentInfo("feature", dependencyPath)
                 includedFeatures.append(dependencyName.lower())
                 break
         if dependency == None:
-            for util in os.listdir(utilsDir):
+            for util in pkg_resources.resource_listdir("LandSeed", utilsDir):
                 if util.replace(".frag", "").upper() == dependencyName.upper():
                     dependencyPath = os.path.join(utilsDir, util)
                     dependency = ShaderFragmentInfo("utils", dependencyPath)
@@ -103,12 +104,12 @@ def includeTerrainMap(input, outputFile):
          #if the line is not commented
         if not "//" in input[line].replace(" ", "")[0:2]:
             # check every features
-            for featureFile in os.listdir(featuresDir) :
+            for featureFile in pkg_resources.resource_listdir("LandSeed", featuresDir) :
                 feature = featureFile.replace(".frag","")
                 # if the feature is in the line, include it
                 if feature in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(feature)+len(feature)]=="("):
                     includeDependency(feature)
-            for utilFile in os.listdir(utilsDir) : # check util after feature
+            for utilFile in pkg_resources.resource_listdir("LandSeed", utilsDir) : # check util after feature
                 util = utilFile.replace(".frag","")
                 # if the util is in the line, include it
                 if util in input[line] and (input[line].replace(" ", "")[input[line].replace(" ", "").find(util)+len(util)]=="("):
@@ -137,7 +138,8 @@ def copyAndComplete(input):
         if "@TEMPLATE" in input[firstLines] and input[firstLines][input[firstLines].find("@TEMPLATE")+9] == " ":
             inputFileTemplateLine = input[firstLines].replace("// ", "").replace("//", "").replace("\n", "").split(" ")
             templateName = inputFileTemplateLine[1]
-            if not templateName in os.listdir(templatesDir):
+            # if not templateName in os.listdir(templatesDir):
+            if not pkg_resources.resource_exists("LandSeed", os.path.join(templatesDir, templateName)):
                 error("Unknown template name : "+templateName, 3)
         firstLines += 1
     if firstLines >= len(input):
@@ -150,7 +152,7 @@ def copyAndComplete(input):
     template = TemplateInfo(templateDirPath)
     # getting template content
     emptyShaderContent = template.getContent()
-    shutil.copytree(templateDirPath, outputPath,ignore=shutil.ignore_patterns('template.config'))
+    shutil.copytree(template.getPath(), outputPath,ignore=shutil.ignore_patterns('template.config'))
 
     outputFilePath=os.path.join(outputPath, template.getFileTofillName())
 
@@ -202,6 +204,11 @@ def copyAndComplete(input):
                             if "@"+template.getParamTag(templateParam) in emptyShaderContent[line]:
                                 emptyShaderContent[line] = emptyShaderContent[line].replace("@"+currentParamTag, currentParamGivenValue)
                     else: # if it's a custom file
+                        print("---------------DEBUG-------------")
+                        print("outputPath : "+outputPath)
+                        print("ParamFile : "+template.getParamFile(p))
+                        print(os.path.join(outputPath, template.getParamFile(p)))
+                        print("---------------DEBUG-------------")
                         fileToFulfillPath = os.path.join(outputPath, template.getParamFile(p))
                         fin = open(fileToFulfillPath, "rt")
                         data = fin.read()
@@ -231,6 +238,7 @@ def copyAndComplete(input):
 
     outputFile = open(outputFilePath, "w+")
     outputFile.write("// @FROM "+inputPath.replace(libRootPath,"")+"\n")
+    outputFile.write("// @TO "+os.path.dirname(outputFilePath.replace(libRootPath, ""))+"\n")
     # run through every lines of the template, seeking for the @TERRAIN_MAP tag.
     # if it's not present, copy the current line then go on the next one
     # if it's on the line, include the input and all the dependencies
@@ -245,7 +253,8 @@ def copyAndComplete(input):
     outputFile.close()
 
 # in order to make the genreation from another file
-def generate(input, output):
+def generate(inputP=os.path.join(inputDir,"demo.frag"), output=os.path.join(os.getcwd(),outputDir), forceOverwrite=False):
+
     global outputPath # path to the output dir
     global outputFile # output file (the one where @TERRAIN_MAP is)
     global inputPath # path to the input file
@@ -255,31 +264,58 @@ def generate(input, output):
     includedFeatures = [] # to register which feature we already added
     includedDependencies = [] # to register which dependencies we already added
 
-    inputPath = os.path.join(libRootPath,input)
+    if len(sys.argv) == 3:
+        inputPath, outputPath = os.path.join(sys.argv[1]),os.path.join(sys.argv[2])
+    elif len(sys.argv) == 1:
+        print("Default parameters are taken.")
+        inputPath = inputP
+        outputPath = output
+    else:
+        print("Parameter error.")
+        print("Syntax : ")
+        print("LandSeed.py [inputPath] [outputPath]")
+        print("or")
+        print("LandSeed.py")
+        sys.exit(4)
+    # inputPath = os.path.join(libRootPath,input)
     print("Input file : "+inputPath)
-    outputPath = os.path.join(libRootPath,output)
+    # outputPath = os.path.join(libRootPath,output)
     print("Output file : "+outputPath)
-
     # checking that input exist and that it's a file
-    if not os.path.exists(inputPath) or not os.path.isfile(inputPath):
+    if (not os.path.exists(inputPath) or not os.path.isfile(inputPath)) and not pkg_resources.resource_exists("LandSeed", inputPath) :
         print("Please enter a valid or existing input file.")
         sys.exit(4)
 
     # opening and getting input file content
-    inputFile = open(inputPath, "r")
+    if pkg_resources.resource_exists("LandSeed", inputPath):
+        inputFile = open(pkg_resources.resource_filename("LandSeed", inputPath), "r")
+    else:
+        inputFile = open(inputPath, "r")
     inputFileContent = inputFile.readlines()
     inputFile.close()
 
     outputFile = None
 
-    if os.path.exists(outputPath):
+    if os.path.exists(outputPath) and forceOverwrite == False:
+        choice = input(outputPath + " already exists, are you sure you want to overwrite it (y/n)? ")
+        if choice.upper() == "Y":
+            shutil.rmtree(outputPath)
+        else:
+            print("Aborting..")
+            sys.exit(-1)
+    elif os.path.exists(outputPath) and forceOverwrite == True:
         shutil.rmtree(outputPath)
-
     # fulfill template with input file and dependencies
     copyAndComplete(inputFileContent)
 
     return 0
 
+def newInputFile():
+    print("Generating new input file")
+    shutil.copyfile(pkg_resources.resource_filename("LandSeed", os.path.join(inputDir,"demo.frag")), "input.frag")
+    return 0
+
+# Todo : make this usable
 if __name__=="__main__":
         # user can enter a personnal input file or use the default one
         # no parameters -> default input and output
@@ -296,9 +332,9 @@ if __name__=="__main__":
         else:
             print("Parameter error.")
             print("Syntax : ")
-            print("./LandSeed.py [inputPath] [outputPath]")
+            print("LandSeed.py [inputPath] [outputPath]")
             print("or")
-            print("./LandSeed.py")
+            print("LandSeed.py")
             sys.exit(4)
 
         # exit
