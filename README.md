@@ -176,6 +176,21 @@ Once you finished writting your template, please call the UpdateDoc.py script to
 
 When your template is ready to be added to the librairy and be available for everyone, create a pull request (Tutorial [here](https://yangsu.github.io/pull-request-tutorial/#:~:text=Pull%20requests%20let%20you%20tell,follow%2Dup%20commits%20if%20necessary.)).
 
+## Known limitation
+
+When using the viewer in classic_shader and fancy_shader templates, if you want to re generate output from shader, please call the viewer from the location of the input file.  
+For instance, if you have :
+```
+.
+├── input.frag
+└── output
+        ├── output.frag
+        ├── vertex_shader.vert
+        └── viewer.py
+```
+
+please do ```./output/viewer.py``` instead of ```cd output``` and ```./viewer.py```
+
 ## Random informations
 
 pipreqs have been used to generate the setup.py dependencies. See [here](https://pypi.org/project/pipreqs/) for more informations.
