@@ -15,7 +15,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LandSeed",
-    version="1.0.12",
+    version="1.0.13",
     author="Bastien Zigmann",
     author_email="bastien@zigmann.org",
     description="Procedural terrain shader generator",
