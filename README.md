@@ -8,18 +8,18 @@ The idea is to use, combine or create features to generate various terrains with
 
 ## Table of content
 
-**[User part](#user)**
+**[User part](https://github.com/Sauww/LandSeed#user)**
 
- - [Installation](#install)
- - [Generation](#generation)
- - [Documentation](#doc)
+ - [Installation](https://github.com/Sauww/LandSeed#install)
+ - [Generation](https://github.com/Sauww/LandSeed#generation)
+ - [Documentation](https://github.com/Sauww/LandSeed#doc)
 
-**[Developper part](#dev)**
+**[Developper part](https://github.com/Sauww/LandSeed#dev)**
 
- - [Test your work locally](#testlocally)
- - [Fragments (features and Utils)](#feature)
- - [Common Header](#commonheader)
- - [Templates](#template)
+ - [Test your work locally](https://github.com/Sauww/LandSeed#testlocally)
+ - [Fragments (features and Utils)](https://github.com/Sauww/LandSeed#feature)
+ - [Common Header](https://github.com/Sauww/LandSeed#commonheader)
+ - [Templates](https://github.com/Sauww/LandSeed#template)
 
 
 <br />
@@ -61,8 +61,8 @@ LandSeed_newinput
 ```
 The newly generated input file is located in the current folder.
 
-The newly created input file contains a terrainMap function. Use the features functions inside it (see [documentation](Doc/main.md) for the list of existing features).
-It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](Doc/main.md). The line should look like this :
+The newly created input file contains a terrainMap function. Use the features functions inside it (see [documentation](https://github.com/Sauww/LandSeed/blob/master/Doc/main.md) for the list of existing features).
+It has a template parameter at the beginning to choose a template, in order to get different kind of output. Templates can have some custom parameters that you can find in the [documentation](https://github.com/Sauww/LandSeed/blob/master/Doc/main.md). The line should look like this :
 ```
 // @TEMPLATE template_tag PARAM1=VALUE PARAM2=VALUE
 ```
@@ -70,7 +70,7 @@ If there is no parameters, some defaults values will be taken. You don't have to
 
 ## <a name="doc"></a>Documentation
 
-To know more about implemented features, utils and templates, check the [documentation](Doc/main.md).
+To know more about implemented features, utils and templates, check the [documentation](https://github.com/Sauww/LandSeed/blob/master/Doc/main.md).
 
 To update the documentation with your modifications or new files, just call the UpdateDoc.py script.
 
@@ -104,7 +104,7 @@ __Utils__ are the functions you want to use inside your features without writtin
 ### Declare a new feature<a name="newfeature"></a>
 
 Create a new file in src/shader_code/features/ folder. PLEASE USE THE MAIN FUNCTION NAME OF YOUR FEATURE AS TAG AND FILE NAME !! (your_function.frag as file name)  
-Inside, please use the common header as specified [below](#commonheader) so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.  
+Inside, please use the common header as specified [below](https://github.com/Sauww/LandSeed#commonheader) so your feature can be automatically included in the librairy. After the common header, start the code with your tag in commentary, and end your code with @END tag.  
 
 Put your feature code between your tag and @END tag. You can use any existing util or feature adding it with the tag @INCLUDE TAG. The include should be between you function tag and it's beginning. Here is an example :
 ```
@@ -125,8 +125,8 @@ When your feature is ready to be added to the librairy and be available for ever
 
 ### Use a utils
 
-As explained in the [Declare a new feature](#newfeature) section, to use a util in a feature (or Util) file, please use the @INCLUDE tag with the tag of the util.  
-To know the tags and specifications of the different features, please refer to the [documentation](Doc/main.md).
+As explained in the [Declare a new feature](https://github.com/Sauww/LandSeed#newfeature) section, to use a util in a feature (or Util) file, please use the @INCLUDE tag with the tag of the util.  
+To know the tags and specifications of the different features, please refer to the [documentation](https://github.com/Sauww/LandSeed/blob/master/Doc/main.md).
 
 ### Declare a new utils function
 
@@ -154,7 +154,7 @@ See examples in any files using this header.
 ## <a name="template"></a>Templates
 
 Templates allows you to get different kind of input. A template is directory containing as much files and subfolder as you want. Its structure always have a GLSL file that will be fulfilled with the terrainMap function and all its dependencies.  
-See in the [documentation](Doc/main.md) to have some informations about the purpose of each templates.
+See in the [documentation](https://github.com/Sauww/LandSeed/blob/master/Doc/main.md) to have some informations about the purpose of each templates.
 
 A template directory should always contains the following configuration file (at root of the template dir) named template.config :
 ```
