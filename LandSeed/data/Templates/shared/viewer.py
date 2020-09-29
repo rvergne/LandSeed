@@ -131,7 +131,6 @@ class Viewer:
         print('OpenGL', GL.glGetString(GL.GL_VERSION).decode() + ', GLSL',
               GL.glGetString(GL.GL_SHADING_LANGUAGE_VERSION).decode() +
               ', Renderer', GL.glGetString(GL.GL_RENDERER).decode())
-        print("To pause or resume the renderer, press P")
         print("To see your changes in this file, press R key to reload "+fs_file.replace(libRootPath, ""))
         print("To generate again with the same input file and reload, press G")
 
@@ -161,6 +160,7 @@ class Viewer:
 
         # flush render commands, and swap draw buffers
         glfw.swap_buffers(self.win)
+        print("RELOADED")
 
     def on_size(self, win, width, height):
         """ window size update => update viewport to new framebuffer size """
@@ -177,7 +177,7 @@ class Viewer:
             # Poll for and process events
             glfw.poll_events()
             self.reload = False
-            while self.pause and not glfw.window_should_close(self.win) and not self.reload:
+            while not glfw.window_should_close(self.win) and not self.reload:
                 glfw.poll_events()
 
 
@@ -193,13 +193,6 @@ class Viewer:
                 self.reload = True
                 if self.ray_tracer.glid:
                     print('Shader successfully reloaded.')
-
-            if key == key == glfw.KEY_P:
-                self.pause = not self.pause
-                if self.pause:
-                    print("Pause on")
-                else:
-                    print("Pause off")
 
             if key == glfw.KEY_G:
                 f = open(fs_file, "r")
@@ -233,6 +226,7 @@ class Viewer:
         if not self.pause:
             if glfw.get_mouse_button(self.win,glfw.MOUSE_BUTTON_LEFT)==glfw.PRESS:
                 self.mouse_offset = (([x,y]/self.size)-self.mouse_pos_click)*[2,-2]
+                self.reload = True
 
 # -------------- main program and scene setup --------------------------------
 def main():
