@@ -122,7 +122,6 @@ vec3 applyFog( in vec3  color,      // original color of the pixel
 }
 
 
-
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a      = roughness*roughness;
@@ -236,6 +235,31 @@ float AmbientOcclusion(vec3 point, vec3 normal, float step_dist, float step_nbr)
 }
 //------------------------------------------------------------------------------
 // Change the color computation function here
+float luminance(vec3 v)
+{
+    return dot(v, vec3(0.2126f, 0.7152f, 0.0722f));
+}
+
+
+vec3 reinhard_jodie(vec3 v)
+{
+    float l = luminance(v);
+    vec3 tv = v / (1.0f + v);
+    return mix(v / (1.0f + l), tv, tv);
+}
+
+vec3 aces_approx(vec3 v)
+{
+    v *= 0.6f;
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    return clamp((v*(a*v+b))/(v*(c*v+d)+e), 0.0f, 1.0f);
+}
+
+
 vec3 computeColor(in vec3 p, vec3 ro){
   // return vec3((p.y+AMP)/(2*AMP));
   float gradient = terrainGradientNorm(p,ro);
@@ -247,16 +271,24 @@ vec3 computeColor(in vec3 p, vec3 ro){
            ao += AmbientOcclusion(p+vec3(f,0,g),terrainNormal(p, ro),step_dist,1);
   ao /= (2*st_nb+1)*(2*st_nb+1);*/
   vec3 normal = terrainNormal(p, ro);
-  vec3 light = normalize(vec3(1));
+  vec3 light = normalize(vec3(1,0.1,1));
   vec3 view = normalize(ro-p);
-  vec3 half = normalize(view+light);
-  vec3 m_col = computeReflectance(normal,view,vec3(0.04),mix(mix(vec3(0.7,0.3,0.1),vec3(0.2,0.7,0.3),pow(max(dot(normal,vec3(0,1,0)),0),4)),vec3(0.6,0.5,0.5),abs(dot(normal,vec3(1,0,0)))),light,half,vec3(1),4,0,0.7);
+  vec3 half_vec = normalize(view+light);
+  vec3 m_col = computeReflectance(normal,view,vec3(0.04),mix(mix(vec3(0.7,0.3,0.1),vec3(0.2,0.7,0.3),pow(max(dot(normal,vec3(0,1,0)),0),4)),vec3(0.6,0.5,0.5),abs(dot(normal,vec3(1,0,0)))),light,half_vec,vec3(1),4,0,0.7);
+  //Test shadow
+  float shadow = 0;
+  float res = rayMarchTerrain(Ray(p+normal,light));
+  if(res == -1)
+      shadow = 0;
+  else
+      shadow = 1;
+  m_col = mix(m_col,m_col*0.3,shadow);
   vec3 col = applyFog(m_col,distance(p, ro),view,light,ro,0.25);
-  col += PRim(normal,view,vec3(0.1,0.8,0.8),half,1.0f);
-  col = col/(col+vec3(1));
+  col += PRim(normal,view,vec3(0.1,0.8,0.8),half_vec,1.0f);
+  col = reinhard_jodie(col);
   col = pow(col,vec3(1.0/1));
   return col;
-  // return p;
+
 }
 
 void main()
